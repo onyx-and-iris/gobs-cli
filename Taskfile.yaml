@@ -1,0 +1,52 @@
+version: '3'
+
+vars:
+  PROGRAM: gobs-cli
+  SHELL: '{{if eq .OS "Windows_NT"}}powershell{{end}}'
+  BIN_DIR: bin
+
+tasks:
+  default:
+    desc: Build the gobs-cli project
+    cmds:
+      - task: build
+
+  build:
+    desc: Build the gobs-cli project
+    deps: [vet]
+    cmds:
+      - task: build-windows
+      - task: build-linux
+
+  vet:
+    desc: Vet the code
+    deps: [fmt]
+    cmds:
+      - go vet ./...
+
+  fmt:
+    desc: Fmt the code
+    cmds:
+      - go fmt ./...
+
+  build-windows:
+    desc: Build the gobs-cli project for Windows
+    cmds:
+      - GOOS=windows GOARCH=amd64 go build -o {{.BIN_DIR}}/{{.PROGRAM}}_windows_amd64.exe
+    internal: true
+
+  build-linux:
+    desc: Build the gobs-cli project for Linux
+    cmds:
+      - GOOS=linux GOARCH=amd64 go build -o {{.BIN_DIR}}/{{.PROGRAM}}_linux_amd64
+    internal: true
+
+  test:
+    desc: Run tests
+    cmds:
+      - go test ./...
+
+  clean:
+    desc: Clean the build artifacts
+    cmds:
+      - '{{.SHELL}} rm -r {{.BIN_DIR}}'

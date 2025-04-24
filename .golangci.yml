@@ -1,0 +1,52 @@
+run:
+  # timeout for analysis, e.g. 30s, 3m, default is 1m
+  timeout: 3m
+  # exclude test files
+  tests: true
+
+linters:
+  # Set to true runs only fast linters.
+  # Good option for 'lint on save', pre-commit hook or CI.
+  fast: true
+
+  disable-all: true
+
+  enable:
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - gofmt
+    - gofumpt
+    - misspell
+    - unparam
+    - gosec
+    - asciicheck
+    - errname
+    - gci
+    - godot
+    - goimports
+    - revive
+
+linters-settings:
+  gofmt:
+    rewrite-rules:
+      - pattern: 'interface{}'
+        replacement: 'any'
+      - pattern: 'a[b:len(a)]'
+        replacement: 'a[b:]'
+
+  misspell:
+    locale: UK
+
+  errcheck:
+    check-type-assertions: true
+
+issues:
+  max-same-issues: 0
+  max-issues-per-linter: 0
+  exclude-use-default: false
+  exclude:
+    # gosec: Duplicated errcheck checks
+    - G104
