@@ -305,21 +305,21 @@ gobs-cli profile current
     -   args: Name
 
 ```console
-gobs-cli profile switch test-collection
+gobs-cli profile switch test-profile
 ```
 
 -   create: Create profile.
     -   args: Name
 
 ```console
-gobs-cli profile create test-collection
+gobs-cli profile create test-profile
 ```
 
 -   remove: Remove profile.
     -   args: Name
 
 ```console
-gobs-cli profile create test-collection
+gobs-cli profile remove test-profile
 ```
 
 ### ReplayBufferCmd
