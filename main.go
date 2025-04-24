@@ -46,7 +46,6 @@ type context struct {
 }
 
 func main() {
-	var client *goobs.Client
 	cli := cli{}
 	ctx := kong.Parse(
 		&cli,
