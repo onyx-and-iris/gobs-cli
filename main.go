@@ -54,9 +54,7 @@ func main() {
 	)
 
 	client, err := connectObs(cli.ObsConfig)
-	if err != nil {
-		ctx.FatalIfErrorf(err)
-	}
+	ctx.FatalIfErrorf(err)
 
 	ctx.Bind(&context{
 		Client: client,
