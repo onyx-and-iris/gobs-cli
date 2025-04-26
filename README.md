@@ -273,7 +273,7 @@ gobs-cli scenecollection list
 gobs-cli scenecollection current
 ```
 
--   switch: "Switch scene collection.
+-   switch: Switch scene collection.
     -   args: Name
 
 ```console
