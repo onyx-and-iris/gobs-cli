@@ -11,7 +11,7 @@ type SceneCollectionCmd struct {
 	List    ListSceneCollectionCmd    `help:"List scene collections."       cmd:"" aliases:"ls"`
 	Current CurrentSceneCollectionCmd `help:"Get current scene collection." cmd:"" aliases:"c"`
 	Switch  SwitchSceneCollectionCmd  `help:"Switch scene collection."      cmd:"" aliases:"sw"`
-	Create  CreateSceneCollectionCmd  `help:"Create scene collection."      cmd:"" aliases:"cr"`
+	Create  CreateSceneCollectionCmd  `help:"Create scene collection."      cmd:"" aliases:"new"`
 }
 
 // ListSceneCollectionCmd provides a command to list all scene collections.

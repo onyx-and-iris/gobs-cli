@@ -12,7 +12,7 @@ type ProfileCmd struct {
 	List    ListProfileCmd    `help:"List profiles."       cmd:"" aliases:"ls"`
 	Current CurrentProfileCmd `help:"Get current profile." cmd:"" aliases:"c"`
 	Switch  SwitchProfileCmd  `help:"Switch profile."      cmd:"" aliases:"sw"`
-	Create  CreateProfileCmd  `help:"Create profile."      cmd:"" aliases:"cr"`
+	Create  CreateProfileCmd  `help:"Create profile."      cmd:"" aliases:"new"`
 	Remove  RemoveProfileCmd  `help:"Remove profile."      cmd:"" aliases:"rm"`
 }
 
