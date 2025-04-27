@@ -4,6 +4,12 @@ A command line interface for OBS Websocket v5
 
 For an outline of past/future changes refer to: [CHANGELOG](CHANGELOG.md)
 
+## Installation
+
+```console
+go install github.com/onyx-and-iris/gobs-cli@latest
+```
+
 ## Configuration
 
 #### Flags
