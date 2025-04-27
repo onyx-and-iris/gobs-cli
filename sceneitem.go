@@ -9,11 +9,12 @@ import (
 
 // SceneItemCmd provides commands to manage scene items in OBS Studio.
 type SceneItemCmd struct {
-	List    SceneItemListCmd    `cmd:"" help:"List all scene items."      aliases:"ls"`
-	Show    SceneItemShowCmd    `cmd:"" help:"Show scene item."           aliases:"sh"`
-	Hide    SceneItemHideCmd    `cmd:"" help:"Hide scene item."           aliases:"h"`
-	Toggle  SceneItemToggleCmd  `cmd:"" help:"Toggle scene item."         aliases:"tg"`
-	Visible SceneItemVisibleCmd `cmd:"" help:"Get scene item visibility." aliases:"v"`
+	List      SceneItemListCmd      `cmd:"" help:"List all scene items."      aliases:"ls"`
+	Show      SceneItemShowCmd      `cmd:"" help:"Show scene item."           aliases:"sh"`
+	Hide      SceneItemHideCmd      `cmd:"" help:"Hide scene item."           aliases:"h"`
+	Toggle    SceneItemToggleCmd    `cmd:"" help:"Toggle scene item."         aliases:"tg"`
+	Visible   SceneItemVisibleCmd   `cmd:"" help:"Get scene item visibility." aliases:"v"`
+	Transform SceneItemTransformCmd `cmd:"" help:"Transform scene item."      aliases:"t"`
 }
 
 // SceneItemListCmd provides a command to list all scene items in a scene.
@@ -85,6 +86,13 @@ func (cmd *SceneItemShowCmd) Run(ctx *context) error {
 	if err != nil {
 		return err
 	}
+
+	if cmd.Parent != "" {
+		fmt.Fprintf(ctx.Out, "Scene item '%s' in group '%s' is now visible.\n", cmd.ItemName, cmd.Parent)
+	} else {
+		fmt.Fprintf(ctx.Out, "Scene item '%s' in scene '%s' is now visible.\n", cmd.ItemName, cmd.SceneName)
+	}
+
 	return nil
 }
 
@@ -110,6 +118,13 @@ func (cmd *SceneItemHideCmd) Run(ctx *context) error {
 	if err != nil {
 		return err
 	}
+
+	if cmd.Parent != "" {
+		fmt.Fprintf(ctx.Out, "Scene item '%s' in group '%s' is now hidden.\n", cmd.ItemName, cmd.Parent)
+	} else {
+		fmt.Fprintf(ctx.Out, "Scene item '%s' in scene '%s' is now hidden.\n", cmd.ItemName, cmd.SceneName)
+	}
+
 	return nil
 }
 
@@ -151,6 +166,13 @@ func (cmd *SceneItemToggleCmd) Run(ctx *context) error {
 	if err != nil {
 		return err
 	}
+
+	if itemEnabled {
+		fmt.Fprintf(ctx.Out, "Scene item '%s' in scene '%s' is now hidden.\n", cmd.ItemName, cmd.SceneName)
+	} else {
+		fmt.Fprintf(ctx.Out, "Scene item '%s' in scene '%s' is now visible.\n", cmd.ItemName, cmd.SceneName)
+	}
+
 	return nil
 }
 
@@ -179,5 +201,112 @@ func (cmd *SceneItemVisibleCmd) Run(ctx *context) error {
 	} else {
 		fmt.Fprintf(ctx.Out, "Scene item '%s' in scene '%s' is hidden.\n", cmd.ItemName, cmd.SceneName)
 	}
+	return nil
+}
+
+// SceneItemTransformCmd provides a command to transform a scene item.
+type SceneItemTransformCmd struct {
+	SceneName string `arg:"" help:"Scene name."`
+	ItemName  string `arg:"" help:"Item name."`
+
+	Parent string `flag:"" help:"Parent group name."`
+
+	Alignment       float64 `flag:"" help:"Alignment of the scene item."`
+	BoundsAlignment float64 `flag:"" help:"Bounds alignment of the scene item."`
+	BoundsHeight    float64 `flag:"" help:"Bounds height of the scene item."          default:"1.0"`
+	BoundsType      string  `flag:"" help:"Bounds type of the scene item."            default:"OBS_BOUNDS_NONE"`
+	BoundsWidth     float64 `flag:"" help:"Bounds width of the scene item."           default:"1.0"`
+	CropToBounds    bool    `flag:"" help:"Whether to crop the scene item to bounds."`
+	CropBottom      float64 `flag:"" help:"Crop bottom value of the scene item."`
+	CropLeft        float64 `flag:"" help:"Crop left value of the scene item."`
+	CropRight       float64 `flag:"" help:"Crop right value of the scene item."`
+	CropTop         float64 `flag:"" help:"Crop top value of the scene item."`
+	PositionX       float64 `flag:"" help:"X position of the scene item."`
+	PositionY       float64 `flag:"" help:"Y position of the scene item."`
+	Rotation        float64 `flag:"" help:"Rotation of the scene item."`
+	ScaleX          float64 `flag:"" help:"X scale of the scene item."`
+	ScaleY          float64 `flag:"" help:"Y scale of the scene item."`
+}
+
+// Run executes the command to transform a scene item.
+func (cmd *SceneItemTransformCmd) Run(ctx *context) error {
+	sceneName, sceneItemID, err := getSceneNameAndItemID(ctx.Client, cmd.SceneName, cmd.ItemName, cmd.Parent)
+	if err != nil {
+		return err
+	}
+
+	// Get the current transform of the scene item
+	resp, err := ctx.Client.SceneItems.GetSceneItemTransform(sceneitems.NewGetSceneItemTransformParams().
+		WithSceneName(sceneName).
+		WithSceneItemId(sceneItemID))
+	if err != nil {
+		return err
+	}
+
+	// Update the transform with the provided values
+	transform := resp.SceneItemTransform
+
+	if cmd.Alignment != 0 {
+		transform.Alignment = cmd.Alignment
+	}
+	if cmd.BoundsAlignment != 0 {
+		transform.BoundsAlignment = cmd.BoundsAlignment
+	}
+
+	if cmd.BoundsHeight != 0 {
+		transform.BoundsHeight = cmd.BoundsHeight
+	}
+	if cmd.BoundsType != "" {
+		transform.BoundsType = cmd.BoundsType
+	}
+	if cmd.BoundsWidth != 0 {
+		transform.BoundsWidth = cmd.BoundsWidth
+	}
+
+	if cmd.CropToBounds {
+		transform.CropToBounds = cmd.CropToBounds
+	}
+	if cmd.CropBottom != 0 {
+		transform.CropBottom = cmd.CropBottom
+	}
+	if cmd.CropLeft != 0 {
+		transform.CropLeft = cmd.CropLeft
+	}
+	if cmd.CropRight != 0 {
+		transform.CropRight = cmd.CropRight
+	}
+	if cmd.CropTop != 0 {
+		transform.CropTop = cmd.CropTop
+	}
+	if cmd.PositionX != 0 {
+		transform.PositionX = cmd.PositionX
+	}
+	if cmd.PositionY != 0 {
+		transform.PositionY = cmd.PositionY
+	}
+	if cmd.Rotation != 0 {
+		transform.Rotation = cmd.Rotation
+	}
+	if cmd.ScaleX != 0 {
+		transform.ScaleX = cmd.ScaleX
+	}
+	if cmd.ScaleY != 0 {
+		transform.ScaleY = cmd.ScaleY
+	}
+
+	_, err = ctx.Client.SceneItems.SetSceneItemTransform(sceneitems.NewSetSceneItemTransformParams().
+		WithSceneName(sceneName).
+		WithSceneItemId(sceneItemID).
+		WithSceneItemTransform(transform))
+	if err != nil {
+		return err
+	}
+
+	if cmd.Parent != "" {
+		fmt.Fprintf(ctx.Out, "Scene item '%s' in group '%s' transformed.\n", cmd.ItemName, cmd.Parent)
+	} else {
+		fmt.Fprintf(ctx.Out, "Scene item '%s' in scene '%s' transformed.\n", cmd.ItemName, cmd.SceneName)
+	}
+
 	return nil
 }

@@ -121,6 +121,35 @@ gobs-cli sceneitem toggle --parent=test_group START "Colour Source 3"
 gobs-cli sceneitem visible --parent=test_group START "Colour Source 4"
 ```
 
+-   transform: Transform scene item.
+    -   flags:
+        *optional*
+        -   --parent: Parent group name.
+
+        -   --alignment: Alignment of the scene item.
+        -   --bounds-alignment: Bounds alignment of the scene item.
+        -   --bounds-height: Bounds height of the scene item.
+        -   --bounds-type: Bounds type of the scene item.
+        -   --bounds-width: Bounds width of the scene item.
+        -   --crop-to-bounds: Whether to crop the scene item to bounds.
+        -   --crop-bottom: Crop bottom value of the scene item.
+        -   --crop-left: Crop left value of the scene item.
+        -   --crop-right: Crop right value of the scene item.
+        -   --crop-top: Crop top value of the scene item.
+        -   --position-x: X position of the scene item.
+        -   --position-y: Y position of the scene item.
+        -   --rotation: Rotation of the scene item.
+        -   --scale-x: X scale of the scene item.
+        -   --scale-y: Y scale of the scene item.
+    -   args: SceneName ItemName
+
+```console
+gobs-cli sceneitem transform \
+    --rotation=5 \
+    --position-x=250.8 \
+    Scene "Colour Source 3"
+```
+
 ### GroupCmd
 
 -   list: List all groups.
