@@ -1,5 +1,8 @@
 version: '3'
 
+includes:
+  man: Taskfile.man.yaml
+
 vars:
   PROGRAM: gobs-cli
   SHELL: '{{if eq .OS "Windows_NT"}}powershell{{end}}'
@@ -50,8 +53,3 @@ tasks:
     desc: Clean the build artifacts
     cmds:
       - '{{.SHELL}} rm -r {{.BIN_DIR}}'
-
-  man:
-    desc: Generate man page
-    cmds:
-      - go run . --man > {{.PROGRAM}}.1

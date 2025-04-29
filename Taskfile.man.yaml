@@ -1,0 +1,17 @@
+version: '3'
+
+tasks:
+  default:
+    desc: View man page
+    cmds:
+      - task: view
+
+  view:
+    desc: View man page
+    cmds:
+      - go run . --man | man -l -
+
+  generate:
+    desc: Generate man page
+    cmds:
+      - go run . --man > {{.PROGRAM}}.1
