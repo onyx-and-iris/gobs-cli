@@ -51,7 +51,7 @@ tasks:
     cmds:
       - '{{.SHELL}} rm -r {{.BIN_DIR}}'
 
-  manfile:
+  man:
     desc: Generate manfile
     cmds:
-      - go run . --man > manfile
+      - go run . --man > gobs-cli.1

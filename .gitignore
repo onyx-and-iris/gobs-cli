@@ -28,3 +28,4 @@ go.work
 
 .envrc
 *_test.go
+gobs-cli.1
