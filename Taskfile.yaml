@@ -52,6 +52,6 @@ tasks:
       - '{{.SHELL}} rm -r {{.BIN_DIR}}'
 
   man:
-    desc: Generate manfile
+    desc: Generate man page
     cmds:
       - go run . --man > {{.PROGRAM}}.1
