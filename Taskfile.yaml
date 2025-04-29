@@ -54,4 +54,4 @@ tasks:
   man:
     desc: Generate manfile
     cmds:
-      - go run . --man > gobs-cli.1
+      - go run . --man > {{.PROGRAM}}.1
