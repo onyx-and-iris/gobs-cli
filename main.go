@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/alecthomas/kong"
+	mangokong "github.com/alecthomas/mango-kong"
 	"github.com/andreykaipov/goobs"
 )
 
@@ -25,6 +26,8 @@ type ObsConfig struct {
 // It embeds the ObsConfig struct to inherit its fields and flags.
 type cli struct {
 	ObsConfig `embed:"" help:"OBS WebSocket configuration."`
+
+	Man mangokong.ManFlag `help:"Print man page."`
 
 	Version         VersionCmd         `help:"Show version."             cmd:"" aliases:"v"`
 	Scene           SceneCmd           `help:"Manage scenes."            cmd:"" aliases:"sc"`

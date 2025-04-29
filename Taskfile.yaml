@@ -50,3 +50,8 @@ tasks:
     desc: Clean the build artifacts
     cmds:
       - '{{.SHELL}} rm -r {{.BIN_DIR}}'
+
+  manfile:
+    desc: Generate manfile
+    cmds:
+      - go run . --man > manfile
