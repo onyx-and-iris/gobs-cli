@@ -7,11 +7,13 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/alecthomas/kong"
 	mangokong "github.com/alecthomas/mango-kong"
 	"github.com/andreykaipov/goobs"
+	kongdotenv "github.com/titusjaka/kong-dotenv-go"
 )
 
 // ObsConfig holds the configuration for connecting to the OBS WebSocket server.
@@ -49,11 +51,18 @@ type context struct {
 }
 
 func main() {
-	cli := cli{}
+	userConfigDir, err := os.UserConfigDir()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error getting user config directory: %v\n", err)
+		os.Exit(1)
+	}
+
+	var cli cli
 	ctx := kong.Parse(
 		&cli,
 		kong.Name("GOBS-CLI"),
 		kong.Description("A command line tool to interact with OBS Websocket."),
+		kong.Configuration(kongdotenv.ENVFileReader, ".env", filepath.Join(userConfigDir, "gobs-cli", "config.env")),
 	)
 
 	client, err := connectObs(cli.ObsConfig)

@@ -26,6 +26,15 @@ go.work
 
 # End of gignore: github.com/onyx-and-iris/gignore
 
+# Environment
+.env
 .envrc
-*_test.go
+
+# Man pages
 gobs-cli.1
+
+# Config files
+config.yaml
+
+# Test files
+*_test.go

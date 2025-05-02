@@ -22,16 +22,18 @@ gobs-cli --host=localhost --port=4455 --password=<websocket password> --help
 
 #### Environment Variables
 
-Load connection details from your environment:
+Store and load environment variables from:
 
-```bash
-#!/usr/bin/env bash
+-   A `.env` file in the cwd
+-   $XDG_CONFIG_HOME / gobs-cli / config.env (see [os.UserConfigDir][userconfigdir])
 
-export OBS_HOST=localhost
-export OBS_PORT=4455
-export OBS_PASSWORD=<websocket password>
-export OBS_TIMEOUT=5
+```env
+OBS_HOST=localhost
+OBS_PORT=4455
+OBS_PASSWORD=<websocket password>
+OBS_TIMEOUT=5
 ```
+
 
 ## Commands
 
@@ -434,3 +436,5 @@ gobs-cli virtualcam toggle
 ```console
 gobs-cli virtualcam status
 ```
+
+[userconfigdir]: https://pkg.go.dev/os#UserConfigDir
