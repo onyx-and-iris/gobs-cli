@@ -8,6 +8,7 @@ import (
 type ReplayBufferCmd struct {
 	Start  ReplayBufferStartCmd  `help:"Start replay buffer."      cmd:"" aliases:"s"`
 	Stop   ReplayBufferStopCmd   `help:"Stop replay buffer."       cmd:"" aliases:"st"`
+	Toggle ReplayBufferToggleCmd `help:"Toggle replay buffer."     cmd:"" aliases:"tg"`
 	Status ReplayBufferStatusCmd `help:"Get replay buffer status." cmd:"" aliases:"ss"`
 	Save   ReplayBufferSaveCmd   `help:"Save replay buffer."       cmd:"" aliases:"sv"`
 }
@@ -28,6 +29,24 @@ type ReplayBufferStopCmd struct{} // size = 0x0
 func (cmd *ReplayBufferStopCmd) Run(ctx *context) error {
 	_, err := ctx.Client.Outputs.StopReplayBuffer()
 	return err
+}
+
+// ReplayBufferToggleCmd toggles the replay buffer state.
+type ReplayBufferToggleCmd struct{} // size = 0x0
+
+// Run executes the command to toggle the replay buffer.
+func (cmd *ReplayBufferToggleCmd) Run(ctx *context) error {
+	status, err := ctx.Client.Outputs.ToggleReplayBuffer()
+	if err != nil {
+		return err
+	}
+
+	if status.OutputActive {
+		fmt.Fprintln(ctx.Out, "Replay buffer started successfully.")
+	} else {
+		fmt.Fprintln(ctx.Out, "Replay buffer stopped successfully.")
+	}
+	return nil
 }
 
 // ReplayBufferStatusCmd retrieves the status of the replay buffer.
