@@ -41,19 +41,15 @@ type StreamToggleCmd struct{} // size = 0x0
 
 // Run executes the command to toggle streaming.
 func (cmd *StreamToggleCmd) Run(ctx *context) error {
-	status, err := ctx.Client.Stream.GetStreamStatus()
+	status, err := ctx.Client.Stream.ToggleStream()
 	if err != nil {
 		return err
 	}
+
 	if status.OutputActive {
-		_, err = ctx.Client.Stream.StopStream()
-		fmt.Fprintf(ctx.Out, "Stopping stream...\n")
+		fmt.Fprintln(ctx.Out, "Streaming started successfully.")
 	} else {
-		_, err = ctx.Client.Stream.StartStream()
-		fmt.Fprintf(ctx.Out, "Starting stream...\n")
-	}
-	if err != nil {
-		return err
+		fmt.Fprintln(ctx.Out, "Streaming stopped successfully.")
 	}
 	return nil
 }

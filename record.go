@@ -44,24 +44,15 @@ type RecordToggleCmd struct{} // size = 0x0
 
 // Run executes the command to toggle recording.
 func (cmd *RecordToggleCmd) Run(ctx *context) error {
-	// Check if recording is in progress
-	status, err := ctx.Client.Record.GetRecordStatus()
+	status, err := ctx.Client.Record.ToggleRecord()
 	if err != nil {
 		return err
 	}
 
 	if status.OutputActive {
-		_, err = ctx.Client.Record.StopRecord()
-		if err != nil {
-			return err
-		}
-		fmt.Fprintln(ctx.Out, "Recording stopped successfully.")
-	} else {
-		_, err = ctx.Client.Record.StartRecord()
-		if err != nil {
-			return err
-		}
 		fmt.Fprintln(ctx.Out, "Recording started successfully.")
+	} else {
+		fmt.Fprintln(ctx.Out, "Recording stopped successfully.")
 	}
 	return nil
 }
