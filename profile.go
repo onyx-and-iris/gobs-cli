@@ -9,18 +9,18 @@ import (
 
 // ProfileCmd provides commands to manage profiles in OBS Studio.
 type ProfileCmd struct {
-	List    ListProfileCmd    `help:"List profiles."       cmd:"" aliases:"ls"`
-	Current CurrentProfileCmd `help:"Get current profile." cmd:"" aliases:"c"`
-	Switch  SwitchProfileCmd  `help:"Switch profile."      cmd:"" aliases:"sw"`
-	Create  CreateProfileCmd  `help:"Create profile."      cmd:"" aliases:"new"`
-	Remove  RemoveProfileCmd  `help:"Remove profile."      cmd:"" aliases:"rm"`
+	List    ProfileListCmd    `help:"List profiles."       cmd:"" aliases:"ls"`
+	Current ProfileCurrentCmd `help:"Get current profile." cmd:"" aliases:"c"`
+	Switch  ProfileSwitchCmd  `help:"Switch profile."      cmd:"" aliases:"sw"`
+	Create  ProfileCreateCmd  `help:"Create profile."      cmd:"" aliases:"new"`
+	Remove  ProfileRemoveCmd  `help:"Remove profile."      cmd:"" aliases:"rm"`
 }
 
-// ListProfileCmd provides a command to list all profiles.
-type ListProfileCmd struct{} // size = 0x0
+// ProfileListCmd provides a command to list all profiles.
+type ProfileListCmd struct{} // size = 0x0
 
 // Run executes the command to list all profiles.
-func (cmd *ListProfileCmd) Run(ctx *context) error {
+func (cmd *ProfileListCmd) Run(ctx *context) error {
 	profiles, err := ctx.Client.Config.GetProfileList()
 	if err != nil {
 		return err
@@ -33,11 +33,11 @@ func (cmd *ListProfileCmd) Run(ctx *context) error {
 	return nil
 }
 
-// CurrentProfileCmd provides a command to get the current profile.
-type CurrentProfileCmd struct{} // size = 0x0
+// ProfileCurrentCmd provides a command to get the current profile.
+type ProfileCurrentCmd struct{} // size = 0x0
 
 // Run executes the command to get the current profile.
-func (cmd *CurrentProfileCmd) Run(ctx *context) error {
+func (cmd *ProfileCurrentCmd) Run(ctx *context) error {
 	profiles, err := ctx.Client.Config.GetProfileList()
 	if err != nil {
 		return err
@@ -47,13 +47,13 @@ func (cmd *CurrentProfileCmd) Run(ctx *context) error {
 	return nil
 }
 
-// SwitchProfileCmd provides a command to switch to a different profile.
-type SwitchProfileCmd struct {
+// ProfileSwitchCmd provides a command to switch to a different profile.
+type ProfileSwitchCmd struct {
 	Name string `arg:"" help:"Name of the profile to switch to." required:""`
 }
 
 // Run executes the command to switch to a different profile.
-func (cmd *SwitchProfileCmd) Run(ctx *context) error {
+func (cmd *ProfileSwitchCmd) Run(ctx *context) error {
 	profiles, err := ctx.Client.Config.GetProfileList()
 	if err != nil {
 		return err
@@ -74,13 +74,13 @@ func (cmd *SwitchProfileCmd) Run(ctx *context) error {
 	return nil
 }
 
-// CreateProfileCmd provides a command to create a new profile.
-type CreateProfileCmd struct {
+// ProfileCreateCmd provides a command to create a new profile.
+type ProfileCreateCmd struct {
 	Name string `arg:"" help:"Name of the profile to create." required:""`
 }
 
 // Run executes the command to create a new profile.
-func (cmd *CreateProfileCmd) Run(ctx *context) error {
+func (cmd *ProfileCreateCmd) Run(ctx *context) error {
 	profiles, err := ctx.Client.Config.GetProfileList()
 	if err != nil {
 		return err
@@ -100,13 +100,13 @@ func (cmd *CreateProfileCmd) Run(ctx *context) error {
 	return nil
 }
 
-// RemoveProfileCmd provides a command to remove an existing profile.
-type RemoveProfileCmd struct {
+// ProfileRemoveCmd provides a command to remove an existing profile.
+type ProfileRemoveCmd struct {
 	Name string `arg:"" help:"Name of the profile to delete." required:""`
 }
 
 // Run executes the command to remove an existing profile.
-func (cmd *RemoveProfileCmd) Run(ctx *context) error {
+func (cmd *ProfileRemoveCmd) Run(ctx *context) error {
 	profiles, err := ctx.Client.Config.GetProfileList()
 	if err != nil {
 		return err

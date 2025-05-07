@@ -8,17 +8,17 @@ import (
 
 // SceneCollectionCmd provides commands to manage scene collections in OBS Studio.
 type SceneCollectionCmd struct {
-	List    ListSceneCollectionCmd    `help:"List scene collections."       cmd:"" aliases:"ls"`
-	Current CurrentSceneCollectionCmd `help:"Get current scene collection." cmd:"" aliases:"c"`
-	Switch  SwitchSceneCollectionCmd  `help:"Switch scene collection."      cmd:"" aliases:"sw"`
-	Create  CreateSceneCollectionCmd  `help:"Create scene collection."      cmd:"" aliases:"new"`
+	List    SceneCollectionListCmd    `help:"List scene collections."       cmd:"" aliases:"ls"`
+	Current SceneCollectionCurrentCmd `help:"Get current scene collection." cmd:"" aliases:"c"`
+	Switch  SceneCollectionSwitchCmd  `help:"Switch scene collection."      cmd:"" aliases:"sw"`
+	Create  SceneCollectionCreateCmd  `help:"Create scene collection."      cmd:"" aliases:"new"`
 }
 
-// ListSceneCollectionCmd provides a command to list all scene collections.
-type ListSceneCollectionCmd struct{} // size = 0x0
+// SceneCollectionListCmd provides a command to list all scene collections.
+type SceneCollectionListCmd struct{} // size = 0x0
 
 // Run executes the command to list all scene collections.
-func (cmd *ListSceneCollectionCmd) Run(ctx *context) error {
+func (cmd *SceneCollectionListCmd) Run(ctx *context) error {
 	collections, err := ctx.Client.Config.GetSceneCollectionList()
 	if err != nil {
 		return fmt.Errorf("failed to get scene collection list: %w", err)
@@ -31,11 +31,11 @@ func (cmd *ListSceneCollectionCmd) Run(ctx *context) error {
 	return nil
 }
 
-// CurrentSceneCollectionCmd provides a command to get the current scene collection.
-type CurrentSceneCollectionCmd struct{} // size = 0x0
+// SceneCollectionCurrentCmd provides a command to get the current scene collection.
+type SceneCollectionCurrentCmd struct{} // size = 0x0
 
 // Run executes the command to get the current scene collection.
-func (cmd *CurrentSceneCollectionCmd) Run(ctx *context) error {
+func (cmd *SceneCollectionCurrentCmd) Run(ctx *context) error {
 	collections, err := ctx.Client.Config.GetSceneCollectionList()
 	if err != nil {
 		return fmt.Errorf("failed to get scene collection list: %w", err)
@@ -45,13 +45,13 @@ func (cmd *CurrentSceneCollectionCmd) Run(ctx *context) error {
 	return nil
 }
 
-// SwitchSceneCollectionCmd provides a command to switch to a different scene collection.
-type SwitchSceneCollectionCmd struct {
+// SceneCollectionSwitchCmd provides a command to switch to a different scene collection.
+type SceneCollectionSwitchCmd struct {
 	Name string `arg:"" help:"Name of the scene collection to switch to." required:""`
 }
 
 // Run executes the command to switch to a different scene collection.
-func (cmd *SwitchSceneCollectionCmd) Run(ctx *context) error {
+func (cmd *SceneCollectionSwitchCmd) Run(ctx *context) error {
 	collections, err := ctx.Client.Config.GetSceneCollectionList()
 	if err != nil {
 		return err
@@ -74,13 +74,13 @@ func (cmd *SwitchSceneCollectionCmd) Run(ctx *context) error {
 	return nil
 }
 
-// CreateSceneCollectionCmd provides a command to create a new scene collection.
-type CreateSceneCollectionCmd struct {
+// SceneCollectionCreateCmd provides a command to create a new scene collection.
+type SceneCollectionCreateCmd struct {
 	Name string `arg:"" help:"Name of the scene collection to create." required:""`
 }
 
 // Run executes the command to create a new scene collection.
-func (cmd *CreateSceneCollectionCmd) Run(ctx *context) error {
+func (cmd *SceneCollectionCreateCmd) Run(ctx *context) error {
 	_, err := ctx.Client.Config.CreateSceneCollection(
 		config.NewCreateSceneCollectionParams().WithSceneCollectionName(cmd.Name),
 	)
