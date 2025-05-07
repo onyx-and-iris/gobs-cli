@@ -6,11 +6,12 @@ import (
 
 // RecordCmd handles the recording commands.
 type RecordCmd struct {
-	Start  RecordStartCmd  `cmd:"" help:"Start recording."  aliases:"s"`
-	Stop   RecordStopCmd   `cmd:"" help:"Stop recording."   aliases:"st"`
-	Toggle RecordToggleCmd `cmd:"" help:"Toggle recording." aliases:"tg"`
-	Pause  RecordPauseCmd  `cmd:"" help:"Pause recording."  aliases:"p"`
-	Resume RecordResumeCmd `cmd:"" help:"Resume recording." aliases:"r"`
+	Start  RecordStartCmd  `cmd:"" help:"Start recording."       aliases:"s"`
+	Stop   RecordStopCmd   `cmd:"" help:"Stop recording."        aliases:"st"`
+	Toggle RecordToggleCmd `cmd:"" help:"Toggle recording."      aliases:"tg"`
+	Status RecordStatusCmd `cmd:"" help:"Show recording status." aliases:"ss"`
+	Pause  RecordPauseCmd  `cmd:"" help:"Pause recording."       aliases:"p"`
+	Resume RecordResumeCmd `cmd:"" help:"Resume recording."      aliases:"r"`
 }
 
 // RecordStartCmd starts the recording.
@@ -54,6 +55,29 @@ func (cmd *RecordToggleCmd) Run(ctx *context) error {
 	} else {
 		fmt.Fprintln(ctx.Out, "Recording stopped successfully.")
 	}
+	return nil
+}
+
+// RecordStatusCmd shows the recording status.
+type RecordStatusCmd struct{} // size = 0x0
+
+// Run executes the command to show recording status.
+func (cmd *RecordStatusCmd) Run(ctx *context) error {
+	status, err := ctx.Client.Record.GetRecordStatus()
+	if err != nil {
+		return err
+	}
+
+	if status.OutputActive {
+		if status.OutputPaused {
+			fmt.Fprintln(ctx.Out, "Recording is paused.")
+		} else {
+			fmt.Fprintln(ctx.Out, "Recording is in progress.")
+		}
+	} else {
+		fmt.Fprintln(ctx.Out, "Recording is not in progress.")
+	}
+
 	return nil
 }
 

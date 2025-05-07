@@ -50,3 +50,6 @@ issues:
   exclude:
     # gosec: Duplicated errcheck checks
     - G104
+  exclude-files:
+    # Exclude vendor directory
+    - main_test.go

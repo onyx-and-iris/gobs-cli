@@ -373,6 +373,12 @@ gobs-cli replaybuffer start
 gobs-cli replaybuffer stop
 ```
 
+-   toggle: Toggle replay buffer.
+
+```console
+gobs-cli replaybuffer toggle
+```
+
 -   status: Get replay buffer status.
 
 ```console
