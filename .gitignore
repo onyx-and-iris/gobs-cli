@@ -35,6 +35,3 @@ gobs-cli.1
 
 # Config files
 config.yaml
-
-# Test files
-*_test.go
