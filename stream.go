@@ -17,10 +17,22 @@ type StreamStartCmd struct{} // size = 0x0
 
 // Run executes the command to start streaming.
 func (cmd *StreamStartCmd) Run(ctx *context) error {
-	_, err := ctx.Client.Stream.StartStream()
+	// Check if the stream is already active
+	status, err := ctx.Client.Stream.GetStreamStatus()
 	if err != nil {
 		return err
 	}
+	if status.OutputActive {
+		fmt.Fprintln(ctx.Out, "Stream is already active.")
+		return nil
+	}
+
+	_, err = ctx.Client.Stream.StartStream()
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprintln(ctx.Out, "Streaming started successfully.")
 	return nil
 }
 
@@ -29,10 +41,22 @@ type StreamStopCmd struct{} // size = 0x0
 
 // Run executes the command to stop streaming.
 func (cmd *StreamStopCmd) Run(ctx *context) error {
-	_, err := ctx.Client.Stream.StopStream()
+	// Check if the stream is already inactive
+	status, err := ctx.Client.Stream.GetStreamStatus()
 	if err != nil {
 		return err
 	}
+	if !status.OutputActive {
+		fmt.Fprintln(ctx.Out, "Stream is already inactive.")
+		return nil
+	}
+
+	_, err = ctx.Client.Stream.StopStream()
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprintln(ctx.Out, "Streaming stopped successfully.")
 	return nil
 }
 
