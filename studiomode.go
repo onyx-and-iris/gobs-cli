@@ -23,6 +23,8 @@ func (cmd *StudioModeEnableCmd) Run(ctx *context) error {
 	if err != nil {
 		return fmt.Errorf("failed to enable studio mode: %w", err)
 	}
+
+	fmt.Fprintln(ctx.Out, "Studio mode is now enabled")
 	return nil
 }
 
@@ -35,6 +37,8 @@ func (cmd *StudioModeDisableCmd) Run(ctx *context) error {
 	if err != nil {
 		return fmt.Errorf("failed to disable studio mode: %w", err)
 	}
+
+	fmt.Fprintln(ctx.Out, "Studio mode is now disabled")
 	return nil
 }
 
