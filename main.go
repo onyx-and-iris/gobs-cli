@@ -24,9 +24,9 @@ type ObsConfig struct {
 	Timeout  int    `flag:"timeout"  help:"Timeout in seconds."          default:"5"         env:"OBS_TIMEOUT"`
 }
 
-// cli is the main command line interface structure.
+// CLI is the main command line interface structure.
 // It embeds the ObsConfig struct to inherit its fields and flags.
-type cli struct {
+type CLI struct {
 	ObsConfig `embed:"" help:"OBS WebSocket configuration."`
 
 	Man mangokong.ManFlag `help:"Print man page."`
@@ -58,7 +58,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	var cli cli
+	var cli CLI
 	ctx := kong.Parse(
 		&cli,
 		kong.Name("GOBS-CLI"),
