@@ -43,6 +43,7 @@ type cli struct {
 	Replaybuffer    ReplayBufferCmd    `help:"Manage replay buffer."     cmd:"" aliases:"rb"`
 	Studiomode      StudioModeCmd      `help:"Manage studio mode."       cmd:"" aliases:"sm"`
 	Virtualcam      VirtualCamCmd      `help:"Manage virtual camera."    cmd:"" aliases:"vc"`
+	Hotkey          HotkeyCmd          `help:"Manage hotkeys."           cmd:"" aliases:"hk"`
 }
 
 type context struct {
