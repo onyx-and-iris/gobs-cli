@@ -443,4 +443,39 @@ gobs-cli virtualcam toggle
 gobs-cli virtualcam status
 ```
 
+### HotkeyCmd
+
+-   list: List all hotkeys.
+
+```console
+gobs-cli hotkey list
+```
+
+-   trigger: Trigger a hotkey by name.
+
+```console
+gobs-cli hotkey trigger OBSBasic.StartStreaming
+
+gobs-cli hotkey trigger OBSBasic.StopStreaming
+```
+
+-   trigger-sequence: Trigger a hotkey by sequence.
+    -   flags:
+
+        *optional*
+        -   --shift: Press shift.
+        -   --ctrl: Press control.
+        -   --alt: Press alt.
+        -   --cmd: Press command (mac).
+
+    -   args: keyID
+        -   Check [obs-hotkeys.h][obs-keyids] for a full list of OBS key ids.
+
+```console
+gobs-cli hotkey trigger-sequence OBS_KEY_F1 --ctrl
+
+gobs-cli hotkey trigger-sequence OBS_KEY_F1 --shift --ctrl
+```
+
 [userconfigdir]: https://pkg.go.dev/os#UserConfigDir
+[obs-keyids]: https://github.com/obsproject/obs-studio/blob/master/libobs/obs-hotkeys.h
