@@ -136,6 +136,7 @@ gobs-cli sceneitem visible --parent=test_group START "Colour Source 4"
 
 -   transform: Transform scene item.
     -   flags:
+        
         *optional*
         -   --parent: Parent group name.
 
