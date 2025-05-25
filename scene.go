@@ -5,6 +5,7 @@ import (
 	"slices"
 
 	"github.com/andreykaipov/goobs/api/requests/scenes"
+	"github.com/aquasecurity/table"
 )
 
 // SceneCmd provides commands to manage scenes in OBS Studio.
@@ -24,10 +25,16 @@ func (cmd *SceneListCmd) Run(ctx *context) error {
 		return err
 	}
 
+	t := table.New(ctx.Out)
+	t.SetPadding(3)
+	t.SetAlignment(table.AlignLeft, table.AlignLeft)
+	t.SetHeaders("Scene Name", "UUID")
+
 	slices.Reverse(scenes.Scenes)
 	for _, scene := range scenes.Scenes {
-		fmt.Fprintln(ctx.Out, scene.SceneName)
+		t.AddRow(scene.SceneName, scene.SceneUuid)
 	}
+	t.Render()
 	return nil
 }
 

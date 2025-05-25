@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/andreykaipov/goobs/api/requests/sceneitems"
+	"github.com/aquasecurity/table"
 )
 
 // GroupCmd provides commands to manage groups in OBS Studio.
@@ -17,21 +18,36 @@ type GroupCmd struct {
 
 // GroupListCmd provides a command to list all groups in a scene.
 type GroupListCmd struct {
-	SceneName string `arg:"" help:"Name of the scene to list groups from."`
+	SceneName string `arg:"" help:"Name of the scene to list groups from." default:""`
 }
 
 // Run executes the command to list all groups in a scene.
 func (cmd *GroupListCmd) Run(ctx *context) error {
+	if cmd.SceneName == "" {
+		currentScene, err := ctx.Client.Scenes.GetCurrentProgramScene()
+		if err != nil {
+			return fmt.Errorf("failed to get current program scene: %w", err)
+		}
+		cmd.SceneName = currentScene.SceneName
+	}
+
 	resp, err := ctx.Client.SceneItems.GetSceneItemList(sceneitems.NewGetSceneItemListParams().
 		WithSceneName(cmd.SceneName))
 	if err != nil {
 		return fmt.Errorf("failed to get scene item list: %w", err)
 	}
+
+	t := table.New(ctx.Out)
+	t.SetPadding(3)
+	t.SetAlignment(table.AlignCenter, table.AlignLeft, table.AlignCenter)
+	t.SetHeaders("ID", "Group Name", "Enabled")
+
 	for _, item := range resp.SceneItems {
 		if item.IsGroup {
-			fmt.Fprintf(ctx.Out, "Group ID: %d, Source Name: %s\n", item.SceneItemID, item.SourceName)
+			t.AddRow(fmt.Sprintf("%d", item.SceneItemID), item.SourceName, getEnabledMark(item.SceneItemEnabled))
 		}
 	}
+	t.Render()
 	return nil
 }
 

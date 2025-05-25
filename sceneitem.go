@@ -5,6 +5,7 @@ import (
 
 	"github.com/andreykaipov/goobs"
 	"github.com/andreykaipov/goobs/api/requests/sceneitems"
+	"github.com/aquasecurity/table"
 )
 
 // SceneItemCmd provides commands to manage scene items in OBS Studio.
@@ -19,19 +20,39 @@ type SceneItemCmd struct {
 
 // SceneItemListCmd provides a command to list all scene items in a scene.
 type SceneItemListCmd struct {
-	SceneName string `arg:"" help:"Scene name."`
+	SceneName string `arg:"" help:"Name of the scene to list items from." default:""`
 }
 
 // Run executes the command to list all scene items in a scene.
 func (cmd *SceneItemListCmd) Run(ctx *context) error {
+	if cmd.SceneName == "" {
+		currentScene, err := ctx.Client.Scenes.GetCurrentProgramScene()
+		if err != nil {
+			return fmt.Errorf("failed to get current program scene: %w", err)
+		}
+		cmd.SceneName = currentScene.SceneName
+	}
+
 	resp, err := ctx.Client.SceneItems.GetSceneItemList(sceneitems.NewGetSceneItemListParams().
 		WithSceneName(cmd.SceneName))
 	if err != nil {
 		return fmt.Errorf("failed to get scene item list: %w", err)
 	}
-	for _, item := range resp.SceneItems {
-		fmt.Fprintf(ctx.Out, "Item ID: %d, Source Name: %s\n", item.SceneItemID, item.SourceName)
+
+	if len(resp.SceneItems) == 0 {
+		fmt.Fprintf(ctx.Out, "No scene items found in scene '%s'.\n", cmd.SceneName)
+		return nil
 	}
+
+	t := table.New(ctx.Out)
+	t.SetPadding(3)
+	t.SetAlignment(table.AlignLeft)
+	t.SetHeaders("Item Name")
+
+	for _, item := range resp.SceneItems {
+		t.AddRow(item.SourceName)
+	}
+	t.Render()
 	return nil
 }
 

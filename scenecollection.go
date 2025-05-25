@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/andreykaipov/goobs/api/requests/config"
+	"github.com/aquasecurity/table"
 )
 
 // SceneCollectionCmd provides commands to manage scene collections in OBS Studio.
@@ -24,10 +25,15 @@ func (cmd *SceneCollectionListCmd) Run(ctx *context) error {
 		return fmt.Errorf("failed to get scene collection list: %w", err)
 	}
 
-	for _, collection := range collections.SceneCollections {
-		fmt.Fprintln(ctx.Out, collection)
-	}
+	t := table.New(ctx.Out)
+	t.SetPadding(3)
+	t.SetAlignment(table.AlignLeft)
+	t.SetHeaders("Scene Collection Name")
 
+	for _, collection := range collections.SceneCollections {
+		t.AddRow(collection)
+	}
+	t.Render()
 	return nil
 }
 

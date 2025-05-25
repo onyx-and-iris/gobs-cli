@@ -1,10 +1,9 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/andreykaipov/goobs/api/requests/general"
 	"github.com/andreykaipov/goobs/api/typedefs"
+	"github.com/aquasecurity/table"
 )
 
 // HotkeyCmd provides commands to manage hotkeys in OBS Studio.
@@ -24,9 +23,15 @@ func (cmd *HotkeyListCmd) Run(ctx *context) error {
 		return err
 	}
 
+	t := table.New(ctx.Out)
+	t.SetPadding(3)
+	t.SetAlignment(table.AlignLeft)
+	t.SetHeaders("Hotkey Name")
+
 	for _, hotkey := range resp.Hotkeys {
-		fmt.Fprintln(ctx.Out, hotkey)
+		t.AddRow(hotkey)
 	}
+	t.Render()
 	return nil
 }
 

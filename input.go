@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/andreykaipov/goobs/api/requests/inputs"
+	"github.com/aquasecurity/table"
 )
 
 // InputCmd provides commands to manage inputs in OBS Studio.
@@ -28,21 +29,28 @@ func (cmd *InputListCmd) Run(ctx *context) error {
 	if err != nil {
 		return err
 	}
+
+	t := table.New(ctx.Out)
+	t.SetPadding(3)
+	t.SetAlignment(table.AlignLeft, table.AlignLeft)
+	t.SetHeaders("Input Name", "Kind")
+
 	for _, input := range resp.Inputs {
 		if cmd.Input && strings.Contains(input.InputKind, "input") {
-			fmt.Fprintln(ctx.Out, "Input:", input.InputName)
+			t.AddRow(input.InputName, input.InputKind)
 		}
 		if cmd.Output && strings.Contains(input.InputKind, "output") {
-			fmt.Fprintln(ctx.Out, "Output:", input.InputName)
+			t.AddRow(input.InputName, input.InputKind)
 		}
 		if cmd.Colour && strings.Contains(input.InputKind, "color") { // nolint
-			fmt.Fprintln(ctx.Out, "Colour Source:", input.InputName)
+			t.AddRow(input.InputName, input.InputKind)
 		}
 
 		if !cmd.Input && !cmd.Output && !cmd.Colour {
-			fmt.Fprintln(ctx.Out, "Source:", input.InputName)
+			t.AddRow(input.InputName, input.InputKind)
 		}
 	}
+	t.Render()
 	return nil
 }
 

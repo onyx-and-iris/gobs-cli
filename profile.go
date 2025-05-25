@@ -5,6 +5,7 @@ import (
 	"slices"
 
 	"github.com/andreykaipov/goobs/api/requests/config"
+	"github.com/aquasecurity/table"
 )
 
 // ProfileCmd provides commands to manage profiles in OBS Studio.
@@ -26,10 +27,20 @@ func (cmd *ProfileListCmd) Run(ctx *context) error {
 		return err
 	}
 
-	for _, profile := range profiles.Profiles {
-		fmt.Fprintln(ctx.Out, profile)
-	}
+	t := table.New(ctx.Out)
+	t.SetPadding(3)
+	t.SetAlignment(table.AlignLeft, table.AlignCenter)
+	t.SetHeaders("Profile Name", "Current")
 
+	for _, profile := range profiles.Profiles {
+		var enabledMark string
+		if profile == profiles.CurrentProfileName {
+			enabledMark = getEnabledMark(true)
+		}
+
+		t.AddRow(profile, enabledMark)
+	}
+	t.Render()
 	return nil
 }
 

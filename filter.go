@@ -2,8 +2,11 @@ package main
 
 import (
 	"fmt"
+	"sort"
+	"strings"
 
 	"github.com/andreykaipov/goobs/api/requests/filters"
+	"github.com/aquasecurity/table"
 )
 
 // FilterCmd provides commands to manage filters in OBS Studio.
@@ -28,10 +31,34 @@ func (cmd *FilterListCmd) Run(ctx *context) error {
 	if err != nil {
 		return err
 	}
-	for _, filter := range filters.Filters {
-		fmt.Fprintf(ctx.Out, "Name: %s\n  Kind: %s\n  Enabled: %t\n  Settings: %+v\n",
-			filter.FilterName, filter.FilterKind, filter.FilterEnabled, filter.FilterSettings)
+
+	if len(filters.Filters) == 0 {
+		fmt.Fprintf(ctx.Out, "No filters found for source %s.\n", cmd.SourceName)
+		return nil
 	}
+
+	t := table.New(ctx.Out)
+	t.SetPadding(3)
+	t.SetAlignment(table.AlignLeft, table.AlignLeft, table.AlignCenter, table.AlignLeft)
+	t.SetHeaders("Filter Name", "Kind", "Enabled", "Settings")
+
+	for _, filter := range filters.Filters {
+		var lines []string
+		for k, v := range filter.FilterSettings {
+			lines = append(lines, fmt.Sprintf("%s %v", k, v))
+		}
+		sort.Slice(lines, func(i, j int) bool {
+			return strings.ToLower(lines[i]) < strings.ToLower(lines[j])
+		})
+
+		t.AddRow(
+			filter.FilterName,
+			snakeCaseToTitleCase(filter.FilterKind),
+			getEnabledMark(filter.FilterEnabled),
+			strings.Join(lines, "\n"),
+		)
+	}
+	t.Render()
 	return nil
 }
 
