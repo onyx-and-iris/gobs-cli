@@ -44,6 +44,7 @@ type CLI struct {
 	Studiomode      StudioModeCmd      `help:"Manage studio mode."       cmd:"" aliases:"sm"`
 	Virtualcam      VirtualCamCmd      `help:"Manage virtual camera."    cmd:"" aliases:"vc"`
 	Hotkey          HotkeyCmd          `help:"Manage hotkeys."           cmd:"" aliases:"hk"`
+	Filter          FilterCmd          `help:"Manage filters."           cmd:"" aliases:"f"`
 }
 
 type context struct {

@@ -477,5 +477,42 @@ gobs-cli hotkey trigger-sequence OBS_KEY_F1 --ctrl
 gobs-cli hotkey trigger-sequence OBS_KEY_F1 --shift --ctrl
 ```
 
+### FilterCmd
+
+-   list: List all filters.
+
+```console
+gobs-cli filter list
+```
+
+-   enable: Enable filter.
+    -   args: SourceName FilterName
+
+```console
+gobs-cli enable 'Mic/Aux' 'Gain'
+```
+
+-   disable: Disable filter.
+    -   args: SourceName FilterName
+
+```console
+gobs-cli disable 'Mic/Aux' 'Gain'
+```
+
+-   toggle: Toggle filter.
+    -   args: SourceName FilterName
+
+```console
+gobs-cli toggle 'Mic/Aux' 'Gain'
+```
+
+-   status: Get filter status.
+    -   args: SourceName FilterName
+
+```console
+gobs-cli status 'Mic/Aux' 'Gain'
+```
+
+
 [userconfigdir]: https://pkg.go.dev/os#UserConfigDir
 [obs-keyids]: https://github.com/obsproject/obs-studio/blob/master/libobs/obs-hotkeys.h
