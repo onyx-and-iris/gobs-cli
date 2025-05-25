@@ -79,9 +79,14 @@ gobs-cli scene switch --preview LIVE
 ### SceneItemCmd
 
 -   list: List all scene items.
+
+    *optional*
     -   args: SceneName
+        -   defaults to current scene
 
 ```console
+gobs-cli sceneitem list
+
 gobs-cli sceneitem list LIVE
 ```
 
@@ -161,9 +166,14 @@ gobs-cli sceneitem transform \
 ### GroupCmd
 
 -   list: List all groups.
+
+    *optional*
     -   args: SceneName
+        -   defaults to current scene
 
 ```console
+gobs-cli group list
+
 gobs-cli group list START
 ```
 
