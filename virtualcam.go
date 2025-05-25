@@ -43,9 +43,15 @@ type VirtualCamToggleCmd struct{} // size = 0x0
 
 // Run executes the command to toggle the virtual camera.
 func (c *VirtualCamToggleCmd) Run(ctx *context) error {
-	_, err := ctx.Client.Outputs.ToggleVirtualCam()
+	resp, err := ctx.Client.Outputs.ToggleVirtualCam()
 	if err != nil {
 		return fmt.Errorf("failed to toggle virtual camera: %w", err)
+	}
+
+	if resp.OutputActive {
+		fmt.Fprintln(ctx.Out, "Virtual camera is now active.")
+	} else {
+		fmt.Fprintln(ctx.Out, "Virtual camera is now inactive.")
 	}
 	return nil
 }
