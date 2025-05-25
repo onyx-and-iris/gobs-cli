@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   filter commands, see [Filter](https://github.com/onyx-and-iris/gobs-cli?tab=readme-ov-file#filter)
+-   filter commands, see [Filter](https://github.com/onyx-and-iris/gobs-cli?tab=readme-ov-file#filtercmd)
 
 # [0.5.0] - 2025-05-22
 
