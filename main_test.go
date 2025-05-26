@@ -6,6 +6,7 @@ import (
 
 	"github.com/andreykaipov/goobs"
 	"github.com/andreykaipov/goobs/api/requests/config"
+	"github.com/andreykaipov/goobs/api/requests/filters"
 	"github.com/andreykaipov/goobs/api/requests/inputs"
 	"github.com/andreykaipov/goobs/api/requests/scenes"
 	typedefs "github.com/andreykaipov/goobs/api/typedefs"
@@ -87,9 +88,39 @@ func setup(client *goobs.Client) {
 			"visible": true,
 		}).
 		WithSceneItemEnabled(true))
+
+	// Create source filter on an audio input
+	client.Filters.CreateSourceFilter(filters.NewCreateSourceFilterParams().
+		WithSourceName("Mic/Aux").
+		WithFilterName("test_filter").
+		WithFilterKind("compressor_filter").
+		WithFilterSettings(map[string]any{
+			"threshold":        -20,
+			"ratio":            4,
+			"attack_time":      10,
+			"release_time":     100,
+			"output_gain":      -3.6,
+			"sidechain_source": nil,
+		}))
+
+	// Create source filter on a scene
+	client.Filters.CreateSourceFilter(filters.NewCreateSourceFilterParams().
+		WithSourceName("gobs-test").
+		WithFilterName("test_filter").
+		WithFilterKind("luma_key_filter_v2").
+		WithFilterSettings(map[string]any{
+			"luma": 0.5,
+		}))
 }
 
 func teardown(client *goobs.Client) {
+	client.Filters.RemoveSourceFilter(filters.NewRemoveSourceFilterParams().
+		WithSourceName("Mic/Aux").
+		WithFilterName("test_filter"))
+	client.Filters.RemoveSourceFilter(filters.NewRemoveSourceFilterParams().
+		WithSourceName("gobs-test").
+		WithFilterName("test_filter"))
+
 	client.Scenes.RemoveScene(scenes.NewRemoveSceneParams().
 		WithSceneName("gobs-test"))
 
@@ -98,4 +129,5 @@ func teardown(client *goobs.Client) {
 
 	client.Stream.StopStream()
 	client.Record.StopRecord()
+	client.Outputs.StopReplayBuffer()
 }
