@@ -19,7 +19,11 @@ type ReplayBufferStartCmd struct{} // size = 0x0
 // Run executes the command to start the replay buffer.
 func (cmd *ReplayBufferStartCmd) Run(ctx *context) error {
 	_, err := ctx.Client.Outputs.StartReplayBuffer()
-	return err
+	if err != nil {
+		return fmt.Errorf("failed to start replay buffer: %w", err)
+	}
+	fmt.Fprintln(ctx.Out, "Replay buffer started.")
+	return nil
 }
 
 // ReplayBufferStopCmd stops the replay buffer.
@@ -28,7 +32,11 @@ type ReplayBufferStopCmd struct{} // size = 0x0
 // Run executes the command to stop the replay buffer.
 func (cmd *ReplayBufferStopCmd) Run(ctx *context) error {
 	_, err := ctx.Client.Outputs.StopReplayBuffer()
-	return err
+	if err != nil {
+		return fmt.Errorf("failed to stop replay buffer: %w", err)
+	}
+	fmt.Fprintln(ctx.Out, "Replay buffer stopped.")
+	return nil
 }
 
 // ReplayBufferToggleCmd toggles the replay buffer state.
@@ -42,9 +50,9 @@ func (cmd *ReplayBufferToggleCmd) Run(ctx *context) error {
 	}
 
 	if status.OutputActive {
-		fmt.Fprintln(ctx.Out, "Replay buffer started successfully.")
+		fmt.Fprintln(ctx.Out, "Replay buffer started.")
 	} else {
-		fmt.Fprintln(ctx.Out, "Replay buffer stopped successfully.")
+		fmt.Fprintln(ctx.Out, "Replay buffer stopped.")
 	}
 	return nil
 }
