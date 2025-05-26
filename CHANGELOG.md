@@ -6,11 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+# [0.7.0] - 2025-05-26
+
+### Added
+
+-   projector commands, see [ProjectorCmd](https://github.com/onyx-and-iris/gobs-cli?tab=readme-ov-file#projectorcmd)
+
+
 # [0.6.1] - 2025-05-25
 
 ### Added
 
--   filter commands, see [Filter](https://github.com/onyx-and-iris/gobs-cli?tab=readme-ov-file#filtercmd)
+-   filter commands, see [FilterCmd](https://github.com/onyx-and-iris/gobs-cli?tab=readme-ov-file#filtercmd)
 
 ### Changed
 
@@ -21,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   hotkey commands, see [Hotkey](https://github.com/onyx-and-iris/gobs-cli?tab=readme-ov-file#hotkeycmd)
+-   hotkey commands, see [HotkeyCmd](https://github.com/onyx-and-iris/gobs-cli?tab=readme-ov-file#hotkeycmd)
 
 # [0.4.2] - 2025-05-08
 
