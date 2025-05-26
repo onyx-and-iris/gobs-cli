@@ -524,6 +524,33 @@ gobs-cli toggle 'Mic/Aux' 'Gain'
 gobs-cli status 'Mic/Aux' 'Gain'
 ```
 
+### ProjectorCmd
+
+-   list-monitors: List available monitors.
+
+```console
+gobs-cli projector list-monitors
+```
+
+-   open: Open a fullscreen projector for a source on a specific monitor.
+    -   flags:
+
+        *optional*
+        -   --monitor-index: Index of the monitor to open the projector on.
+            -   defaults to 0
+
+    *optional*
+    -   args: <source_name>
+        -   defaults to current scene
+
+```console
+gobs-cli project open
+
+gobs-cli projector open --monitor-index=1 "test_scene"
+
+gobs-cli projector open --monitor-index=1 "test_group"
+```
+
 
 [userconfigdir]: https://pkg.go.dev/os#UserConfigDir
 [obs-keyids]: https://github.com/obsproject/obs-studio/blob/master/libobs/obs-hotkeys.h

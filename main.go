@@ -45,6 +45,7 @@ type CLI struct {
 	Virtualcam      VirtualCamCmd      `help:"Manage virtual camera."    cmd:"" aliases:"vc"`
 	Hotkey          HotkeyCmd          `help:"Manage hotkeys."           cmd:"" aliases:"hk"`
 	Filter          FilterCmd          `help:"Manage filters."           cmd:"" aliases:"f"`
+	Projector       ProjectorCmd       `help:"Manage projectors."        cmd:"" aliases:"prj"`
 }
 
 type context struct {
