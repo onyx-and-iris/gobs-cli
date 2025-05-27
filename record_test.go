@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 	"time"
 )
@@ -45,7 +46,7 @@ func TestRecordStartStatusStop(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to stop recording: %v", err)
 	}
-	if out.String() != "Recording stopped successfully.\n" {
+	if !strings.Contains(out.String(), "Recording stopped successfully. Output file:") {
 		t.Fatalf("Expected output to be 'Recording stopped successfully.', got '%s'", out.String())
 	}
 	// Reset output buffer for the next command

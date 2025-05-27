@@ -2,16 +2,19 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/andreykaipov/goobs/api/requests/config"
 )
 
 // RecordCmd handles the recording commands.
 type RecordCmd struct {
-	Start  RecordStartCmd  `cmd:"" help:"Start recording."       aliases:"s"`
-	Stop   RecordStopCmd   `cmd:"" help:"Stop recording."        aliases:"st"`
-	Toggle RecordToggleCmd `cmd:"" help:"Toggle recording."      aliases:"tg"`
-	Status RecordStatusCmd `cmd:"" help:"Show recording status." aliases:"ss"`
-	Pause  RecordPauseCmd  `cmd:"" help:"Pause recording."       aliases:"p"`
-	Resume RecordResumeCmd `cmd:"" help:"Resume recording."      aliases:"r"`
+	Start     RecordStartCmd     `cmd:"" help:"Start recording."             aliases:"s"`
+	Stop      RecordStopCmd      `cmd:"" help:"Stop recording."              aliases:"st"`
+	Toggle    RecordToggleCmd    `cmd:"" help:"Toggle recording."            aliases:"tg"`
+	Status    RecordStatusCmd    `cmd:"" help:"Show recording status."       aliases:"ss"`
+	Pause     RecordPauseCmd     `cmd:"" help:"Pause recording."             aliases:"p"`
+	Resume    RecordResumeCmd    `cmd:"" help:"Resume recording."            aliases:"r"`
+	Directory RecordDirectoryCmd `cmd:"" help:"Get/Set recording directory." aliases:"d"`
 }
 
 // RecordStartCmd starts the recording.
@@ -32,11 +35,11 @@ type RecordStopCmd struct{} // size = 0x0
 
 // Run executes the command to stop recording.
 func (cmd *RecordStopCmd) Run(ctx *context) error {
-	_, err := ctx.Client.Record.StopRecord()
+	resp, err := ctx.Client.Record.StopRecord()
 	if err != nil {
 		return err
 	}
-	fmt.Fprintln(ctx.Out, "Recording stopped successfully.")
+	fmt.Fprintf(ctx.Out, "%s", fmt.Sprintf("Recording stopped successfully. Output file: %s\n", resp.OutputPath))
 	return nil
 }
 
@@ -130,5 +133,32 @@ func (cmd *RecordResumeCmd) Run(ctx *context) error {
 	}
 
 	fmt.Fprintln(ctx.Out, "Recording resumed successfully.")
+	return nil
+}
+
+// RecordDirectoryCmd sets the recording directory.
+type RecordDirectoryCmd struct {
+	RecordDirectory string `arg:"" help:"Directory to save recordings." default:""`
+}
+
+// Run executes the command to set the recording directory.
+func (cmd *RecordDirectoryCmd) Run(ctx *context) error {
+	if cmd.RecordDirectory == "" {
+		resp, err := ctx.Client.Config.GetRecordDirectory()
+		if err != nil {
+			return err
+		}
+		fmt.Fprintf(ctx.Out, "Current recording directory: %s\n", resp.RecordDirectory)
+		return nil
+	}
+
+	_, err := ctx.Client.Config.SetRecordDirectory(
+		config.NewSetRecordDirectoryParams().WithRecordDirectory(cmd.RecordDirectory),
+	)
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprintf(ctx.Out, "Recording directory set to: %s\n", cmd.RecordDirectory)
 	return nil
 }
