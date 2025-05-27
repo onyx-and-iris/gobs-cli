@@ -281,6 +281,19 @@ gobs-cli record pause
 gobs-cli record resume
 ```
 
+-   directory: Get/Set recording directory.
+
+    *optional*
+    -   args: RecordDirectory
+        -   if not passed the current record directory will be printed.
+
+```console
+gobs-cli record directory
+
+gobs-cli record directory "/home/me/obs-vids/"
+gobs-cli record directory "C:/Users/me/Videos"
+```
+
 ### StreamCmd
 
 -   start: Start streaming.
