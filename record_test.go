@@ -35,8 +35,8 @@ func TestRecordStart(t *testing.T) {
 		if err == nil {
 			t.Fatalf("Expected error when starting recording while active, got nil")
 		}
-		if !strings.Contains(err.Error(), "Recording is already in progress") {
-			t.Fatalf("Expected error message to contain 'Recording is already in progress', got '%s'", err.Error())
+		if !strings.Contains(err.Error(), "recording is already in progress") {
+			t.Fatalf("Expected error message to contain 'recording is already in progress', got '%s'", err.Error())
 		}
 		return
 	}
