@@ -9,6 +9,7 @@ import (
 	"github.com/andreykaipov/goobs/api/requests/filters"
 	"github.com/andreykaipov/goobs/api/requests/inputs"
 	"github.com/andreykaipov/goobs/api/requests/scenes"
+	"github.com/andreykaipov/goobs/api/requests/ui"
 	typedefs "github.com/andreykaipov/goobs/api/typedefs"
 )
 
@@ -130,4 +131,6 @@ func teardown(client *goobs.Client) {
 	client.Stream.StopStream()
 	client.Record.StopRecord()
 	client.Outputs.StopReplayBuffer()
+	client.Ui.SetStudioModeEnabled(ui.NewSetStudioModeEnabledParams().
+		WithStudioModeEnabled(false))
 }
