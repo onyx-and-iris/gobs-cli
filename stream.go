@@ -23,8 +23,7 @@ func (cmd *StreamStartCmd) Run(ctx *context) error {
 		return err
 	}
 	if status.OutputActive {
-		fmt.Fprintln(ctx.Out, "Stream is already active.")
-		return nil
+		return fmt.Errorf("stream is already in progress")
 	}
 
 	_, err = ctx.Client.Stream.StartStream()
@@ -32,7 +31,7 @@ func (cmd *StreamStartCmd) Run(ctx *context) error {
 		return err
 	}
 
-	fmt.Fprintln(ctx.Out, "Streaming started successfully.")
+	fmt.Fprintln(ctx.Out, "Stream started successfully.")
 	return nil
 }
 
@@ -47,8 +46,7 @@ func (cmd *StreamStopCmd) Run(ctx *context) error {
 		return err
 	}
 	if !status.OutputActive {
-		fmt.Fprintln(ctx.Out, "Stream is already inactive.")
-		return nil
+		return fmt.Errorf("stream is not in progress")
 	}
 
 	_, err = ctx.Client.Stream.StopStream()
@@ -56,7 +54,7 @@ func (cmd *StreamStopCmd) Run(ctx *context) error {
 		return err
 	}
 
-	fmt.Fprintln(ctx.Out, "Streaming stopped successfully.")
+	fmt.Fprintln(ctx.Out, "Stream stopped successfully.")
 	return nil
 }
 
@@ -71,9 +69,9 @@ func (cmd *StreamToggleCmd) Run(ctx *context) error {
 	}
 
 	if status.OutputActive {
-		fmt.Fprintln(ctx.Out, "Streaming started successfully.")
+		fmt.Fprintln(ctx.Out, "Stream started successfully.")
 	} else {
-		fmt.Fprintln(ctx.Out, "Streaming stopped successfully.")
+		fmt.Fprintln(ctx.Out, "Stream stopped successfully.")
 	}
 	return nil
 }
