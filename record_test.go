@@ -31,19 +31,23 @@ func TestRecordStart(t *testing.T) {
 
 	cmdStart := &RecordStartCmd{}
 	err = cmdStart.Run(context)
+	if active {
+		if err == nil {
+			t.Fatalf("Expected error when starting recording while active, got nil")
+		}
+		if !strings.Contains(err.Error(), "Recording is already in progress") {
+			t.Fatalf("Expected error message to contain 'Recording is already in progress', got '%s'", err.Error())
+		}
+		return
+	}
+
 	if err != nil {
 		t.Fatalf("Failed to start recording: %v", err)
 	}
-	time.Sleep(1 * time.Second) // Wait for a second to ensure recording has started
-	if active {
-		if out.String() != "Recording is already in progress.\n" {
-			t.Fatalf("Expected output to be 'Recording is already in progress.', got '%s'", out.String())
-		}
-	} else {
-		if !strings.Contains(out.String(), "Recording started successfully.") {
-			t.Fatalf("Expected output to contain 'Recording started successfully.', got '%s'", out.String())
-		}
+	if out.String() != "Recording started successfully.\n" {
+		t.Fatalf("Expected output to contain 'Recording started successfully.', got '%s'", out.String())
 	}
+	time.Sleep(1 * time.Second) // Wait for the recording to start
 }
 
 func TestRecordStop(t *testing.T) {
@@ -70,19 +74,23 @@ func TestRecordStop(t *testing.T) {
 
 	cmdStop := &RecordStopCmd{}
 	err = cmdStop.Run(context)
+	if !active {
+		if err == nil {
+			t.Fatalf("Expected error when stopping recording while inactive, got nil")
+		}
+		if !strings.Contains(err.Error(), "recording is not in progress") {
+			t.Fatalf("Expected error message to contain 'recording is not in progress', got '%s'", err.Error())
+		}
+		return
+	}
+
 	if err != nil {
 		t.Fatalf("Failed to stop recording: %v", err)
 	}
-	time.Sleep(1 * time.Second) // Wait for a second to ensure recording has stopped
-	if !active {
-		if out.String() != "No recording is currently in progress.\n" {
-			t.Fatalf("Expected output to be 'No recording is currently in progress.', got '%s'", out.String())
-		}
-	} else {
-		if !strings.Contains(out.String(), "Recording stopped successfully. Output file:") {
-			t.Fatalf("Expected output to contain 'Recording stopped successfully. Output file:', got '%s'", out.String())
-		}
+	if !strings.Contains(out.String(), "Recording stopped successfully. Output file: ") {
+		t.Fatalf("Expected output to contain 'Recording stopped successfully. Output file: ', got '%s'", out.String())
 	}
+	time.Sleep(1 * time.Second) // Wait for the recording to stop
 }
 
 func TestRecordToggle(t *testing.T) {

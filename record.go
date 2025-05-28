@@ -22,7 +22,19 @@ type RecordStartCmd struct{} // size = 0x0
 
 // Run executes the command to start recording.
 func (cmd *RecordStartCmd) Run(ctx *context) error {
-	_, err := ctx.Client.Record.StartRecord()
+	status, err := ctx.Client.Record.GetRecordStatus()
+	if err != nil {
+		return err
+	}
+
+	if status.OutputActive {
+		if status.OutputPaused {
+			return fmt.Errorf("recording is already in progress and paused")
+		}
+		return fmt.Errorf("recording is already in progress")
+	}
+
+	_, err = ctx.Client.Record.StartRecord()
 	if err != nil {
 		return err
 	}
@@ -35,6 +47,15 @@ type RecordStopCmd struct{} // size = 0x0
 
 // Run executes the command to stop recording.
 func (cmd *RecordStopCmd) Run(ctx *context) error {
+	status, err := ctx.Client.Record.GetRecordStatus()
+	if err != nil {
+		return err
+	}
+
+	if !status.OutputActive {
+		return fmt.Errorf("recording is not in progress")
+	}
+
 	resp, err := ctx.Client.Record.StopRecord()
 	if err != nil {
 		return err
