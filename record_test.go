@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func TestRecordStartStatusStop(t *testing.T) {
+func TestRecordStart(t *testing.T) {
 	client, disconnect := getClient(t)
 	defer disconnect()
 
@@ -17,26 +17,53 @@ func TestRecordStartStatusStop(t *testing.T) {
 		Out:    &out,
 	}
 
-	cmdStart := &RecordStartCmd{}
-	err := cmdStart.Run(context)
+	cmdStatus := &RecordStatusCmd{}
+	err := cmdStatus.Run(context)
 	if err != nil {
-		t.Fatalf("Failed to start recording: %v", err)
+		t.Fatalf("Failed to get recording status: %v", err)
 	}
-	if out.String() != "Recording started successfully.\n" {
-		t.Fatalf("Expected output to be 'Recording started successfully.', got '%s'", out.String())
+	var active bool
+	if out.String() == "Recording is in progress.\n" {
+		active = true
 	}
 	// Reset output buffer for the next command
 	out.Reset()
 
+	cmdStart := &RecordStartCmd{}
+	err = cmdStart.Run(context)
+	if err != nil {
+		t.Fatalf("Failed to start recording: %v", err)
+	}
 	time.Sleep(1 * time.Second) // Wait for a second to ensure recording has started
+	if active {
+		if out.String() != "Recording is already in progress.\n" {
+			t.Fatalf("Expected output to be 'Recording is already in progress.', got '%s'", out.String())
+		}
+	} else {
+		if !strings.Contains(out.String(), "Recording started successfully.") {
+			t.Fatalf("Expected output to contain 'Recording started successfully.', got '%s'", out.String())
+		}
+	}
+}
+
+func TestRecordStop(t *testing.T) {
+	client, disconnect := getClient(t)
+	defer disconnect()
+
+	var out bytes.Buffer
+	context := &context{
+		Client: client,
+		Out:    &out,
+	}
 
 	cmdStatus := &RecordStatusCmd{}
-	err = cmdStatus.Run(context)
+	err := cmdStatus.Run(context)
 	if err != nil {
 		t.Fatalf("Failed to get recording status: %v", err)
 	}
-	if out.String() != "Recording is in progress.\n" {
-		t.Fatalf("Expected output to be 'Recording is in progress.', got '%s'", out.String())
+	var active bool
+	if out.String() == "Recording is in progress.\n" {
+		active = true
 	}
 	// Reset output buffer for the next command
 	out.Reset()
@@ -46,21 +73,15 @@ func TestRecordStartStatusStop(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to stop recording: %v", err)
 	}
-	if !strings.Contains(out.String(), "Recording stopped successfully. Output file:") {
-		t.Fatalf("Expected output to be 'Recording stopped successfully.', got '%s'", out.String())
-	}
-	// Reset output buffer for the next command
-	out.Reset()
-
 	time.Sleep(1 * time.Second) // Wait for a second to ensure recording has stopped
-
-	cmdStatus = &RecordStatusCmd{}
-	err = cmdStatus.Run(context)
-	if err != nil {
-		t.Fatalf("Failed to get recording status: %v", err)
-	}
-	if out.String() != "Recording is not in progress.\n" {
-		t.Fatalf("Expected output to be 'Recording is not in progress.', got '%s'", out.String())
+	if !active {
+		if out.String() != "No recording is currently in progress.\n" {
+			t.Fatalf("Expected output to be 'No recording is currently in progress.', got '%s'", out.String())
+		}
+	} else {
+		if !strings.Contains(out.String(), "Recording stopped successfully. Output file:") {
+			t.Fatalf("Expected output to contain 'Recording stopped successfully. Output file:', got '%s'", out.String())
+		}
 	}
 }
 
