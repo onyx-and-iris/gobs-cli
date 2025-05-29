@@ -94,7 +94,7 @@ gobs-cli sceneitem list LIVE
     -   flags:
 
         *optional*
-        -   --parent: Parent group name.
+        -   --group: Parent group name.
     -   args: SceneName ItemName
 
 ```console
@@ -105,7 +105,7 @@ gobs-cli sceneitem show START "Colour Source"
     -   flags:
 
         *optional*
-        -   --parent: Parent group name.
+        -   --group: Parent group name.
     -   args: SceneName ItemName
 
 ```console
@@ -116,29 +116,29 @@ gobs-cli sceneitem hide START "Colour Source"
     -   flags:
 
         *optional*
-        -   --parent: Parent group name.
+        -   --group: Parent group name.
     -   args: SceneName ItemName
 
 ```console
-gobs-cli sceneitem toggle --parent=test_group START "Colour Source 3"
+gobs-cli sceneitem toggle --group=test_group START "Colour Source 3"
 ```
 
 -   visible: Get scene item visibility.
     -   flags:
 
         *optional*
-        -   --parent: Parent group name.
+        -   --group: Parent group name.
     -   args: SceneName ItemName
 
 ```console
-gobs-cli sceneitem visible --parent=test_group START "Colour Source 4"
+gobs-cli sceneitem visible --group=test_group START "Colour Source 4"
 ```
 
 -   transform: Transform scene item.
     -   flags:
         
         *optional*
-        -   --parent: Parent group name.
+        -   --group: Parent group name.
 
         -   --alignment: Alignment of the scene item.
         -   --bounds-alignment: Bounds alignment of the scene item.
