@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# [0.8.2]
+
+### Added
+
+-   record start/stop and stream start/stop commands check outputActive states first. 
+    -   Errors are returned if the command cannot be performed.
+
+### Changed
+
+-   The --parent flag for the sceneitem commands has been renamed to --group, see [SceneItemCmd](https://github.com/onyx-and-iris/gobs-cli?tab=readme-ov-file#sceneitemcmd)
+
 # [0.8.0] - 2025-05-27
 
 ### Added
