@@ -35,13 +35,13 @@ tasks:
   build-windows:
     desc: Build the gobs-cli project for Windows
     cmds:
-      - GOOS=windows GOARCH=amd64 go build -o {{.BIN_DIR}}/{{.PROGRAM}}_windows_amd64.exe
+      - GOOS=windows GOARCH=amd64 go build -ldflags "-X 'main.version=debug'" -o {{.BIN_DIR}}/{{.PROGRAM}}_windows_amd64.exe
     internal: true
 
   build-linux:
     desc: Build the gobs-cli project for Linux
     cmds:
-      - GOOS=linux GOARCH=amd64 go build -o {{.BIN_DIR}}/{{.PROGRAM}}_linux_amd64
+      - GOOS=linux GOARCH=amd64 go build -ldflags "-X 'main.version=debug'" -o {{.BIN_DIR}}/{{.PROGRAM}}_linux_amd64
     internal: true
 
   test:
