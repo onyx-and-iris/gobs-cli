@@ -37,10 +37,20 @@ OBS_TIMEOUT=5
 
 ## Commands
 
-### VersionCmd
+### VersionFlag
+
+-   --version/-v: Print gobs-cli version information and quit
 
 ```console
-gobs-cli version
+gobs-cli --version
+```
+
+### ObsVersionCmd
+
+-   Print OBS client and websocket version.
+
+```console
+gobs-cli obs-version
 ```
 
 ### SceneCmd
