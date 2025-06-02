@@ -16,7 +16,7 @@ func TestVersion(t *testing.T) {
 		Out:    &out,
 	}
 
-	cmd := &VersionCmd{}
+	cmd := &ObsVersionCmd{}
 	err := cmd.Run(context)
 	if err != nil {
 		t.Fatalf("Failed to get version: %v", err)
