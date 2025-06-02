@@ -29,23 +29,24 @@ type ObsConfig struct {
 type CLI struct {
 	ObsConfig `embed:"" help:"OBS WebSocket configuration."`
 
-	Man mangokong.ManFlag `help:"Print man page."`
+	Man     mangokong.ManFlag `help:"Print man page."`
+	Version VersionFlag       `help:"Print gobs-cli version information and quit" name:"version" short:"v"`
 
-	Version         VersionCmd         `help:"Show version."             cmd:"" aliases:"v"`
-	Scene           SceneCmd           `help:"Manage scenes."            cmd:"" aliases:"sc"`
-	Sceneitem       SceneItemCmd       `help:"Manage scene items."       cmd:"" aliases:"si"`
-	Group           GroupCmd           `help:"Manage groups."            cmd:"" aliases:"g"`
-	Input           InputCmd           `help:"Manage inputs."            cmd:"" aliases:"i"`
-	Record          RecordCmd          `help:"Manage recording."         cmd:"" aliases:"rec"`
-	Stream          StreamCmd          `help:"Manage streaming."         cmd:"" aliases:"st"`
-	Scenecollection SceneCollectionCmd `help:"Manage scene collections." cmd:"" aliases:"scn"`
-	Profile         ProfileCmd         `help:"Manage profiles."          cmd:"" aliases:"p"`
-	Replaybuffer    ReplayBufferCmd    `help:"Manage replay buffer."     cmd:"" aliases:"rb"`
-	Studiomode      StudioModeCmd      `help:"Manage studio mode."       cmd:"" aliases:"sm"`
-	Virtualcam      VirtualCamCmd      `help:"Manage virtual camera."    cmd:"" aliases:"vc"`
-	Hotkey          HotkeyCmd          `help:"Manage hotkeys."           cmd:"" aliases:"hk"`
-	Filter          FilterCmd          `help:"Manage filters."           cmd:"" aliases:"f"`
-	Projector       ProjectorCmd       `help:"Manage projectors."        cmd:"" aliases:"prj"`
+	ObsVersion      ObsVersionCmd      `help:"Print OBS client and websocket version." cmd:"" aliases:"v"`
+	Scene           SceneCmd           `help:"Manage scenes."                          cmd:"" aliases:"sc"`
+	Sceneitem       SceneItemCmd       `help:"Manage scene items."                     cmd:"" aliases:"si"`
+	Group           GroupCmd           `help:"Manage groups."                          cmd:"" aliases:"g"`
+	Input           InputCmd           `help:"Manage inputs."                          cmd:"" aliases:"i"`
+	Record          RecordCmd          `help:"Manage recording."                       cmd:"" aliases:"rec"`
+	Stream          StreamCmd          `help:"Manage streaming."                       cmd:"" aliases:"st"`
+	Scenecollection SceneCollectionCmd `help:"Manage scene collections."               cmd:"" aliases:"scn"`
+	Profile         ProfileCmd         `help:"Manage profiles."                        cmd:"" aliases:"p"`
+	Replaybuffer    ReplayBufferCmd    `help:"Manage replay buffer."                   cmd:"" aliases:"rb"`
+	Studiomode      StudioModeCmd      `help:"Manage studio mode."                     cmd:"" aliases:"sm"`
+	Virtualcam      VirtualCamCmd      `help:"Manage virtual camera."                  cmd:"" aliases:"vc"`
+	Hotkey          HotkeyCmd          `help:"Manage hotkeys."                         cmd:"" aliases:"hk"`
+	Filter          FilterCmd          `help:"Manage filters."                         cmd:"" aliases:"f"`
+	Projector       ProjectorCmd       `help:"Manage projectors."                      cmd:"" aliases:"prj"`
 }
 
 type context struct {

@@ -2,13 +2,33 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/alecthomas/kong"
 )
 
-// VersionCmd handles the version command.
-type VersionCmd struct{} // size = 0x0
+var version = "unknown"
+
+// VersionFlag is a custom flag type for displaying version information.
+type VersionFlag string
+
+// Decode implements the kong.Flag interface for VersionFlag.
+func (v VersionFlag) Decode(_ *kong.DecodeContext) error { return nil }
+
+// IsBool implements the kong.Flag interface for VersionFlag.
+func (v VersionFlag) IsBool() bool { return true }
+
+// BeforeApply implements the kong.Flag interface for VersionFlag.
+func (v VersionFlag) BeforeApply(app *kong.Kong, _ kong.Vars) error {
+	fmt.Println(version)
+	app.Exit(0) // Exit the application after printing the version
+	return nil
+}
+
+// ObsVersionCmd handles the version command.
+type ObsVersionCmd struct{} // size = 0x0
 
 // Run executes the command to get the OBS client version.
-func (cmd *VersionCmd) Run(ctx *context) error {
+func (cmd *ObsVersionCmd) Run(ctx *context) error {
 	version, err := ctx.Client.General.GetVersion()
 	if err != nil {
 		return err
