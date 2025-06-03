@@ -7,6 +7,8 @@ vars:
   PROGRAM: gobs-cli
   SHELL: '{{if eq .OS "Windows_NT"}}powershell{{end}}'
   BIN_DIR: bin
+  VERSION:
+    sh: 'git describe --tags $(git rev-list --tags --max-count=1)'
 
 tasks:
   default:
@@ -35,13 +37,13 @@ tasks:
   build-windows:
     desc: Build the gobs-cli project for Windows
     cmds:
-      - GOOS=windows GOARCH=amd64 go build -ldflags "-X 'main.version=debug'" -o {{.BIN_DIR}}/{{.PROGRAM}}_windows_amd64.exe
+      - GOOS=windows GOARCH=amd64 go build -ldflags "-X 'main.version={{.VERSION}}'" -o {{.BIN_DIR}}/{{.PROGRAM}}_windows_amd64.exe
     internal: true
 
   build-linux:
     desc: Build the gobs-cli project for Linux
     cmds:
-      - GOOS=linux GOARCH=amd64 go build -ldflags "-X 'main.version=debug'" -o {{.BIN_DIR}}/{{.PROGRAM}}_linux_amd64
+      - GOOS=linux GOARCH=amd64 go build -ldflags "-X 'main.version={{.VERSION}}'" -o {{.BIN_DIR}}/{{.PROGRAM}}_linux_amd64
     internal: true
 
   test:
