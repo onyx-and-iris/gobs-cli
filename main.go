@@ -18,10 +18,10 @@ import (
 
 // ObsConfig holds the configuration for connecting to the OBS WebSocket server.
 type ObsConfig struct {
-	Host     string `flag:"host"     help:"Host to connect to."          default:"localhost" env:"OBS_HOST"`
-	Port     int    `flag:"port"     help:"Port to connect to."          default:"4455"      env:"OBS_PORT"`
-	Password string `flag:"password" help:"Password for authentication." default:""          env:"OBS_PASSWORD"`
-	Timeout  int    `flag:"timeout"  help:"Timeout in seconds."          default:"5"         env:"OBS_TIMEOUT"`
+	Host     string `flag:"host"     help:"Host to connect to."          default:"localhost" env:"OBS_HOST"     short:"H"`
+	Port     int    `flag:"port"     help:"Port to connect to."          default:"4455"      env:"OBS_PORT"     short:"P"`
+	Password string `flag:"password" help:"Password for authentication." default:""          env:"OBS_PASSWORD" short:"p"`
+	Timeout  int    `flag:"timeout"  help:"Timeout in seconds."          default:"5"         env:"OBS_TIMEOUT"  short:"T"`
 }
 
 // CLI is the main command line interface structure.

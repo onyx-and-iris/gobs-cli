@@ -14,10 +14,16 @@ go install github.com/onyx-and-iris/gobs-cli@latest
 
 #### Flags
 
-Pass `--host`, `--port` and `--password` as flags to the root command, for example:
+-   --host/-H: Websocket host
+-   --port/-P Websocket port
+-   --password/-p: Websocket password
+-   --timeout/-T: Websocket timeout
+-   --version/-v: Print the gobs-cli version
+
+Pass `--host`, `--port` and `--password` as flags on the root command, for example:
 
 ```console
-gobs-cli --host=localhost --port=4455 --password=<websocket password> --help
+gobs-cli --host localhost --port 4455 --password 'websocket password' --help
 ```
 
 #### Environment Variables
@@ -36,14 +42,6 @@ OBS_TIMEOUT=5
 
 
 ## Commands
-
-### VersionFlag
-
--   --version/-v: Print gobs-cli version information and quit
-
-```console
-gobs-cli --version
-```
 
 ### ObsVersionCmd
 

@@ -18,8 +18,8 @@ func (v VersionFlag) Decode(_ *kong.DecodeContext) error { return nil }
 func (v VersionFlag) IsBool() bool { return true }
 
 // BeforeApply implements the kong.Flag interface for VersionFlag.
-func (v VersionFlag) BeforeApply(app *kong.Kong, _ kong.Vars) error {
-	fmt.Println(version)
+func (v VersionFlag) BeforeApply(app *kong.Kong, _ kong.Vars) error { // nolint: unparam
+	fmt.Printf("gobs-cli version: %s\n", version)
 	app.Exit(0) // Exit the application after printing the version
 	return nil
 }
