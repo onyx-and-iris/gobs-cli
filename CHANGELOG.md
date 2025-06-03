@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   --version/-v option. See [VersionFlag](https://github.com/onyx-and-iris/gobs-cli?tab=readme-ov-file#versionflag)
+-   --version/-v option. See [Flags](https://github.com/onyx-and-iris/gobs-cli?tab=readme-ov-file#flags)
 
 ### Changed
 
