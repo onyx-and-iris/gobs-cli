@@ -71,11 +71,11 @@ func (cmd *SceneItemListCmd) Run(ctx *context) error {
 					fmt.Sprintf("%d", groupItem.SceneItemID),
 					groupItem.SourceName,
 					item.SourceName,
-					fmt.Sprintf("%t", item.SceneItemEnabled && groupItem.SceneItemEnabled),
+					getEnabledMark(item.SceneItemEnabled && groupItem.SceneItemEnabled),
 				)
 			}
 		} else {
-			t.AddRow(fmt.Sprintf("%d", item.SceneItemID), item.SourceName, "", fmt.Sprintf("%t", item.SceneItemEnabled))
+			t.AddRow(fmt.Sprintf("%d", item.SceneItemID), item.SourceName, "", getEnabledMark(item.SceneItemEnabled))
 		}
 	}
 	t.Render()
