@@ -47,6 +47,7 @@ type CLI struct {
 	Hotkey          HotkeyCmd          `help:"Manage hotkeys."                         cmd:"" aliases:"hk"`
 	Filter          FilterCmd          `help:"Manage filters."                         cmd:"" aliases:"f"`
 	Projector       ProjectorCmd       `help:"Manage projectors."                      cmd:"" aliases:"prj"`
+	Screenshot      ScreenshotCmd      `help:"Take screenshots."                       cmd:"" aliases:"ss"`
 }
 
 type context struct {

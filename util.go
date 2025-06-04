@@ -20,3 +20,10 @@ func getEnabledMark(enabled bool) string {
 	}
 	return "\u274c" // red cross mark
 }
+
+func trimPrefix(s, prefix string) string {
+	if strings.HasPrefix(s, prefix) {
+		return s[len(prefix):]
+	}
+	return s
+}
