@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"maps"
 	"sort"
 	"strings"
 
@@ -20,19 +21,27 @@ type FilterCmd struct {
 
 // FilterListCmd provides a command to list all filters in a scene.
 type FilterListCmd struct {
-	SourceName string `arg:"" help:"Name of the source to list filters from."`
+	SourceName string `arg:"" help:"Name of the source to list filters from." default:""`
 }
 
 // Run executes the command to list all filters in a scene.
 func (cmd *FilterListCmd) Run(ctx *context) error {
-	filters, err := ctx.Client.Filters.GetSourceFilterList(
+	if cmd.SourceName == "" {
+		currentScene, err := ctx.Client.Scenes.GetCurrentProgramScene()
+		if err != nil {
+			return fmt.Errorf("failed to get current program scene: %w", err)
+		}
+		cmd.SourceName = currentScene.SceneName
+	}
+
+	sourceFilters, err := ctx.Client.Filters.GetSourceFilterList(
 		filters.NewGetSourceFilterListParams().WithSourceName(cmd.SourceName),
 	)
 	if err != nil {
 		return err
 	}
 
-	if len(filters.Filters) == 0 {
+	if len(sourceFilters.Filters) == 0 {
 		fmt.Fprintf(ctx.Out, "No filters found for source %s.\n", cmd.SourceName)
 		return nil
 	}
@@ -42,10 +51,20 @@ func (cmd *FilterListCmd) Run(ctx *context) error {
 	t.SetAlignment(table.AlignLeft, table.AlignLeft, table.AlignCenter, table.AlignLeft)
 	t.SetHeaders("Filter Name", "Kind", "Enabled", "Settings")
 
-	for _, filter := range filters.Filters {
+	for _, filter := range sourceFilters.Filters {
+		defaultSettings, err := ctx.Client.Filters.GetSourceFilterDefaultSettings(
+			filters.NewGetSourceFilterDefaultSettingsParams().
+				WithFilterKind(filter.FilterKind),
+		)
+		if err != nil {
+			return fmt.Errorf("failed to get default settings for filter %s: %w",
+				filter.FilterName, err)
+		}
+		maps.Insert(defaultSettings.DefaultFilterSettings, maps.All(filter.FilterSettings))
+
 		var lines []string
-		for k, v := range filter.FilterSettings {
-			lines = append(lines, fmt.Sprintf("%s %v", k, v))
+		for k, v := range defaultSettings.DefaultFilterSettings {
+			lines = append(lines, fmt.Sprintf("%s: %v", snakeCaseToTitleCase(k), v))
 		}
 		sort.Slice(lines, func(i, j int) bool {
 			return strings.ToLower(lines[i]) < strings.ToLower(lines[j])
