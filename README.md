@@ -513,6 +513,10 @@ gobs-cli hotkey trigger-sequence OBS_KEY_F1 --shift --ctrl
 
 -   list: List all filters.
 
+    *optional*
+    -   args: SourceName
+        -   defaults to current scene
+
 ```console
 gobs-cli filter list
 ```
@@ -561,7 +565,7 @@ gobs-cli projector list-monitors
             -   defaults to 0
 
     *optional*
-    -   args: <source_name>
+    -   args: SourceName
         -   defaults to current scene
 
 ```console
@@ -585,7 +589,7 @@ gobs-cli projector open --monitor-index=1 "test_group"
         -   --quality:
             -   defaults to -1
 
-    -   args: <source_name> <output_path>
+    -   args: SourceName FilePath
 
 ```console
 gobs-cli screenshot save --width=2560 --height=1440 "Scene" "C:\Users\me\Videos\screenshot.png"
