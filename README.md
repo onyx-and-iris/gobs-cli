@@ -223,6 +223,8 @@ gobs-cli group status START "test_group"
         -   --input: List all inputs.
         -   --output: List all outputs.
         -   --colour: List all colour sources.
+        -   --ffmpeg: List all ffmpeg sources.
+        -   --vlc: List all VLC sources.
 
 ```console
 gobs-cli input list
