@@ -21,6 +21,8 @@ type InputListCmd struct {
 	Input  bool `flag:"" help:"List all inputs."         aliases:"i"`
 	Output bool `flag:"" help:"List all outputs."        aliases:"o"`
 	Colour bool `flag:"" help:"List all colour sources." aliases:"c"`
+	Ffmpeg bool `flag:"" help:"List all ffmpeg sources." aliases:"f"`
+	Vlc    bool `flag:"" help:"List all VLC sources."    aliases:"v"`
 }
 
 // Run executes the command to list all inputs.
@@ -32,22 +34,47 @@ func (cmd *InputListCmd) Run(ctx *context) error {
 
 	t := table.New(ctx.Out)
 	t.SetPadding(3)
-	t.SetAlignment(table.AlignLeft, table.AlignLeft)
-	t.SetHeaders("Input Name", "Kind")
+	t.SetAlignment(table.AlignLeft, table.AlignLeft, table.AlignCenter)
+	t.SetHeaders("Input Name", "Kind", "Muted")
 
 	for _, input := range resp.Inputs {
-		if cmd.Input && strings.Contains(input.InputKind, "input") {
-			t.AddRow(input.InputName, input.InputKind)
-		}
-		if cmd.Output && strings.Contains(input.InputKind, "output") {
-			t.AddRow(input.InputName, input.InputKind)
-		}
-		if cmd.Colour && strings.Contains(input.InputKind, "color") { // nolint
-			t.AddRow(input.InputName, input.InputKind)
+		var muteMark string
+		for _, kind := range []string{"input", "output", "ffmpeg", "vlc"} {
+			if strings.Contains(input.InputKind, kind) {
+				resp, err := ctx.Client.Inputs.GetInputMute(
+					inputs.NewGetInputMuteParams().WithInputName(input.InputName),
+				)
+				if err != nil {
+					return fmt.Errorf("failed to get input mute state: %w", err)
+				}
+				muteMark = getEnabledMark(resp.InputMuted)
+				break
+			}
 		}
 
-		if !cmd.Input && !cmd.Output && !cmd.Colour {
-			t.AddRow(input.InputName, input.InputKind)
+		type filter struct {
+			enabled bool
+			keyword string
+		}
+		filters := []filter{
+			{cmd.Input, "input"},
+			{cmd.Output, "output"},
+			{cmd.Colour, "color"}, // nolint: misspell
+			{cmd.Ffmpeg, "ffmpeg"},
+			{cmd.Vlc, "vlc"},
+		}
+
+		var added bool
+		for _, f := range filters {
+			if f.enabled && strings.Contains(input.InputKind, f.keyword) {
+				t.AddRow(input.InputName, input.InputKind, muteMark)
+				added = true
+				break
+			}
+		}
+
+		if !added && (!cmd.Input && !cmd.Output && !cmd.Colour && !cmd.Ffmpeg && !cmd.Vlc) {
+			t.AddRow(input.InputName, input.InputKind, muteMark)
 		}
 	}
 	t.Render()
