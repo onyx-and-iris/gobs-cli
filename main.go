@@ -33,21 +33,21 @@ type CLI struct {
 	Version VersionFlag       `help:"Print gobs-cli version information and quit" name:"version" short:"v"`
 
 	ObsVersion      ObsVersionCmd      `help:"Print OBS client and websocket version." cmd:"" aliases:"v"`
-	Scene           SceneCmd           `help:"Manage scenes."                          cmd:"" aliases:"sc"`
-	Sceneitem       SceneItemCmd       `help:"Manage scene items."                     cmd:"" aliases:"si"`
-	Group           GroupCmd           `help:"Manage groups."                          cmd:"" aliases:"g"`
-	Input           InputCmd           `help:"Manage inputs."                          cmd:"" aliases:"i"`
-	Record          RecordCmd          `help:"Manage recording."                       cmd:"" aliases:"rec"`
-	Stream          StreamCmd          `help:"Manage streaming."                       cmd:"" aliases:"st"`
-	Scenecollection SceneCollectionCmd `help:"Manage scene collections."               cmd:"" aliases:"scn"`
-	Profile         ProfileCmd         `help:"Manage profiles."                        cmd:"" aliases:"p"`
-	Replaybuffer    ReplayBufferCmd    `help:"Manage replay buffer."                   cmd:"" aliases:"rb"`
-	Studiomode      StudioModeCmd      `help:"Manage studio mode."                     cmd:"" aliases:"sm"`
-	Virtualcam      VirtualCamCmd      `help:"Manage virtual camera."                  cmd:"" aliases:"vc"`
-	Hotkey          HotkeyCmd          `help:"Manage hotkeys."                         cmd:"" aliases:"hk"`
-	Filter          FilterCmd          `help:"Manage filters."                         cmd:"" aliases:"f"`
-	Projector       ProjectorCmd       `help:"Manage projectors."                      cmd:"" aliases:"prj"`
-	Screenshot      ScreenshotCmd      `help:"Take screenshots."                       cmd:"" aliases:"ss"`
+	Scene           SceneCmd           `help:"Manage scenes."                          cmd:"" aliases:"sc"  group:"Scene"`
+	Sceneitem       SceneItemCmd       `help:"Manage scene items."                     cmd:"" aliases:"si"  group:"Scene Item"`
+	Group           GroupCmd           `help:"Manage groups."                          cmd:"" aliases:"g"   group:"Group"`
+	Input           InputCmd           `help:"Manage inputs."                          cmd:"" aliases:"i"   group:"Input"`
+	Record          RecordCmd          `help:"Manage recording."                       cmd:"" aliases:"rec" group:"Recording"`
+	Stream          StreamCmd          `help:"Manage streaming."                       cmd:"" aliases:"st"  group:"Streaming"`
+	Scenecollection SceneCollectionCmd `help:"Manage scene collections."               cmd:"" aliases:"scn" group:"Scene Collection"`
+	Profile         ProfileCmd         `help:"Manage profiles."                        cmd:"" aliases:"p"   group:"Profile"`
+	Replaybuffer    ReplayBufferCmd    `help:"Manage replay buffer."                   cmd:"" aliases:"rb"  group:"Replay Buffer"`
+	Studiomode      StudioModeCmd      `help:"Manage studio mode."                     cmd:"" aliases:"sm"  group:"Studio Mode"`
+	Virtualcam      VirtualCamCmd      `help:"Manage virtual camera."                  cmd:"" aliases:"vc"  group:"Virtual Camera"`
+	Hotkey          HotkeyCmd          `help:"Manage hotkeys."                         cmd:"" aliases:"hk"  group:"Hotkey"`
+	Filter          FilterCmd          `help:"Manage filters."                         cmd:"" aliases:"f"   group:"Filter"`
+	Projector       ProjectorCmd       `help:"Manage projectors."                      cmd:"" aliases:"prj" group:"Projector"`
+	Screenshot      ScreenshotCmd      `help:"Take screenshots."                       cmd:"" aliases:"ss"  group:"Screenshot"`
 }
 
 type context struct {
