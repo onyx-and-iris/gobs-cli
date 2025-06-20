@@ -54,6 +54,10 @@ gobs-cli obs-version
 ### SceneCmd
 
 -   list: List all scenes.
+    -   flags:
+
+        *optional*
+        -   --UUID: Display UUIDs of scenes.
 
 ```console
 gobs-cli scene list
@@ -87,6 +91,10 @@ gobs-cli scene switch --preview LIVE
 ### SceneItemCmd
 
 -   list: List all scene items.
+    -   flags:
+
+        *optional*
+        -   --UUID: Display UUIDs of scene items.
 
     *optional*
     -   args: SceneName
@@ -225,6 +233,7 @@ gobs-cli group status START "test_group"
         -   --colour: List all colour sources.
         -   --ffmpeg: List all ffmpeg sources.
         -   --vlc: List all VLC sources.
+        -   --uuid: Display UUIDs of inputs.
 
 ```console
 gobs-cli input list
