@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# [0.11.0] - 2025-06-20
+
+### Added
+
+-   input list, scene list and sceneitem list now accept --uuid flag.
+-   Active column added to scene list table.
+
+### Changed
+
+-   scene list no longer prints the UUIDs by default, enable it with the --uuid flag.
+
 # [0.10.3] - 2025-06-07
 
 ### Added
