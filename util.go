@@ -16,9 +16,9 @@ func snakeCaseToTitleCase(snake string) string {
 
 func getEnabledMark(enabled bool) string {
 	if enabled {
-		return "\u2713" // green check mark
+		return "\u2713" // check mark
 	}
-	return "\u274c" // red cross mark
+	return "\u274c" // cross mark
 }
 
 func trimPrefix(s, prefix string) string {

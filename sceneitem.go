@@ -21,7 +21,8 @@ type SceneItemCmd struct {
 
 // SceneItemListCmd provides a command to list all scene items in a scene.
 type SceneItemListCmd struct {
-	SceneName string `arg:"" help:"Name of the scene to list items from." default:""`
+	UUID      bool   `flag:"" help:"Display UUIDs of scene items."`
+	SceneName string `        help:"Name of the scene to list items from." arg:"" default:""`
 }
 
 // Run executes the command to list all scene items in a scene.
@@ -47,8 +48,13 @@ func (cmd *SceneItemListCmd) Run(ctx *context) error {
 
 	t := table.New(ctx.Out)
 	t.SetPadding(3)
-	t.SetAlignment(table.AlignCenter, table.AlignLeft, table.AlignCenter, table.AlignCenter)
-	t.SetHeaders("Item ID", "Item Name", "In Group", "Enabled")
+	if cmd.UUID {
+		t.SetAlignment(table.AlignCenter, table.AlignLeft, table.AlignCenter, table.AlignCenter, table.AlignCenter)
+		t.SetHeaders("Item ID", "Item Name", "In Group", "Enabled", "UUID")
+	} else {
+		t.SetAlignment(table.AlignCenter, table.AlignLeft, table.AlignCenter, table.AlignCenter)
+		t.SetHeaders("Item ID", "Item Name", "In Group", "Enabled")
+	}
 
 	sort.Slice(resp.SceneItems, func(i, j int) bool {
 		return resp.SceneItems[i].SceneItemID < resp.SceneItems[j].SceneItemID
@@ -67,15 +73,30 @@ func (cmd *SceneItemListCmd) Run(ctx *context) error {
 			})
 
 			for _, groupItem := range resp.SceneItems {
-				t.AddRow(
-					fmt.Sprintf("%d", groupItem.SceneItemID),
-					groupItem.SourceName,
-					item.SourceName,
-					getEnabledMark(item.SceneItemEnabled && groupItem.SceneItemEnabled),
-				)
+				if cmd.UUID {
+					t.AddRow(
+						fmt.Sprintf("%d", groupItem.SceneItemID),
+						groupItem.SourceName,
+						item.SourceName,
+						getEnabledMark(item.SceneItemEnabled && groupItem.SceneItemEnabled),
+						groupItem.SourceUuid,
+					)
+				} else {
+					t.AddRow(
+						fmt.Sprintf("%d", groupItem.SceneItemID),
+						groupItem.SourceName,
+						item.SourceName,
+						getEnabledMark(item.SceneItemEnabled && groupItem.SceneItemEnabled),
+					)
+				}
 			}
 		} else {
-			t.AddRow(fmt.Sprintf("%d", item.SceneItemID), item.SourceName, "", getEnabledMark(item.SceneItemEnabled))
+			if cmd.UUID {
+				t.AddRow(fmt.Sprintf("%d", item.SceneItemID), item.SourceName, "",
+					getEnabledMark(item.SceneItemEnabled), item.SourceUuid)
+			} else {
+				t.AddRow(fmt.Sprintf("%d", item.SceneItemID), item.SourceName, "", getEnabledMark(item.SceneItemEnabled))
+			}
 		}
 	}
 	t.Render()

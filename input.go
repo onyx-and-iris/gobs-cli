@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/andreykaipov/goobs/api/requests/inputs"
@@ -23,6 +24,7 @@ type InputListCmd struct {
 	Colour bool `flag:"" help:"List all colour sources." aliases:"c"`
 	Ffmpeg bool `flag:"" help:"List all ffmpeg sources." aliases:"f"`
 	Vlc    bool `flag:"" help:"List all VLC sources."    aliases:"v"`
+	UUID   bool `flag:"" help:"Display UUIDs of inputs." aliases:"u"`
 }
 
 // Run executes the command to list all inputs.
@@ -34,22 +36,31 @@ func (cmd *InputListCmd) Run(ctx *context) error {
 
 	t := table.New(ctx.Out)
 	t.SetPadding(3)
-	t.SetAlignment(table.AlignLeft, table.AlignLeft, table.AlignCenter)
-	t.SetHeaders("Input Name", "Kind", "Muted")
+	if cmd.UUID {
+		t.SetAlignment(table.AlignLeft, table.AlignLeft, table.AlignCenter, table.AlignLeft)
+		t.SetHeaders("Input Name", "Kind", "Muted", "UUID")
+	} else {
+		t.SetAlignment(table.AlignLeft, table.AlignLeft, table.AlignCenter)
+		t.SetHeaders("Input Name", "Kind", "Muted")
+	}
+
+	sort.Slice(resp.Inputs, func(i, j int) bool {
+		return resp.Inputs[i].InputName < resp.Inputs[j].InputName
+	})
 
 	for _, input := range resp.Inputs {
 		var muteMark string
-		for _, kind := range []string{"input", "output", "ffmpeg", "vlc"} {
-			if strings.Contains(input.InputKind, kind) {
-				resp, err := ctx.Client.Inputs.GetInputMute(
-					inputs.NewGetInputMuteParams().WithInputName(input.InputName),
-				)
-				if err != nil {
-					return fmt.Errorf("failed to get input mute state: %w", err)
-				}
-				muteMark = getEnabledMark(resp.InputMuted)
-				break
+		resp, err := ctx.Client.Inputs.GetInputMute(
+			inputs.NewGetInputMuteParams().WithInputName(input.InputName),
+		)
+		if err != nil {
+			if err.Error() == "request GetInputMute: InvalidResourceState (604): The specified input does not support audio." {
+				muteMark = "N/A"
+			} else {
+				return fmt.Errorf("failed to get input mute state: %w", err)
 			}
+		} else {
+			muteMark = getEnabledMark(resp.InputMuted)
 		}
 
 		type filter struct {
@@ -67,14 +78,22 @@ func (cmd *InputListCmd) Run(ctx *context) error {
 		var added bool
 		for _, f := range filters {
 			if f.enabled && strings.Contains(input.InputKind, f.keyword) {
-				t.AddRow(input.InputName, input.InputKind, muteMark)
+				if cmd.UUID {
+					t.AddRow(input.InputName, input.InputKind, muteMark, input.InputUuid)
+				} else {
+					t.AddRow(input.InputName, input.InputKind, muteMark)
+				}
 				added = true
 				break
 			}
 		}
 
 		if !added && (!cmd.Input && !cmd.Output && !cmd.Colour && !cmd.Ffmpeg && !cmd.Vlc) {
-			t.AddRow(input.InputName, input.InputKind, muteMark)
+			if cmd.UUID {
+				t.AddRow(input.InputName, snakeCaseToTitleCase(input.InputKind), muteMark, input.InputUuid)
+			} else {
+				t.AddRow(input.InputName, snakeCaseToTitleCase(input.InputKind), muteMark)
+			}
 		}
 	}
 	t.Render()

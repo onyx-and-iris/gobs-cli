@@ -16,7 +16,9 @@ type SceneCmd struct {
 }
 
 // SceneListCmd provides a command to list all scenes.
-type SceneListCmd struct{} // size = 0x0
+type SceneListCmd struct {
+	UUID bool `flag:"" help:"Display UUIDs of scenes."`
+}
 
 // Run executes the command to list all scenes.
 func (cmd *SceneListCmd) Run(ctx *context) error {
@@ -25,14 +27,32 @@ func (cmd *SceneListCmd) Run(ctx *context) error {
 		return err
 	}
 
+	currentScene, err := ctx.Client.Scenes.GetCurrentProgramScene()
+	if err != nil {
+		return err
+	}
+
 	t := table.New(ctx.Out)
 	t.SetPadding(3)
-	t.SetAlignment(table.AlignLeft, table.AlignLeft)
-	t.SetHeaders("Scene Name", "UUID")
+	if cmd.UUID {
+		t.SetAlignment(table.AlignLeft, table.AlignCenter, table.AlignLeft)
+		t.SetHeaders("Scene Name", "Active", "UUID")
+	} else {
+		t.SetAlignment(table.AlignLeft, table.AlignCenter)
+		t.SetHeaders("Scene Name", "Active")
+	}
 
 	slices.Reverse(scenes.Scenes)
 	for _, scene := range scenes.Scenes {
-		t.AddRow(scene.SceneName, scene.SceneUuid)
+		var activeMark string
+		if scene.SceneName == currentScene.SceneName {
+			activeMark = getEnabledMark(true)
+		}
+		if cmd.UUID {
+			t.AddRow(scene.SceneName, activeMark, scene.SceneUuid)
+		} else {
+			t.AddRow(scene.SceneName, activeMark)
+		}
 	}
 	t.Render()
 	return nil
