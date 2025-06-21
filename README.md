@@ -625,6 +625,8 @@ Available options are:
 - navy
 - black
 
+Alternatively you may set the style with an environment variable `GOBS_STYLE`.
+
 
 [userconfigdir]: https://pkg.go.dev/os#UserConfigDir
 [obs-keyids]: https://github.com/obsproject/obs-studio/blob/master/libobs/obs-hotkeys.h
