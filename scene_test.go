@@ -10,7 +10,7 @@ func TestSceneList(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmd := &SceneListCmd{}
 	err := cmd.Run(context)
@@ -27,7 +27,7 @@ func TestSceneCurrent(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	// Set the current scene to "gobs-test"
 	cmdSwitch := &SceneSwitchCmd{

@@ -12,7 +12,7 @@ func TestRecordStart(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmdStatus := &RecordStatusCmd{}
 	err := cmdStatus.Run(context)
@@ -52,7 +52,7 @@ func TestRecordStop(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmdStatus := &RecordStatusCmd{}
 	err := cmdStatus.Run(context)
@@ -92,7 +92,7 @@ func TestRecordToggle(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmdStatus := &RecordStatusCmd{}
 	err := cmdStatus.Run(context)

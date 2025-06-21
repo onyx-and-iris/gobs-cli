@@ -11,7 +11,7 @@ func TestInputList(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmd := &InputListCmd{}
 	err := cmd.Run(context)
@@ -39,7 +39,7 @@ func TestInputListFilterInput(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmd := &InputListCmd{Input: true}
 	err := cmd.Run(context)
@@ -73,7 +73,7 @@ func TestInputListFilterOutput(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmd := &InputListCmd{Output: true}
 	err := cmd.Run(context)
@@ -107,7 +107,7 @@ func TestInputListFilterColour(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmd := &InputListCmd{Colour: true}
 	err := cmd.Run(context)

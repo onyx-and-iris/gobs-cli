@@ -11,7 +11,7 @@ func TestFilterList(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmd := &FilterListCmd{
 		SourceName: "Mic/Aux",
@@ -30,7 +30,7 @@ func TestFilterListScene(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmd := &FilterListCmd{
 		SourceName: "gobs-test",
@@ -49,7 +49,7 @@ func TestFilterListEmpty(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmd := &FilterListCmd{
 		SourceName: "NonExistentSource",

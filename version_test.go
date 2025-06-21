@@ -11,7 +11,7 @@ func TestVersion(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmd := &ObsVersionCmd{}
 	err := cmd.Run(context)

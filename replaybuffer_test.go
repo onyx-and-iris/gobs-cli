@@ -11,7 +11,7 @@ func TestReplayBufferStart(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmd := &ReplayBufferStartCmd{}
 	err := cmd.Run(context)
@@ -28,7 +28,7 @@ func TestReplayBufferStop(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmd := &ReplayBufferStopCmd{}
 	err := cmd.Run(context)
@@ -45,7 +45,7 @@ func TestReplayBufferToggle(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmdStatus := &ReplayBufferStatusCmd{}
 	err := cmdStatus.Run(context)

@@ -10,7 +10,7 @@ func TestStudioModeEnable(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmdEnable := &StudioModeEnableCmd{}
 	err := cmdEnable.Run(context)
@@ -38,7 +38,7 @@ func TestStudioModeDisable(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmdDisable := &StudioModeDisableCmd{}
 	err := cmdDisable.Run(context)

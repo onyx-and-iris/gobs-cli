@@ -12,7 +12,7 @@ func TestStreamStart(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmdStatus := &StreamStatusCmd{}
 	err := cmdStatus.Run(context)
@@ -51,7 +51,7 @@ func TestStreamStop(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmdStatus := &StreamStatusCmd{}
 	err := cmdStatus.Run(context)
@@ -90,7 +90,7 @@ func TestStreamToggle(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmdStatus := &StreamStatusCmd{}
 	err := cmdStatus.Run(context)

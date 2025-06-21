@@ -11,7 +11,7 @@ func TestSceneItemList(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := newContext(client, &out, "")
+	context := newContext(client, &out, StyleConfig{})
 
 	cmd := &SceneItemListCmd{
 		SceneName: "gobs-test",
