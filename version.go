@@ -13,13 +13,13 @@ var version string
 // VersionFlag is a custom flag type for displaying version information.
 type VersionFlag string
 
-// Decode implements the kong.Flag interface for VersionFlag.
+// Decode implements the kong.Flag interface.
 func (v VersionFlag) Decode(_ *kong.DecodeContext) error { return nil }
 
-// IsBool implements the kong.Flag interface for VersionFlag.
+// IsBool implements the kong.Flag interface.
 func (v VersionFlag) IsBool() bool { return true }
 
-// BeforeApply implements the kong.Flag interface for VersionFlag.
+// BeforeApply implements the kong.Flag interface.
 func (v VersionFlag) BeforeApply(app *kong.Kong, _ kong.Vars) error { // nolint: unparam
 	if version == "" {
 		info, ok := debug.ReadBuildInfo()
