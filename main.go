@@ -24,10 +24,16 @@ type ObsConfig struct {
 	Timeout  int    `flag:"timeout"  help:"Timeout in seconds."          default:"5"         env:"OBS_TIMEOUT"  short:"T"`
 }
 
+// StyleConfig holds the configuration for styling the CLI output.
+type StyleConfig struct {
+	Style string `help:"Style used in output." flag:"style" default:"" env:"GOBS_STYLE" short:"c" enum:",red,magenta,purple,blue,cyan,green,yellow,orange,white,grey,navy,black"`
+}
+
 // CLI is the main command line interface structure.
 // It embeds the ObsConfig struct to inherit its fields and flags.
 type CLI struct {
-	ObsConfig `embed:"" help:"OBS WebSocket configuration."`
+	ObsConfig   `embed:"" help:"OBS WebSocket configuration."`
+	StyleConfig `embed:"" help:"Style configuration."`
 
 	Man     mangokong.ManFlag `help:"Print man page."`
 	Version VersionFlag       `help:"Print gobs-cli version information and quit" name:"version" short:"v"`
@@ -53,6 +59,15 @@ type CLI struct {
 type context struct {
 	Client *goobs.Client
 	Out    io.Writer
+	Style  *Style
+}
+
+func newContext(client *goobs.Client, out io.Writer, styleName string) *context {
+	return &context{
+		Client: client,
+		Out:    out,
+		Style:  styleFromFlag(styleName),
+	}
 }
 
 func main() {
@@ -73,10 +88,7 @@ func main() {
 	client, err := connectObs(cli.ObsConfig)
 	ctx.FatalIfErrorf(err)
 
-	ctx.Bind(&context{
-		Client: client,
-		Out:    os.Stdout,
-	})
+	ctx.Bind(newContext(client, os.Stdout, cli.StyleConfig.Style))
 
 	ctx.FatalIfErrorf(run(ctx, client))
 }
