@@ -608,9 +608,14 @@ gobs-cli screenshot save --width=2560 --height=1440 "Scene" "C:\Users\me\Videos\
 
 ## Style
 
-By default styling is disabled but you may enable it with the --style/-s flag.
+By default styling is disabled but you may enable and configure it in the following ways:
 
-Available options are:
+-   --style/-s: Style used in output.
+    -  GOBS_STYLE
+-   --no-border/-b: Disable table border styling in output.
+    -   GOBS_STYLE_NO_BORDER
+
+Available styles:
 
 - red
 - magenta
@@ -625,7 +630,9 @@ Available options are:
 - navy
 - black
 
-Alternatively you may set the style with an environment variable `GOBS_STYLE`.
+```console
+gobs-cli --style=cyan --no-border scene list
+```
 
 
 [userconfigdir]: https://pkg.go.dev/os#UserConfigDir
