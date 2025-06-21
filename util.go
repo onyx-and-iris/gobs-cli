@@ -2,7 +2,10 @@
 
 package main
 
-import "strings"
+import (
+	"os"
+	"strings"
+)
 
 func snakeCaseToTitleCase(snake string) string {
 	words := strings.Split(snake, "_")
@@ -16,9 +19,15 @@ func snakeCaseToTitleCase(snake string) string {
 
 func getEnabledMark(enabled bool) string {
 	if enabled {
-		return "\u2713" // check mark
+		if os.Getenv("NO_COLOR") != "" { // nolint: misspell
+			return "✓"
+		}
+		return "✅"
 	}
-	return "\u274c" // cross mark
+	if os.Getenv("NO_COLOR") != "" { // nolint: misspell
+		return "✗"
+	}
+	return "❌"
 }
 
 func trimPrefix(s, prefix string) string {
