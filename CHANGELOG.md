@@ -5,12 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-# [0.12.0] - 2025-06-21
+# [0.12.1] - 2025-06-21
 
 ### Added
 
 -   Various colouring styles, see [Style](https://github.com/onyx-and-iris/gobs-cli/tree/main?tab=readme-ov-file#style)
     -   colouring is applied to list tables as well as highlighted information in stdout/stderr output.
+    -   table border styling may be optionally disabled with the --no-border flag.
 
 ### Changed
 
