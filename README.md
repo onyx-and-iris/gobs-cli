@@ -606,6 +606,26 @@ gobs-cli projector open --monitor-index=1 "test_group"
 gobs-cli screenshot save --width=2560 --height=1440 "Scene" "C:\Users\me\Videos\screenshot.png"
 ```
 
+## Style
+
+By default styling is disabled but you may enable it with the --style/-s flag.
+
+Available options are:
+
+- red
+- magenta
+- purple
+- blue
+- cyan
+- green
+- yellow
+- orange
+- white
+- grey
+- navy
+- black
+
 
 [userconfigdir]: https://pkg.go.dev/os#UserConfigDir
 [obs-keyids]: https://github.com/obsproject/obs-studio/blob/master/libobs/obs-hotkeys.h
+[no-colour]: https://no-color.org/

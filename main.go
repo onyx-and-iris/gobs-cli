@@ -26,7 +26,7 @@ type ObsConfig struct {
 
 // StyleConfig holds the configuration for styling the CLI output.
 type StyleConfig struct {
-	Style string `help:"Style used in output." flag:"style" default:"" env:"GOBS_STYLE" short:"c" enum:",red,magenta,purple,blue,cyan,green,yellow,orange,white,grey,navy,black"`
+	Style string `help:"Style used in output." flag:"style" default:"" env:"GOBS_STYLE" short:"s" enum:",red,magenta,purple,blue,cyan,green,yellow,orange,white,grey,navy,black"`
 }
 
 // CLI is the main command line interface structure.
