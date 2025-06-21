@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/andreykaipov/goobs/api/requests/general"
 	"github.com/andreykaipov/goobs/api/typedefs"
-	"github.com/aquasecurity/table"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/lipgloss/table"
 )
 
 // HotkeyCmd provides commands to manage hotkeys in OBS Studio.
@@ -23,15 +26,26 @@ func (cmd *HotkeyListCmd) Run(ctx *context) error {
 		return err
 	}
 
-	t := table.New(ctx.Out)
-	t.SetPadding(3)
-	t.SetAlignment(table.AlignLeft)
-	t.SetHeaders("Hotkey Name")
+	t := table.New().Border(lipgloss.RoundedBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground(ctx.Style.border)).
+		Headers("Hotkey Name").
+		StyleFunc(func(row, _ int) lipgloss.Style {
+			style := lipgloss.NewStyle().Padding(0, 3)
+			switch {
+			case row == table.HeaderRow:
+				style = style.Bold(true).Align(lipgloss.Center) // nolint: misspell
+			case row%2 == 0:
+				style = style.Foreground(ctx.Style.evenRows)
+			default:
+				style = style.Foreground(ctx.Style.oddRows)
+			}
+			return style
+		})
 
 	for _, hotkey := range resp.Hotkeys {
-		t.AddRow(hotkey)
+		t.Row(hotkey)
 	}
-	t.Render()
+	fmt.Fprintln(ctx.Out, t.Render())
 	return nil
 }
 

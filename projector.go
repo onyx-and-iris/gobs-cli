@@ -4,7 +4,8 @@ import (
 	"fmt"
 
 	"github.com/andreykaipov/goobs/api/requests/ui"
-	"github.com/aquasecurity/table"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/lipgloss/table"
 )
 
 // ProjectorCmd provides a command to manage projectors in OBS.
@@ -17,6 +18,7 @@ type ProjectorCmd struct {
 type ProjectorListMonitorsCmd struct{} // size = 0x0
 
 // Run executes the command to list all monitors available for projectors.
+// nolint: misspell
 func (cmd *ProjectorListMonitorsCmd) Run(ctx *context) error {
 	monitors, err := ctx.Client.Ui.GetMonitorList()
 	if err != nil {
@@ -24,20 +26,37 @@ func (cmd *ProjectorListMonitorsCmd) Run(ctx *context) error {
 	}
 
 	if len(monitors.Monitors) == 0 {
-		ctx.Out.Write([]byte("No monitors found for projectors.\n"))
+		fmt.Fprintf(ctx.Out, "No monitors found.\n")
 		return nil
 	}
 
-	t := table.New(ctx.Out)
-	t.SetPadding(3)
-	t.SetAlignment(table.AlignCenter, table.AlignLeft)
-	t.SetHeaders("Monitor ID", "Monitor Name")
+	t := table.New().Border(lipgloss.RoundedBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground(ctx.Style.border)).
+		Headers("Monitor ID", "Monitor Name").
+		StyleFunc(func(row, col int) lipgloss.Style {
+			style := lipgloss.NewStyle().Padding(0, 3)
+			switch col {
+			case 0:
+				style = style.Align(lipgloss.Center)
+			case 1:
+				style = style.Align(lipgloss.Left)
+			}
+			switch {
+			case row == table.HeaderRow:
+				style = style.Bold(true).Align(lipgloss.Center)
+			case row%2 == 0:
+				style = style.Foreground(ctx.Style.evenRows)
+			default:
+				style = style.Foreground(ctx.Style.oddRows)
+			}
+			return style
+		})
 
 	for _, monitor := range monitors.Monitors {
-		t.AddRow(fmt.Sprintf("%d", monitor.MonitorIndex), monitor.MonitorName)
+		t.Row(fmt.Sprintf("%d", monitor.MonitorIndex), monitor.MonitorName)
 	}
 
-	t.Render()
+	fmt.Fprintln(ctx.Out, t.Render())
 	return nil
 }
 
@@ -57,10 +76,36 @@ func (cmd *ProjectorOpenCmd) Run(ctx *context) error {
 		cmd.SourceName = currentScene.SceneName
 	}
 
+	monitors, err := ctx.Client.Ui.GetMonitorList()
+	if err != nil {
+		return err
+	}
+
+	var monitorName string
+	for _, monitor := range monitors.Monitors {
+		if monitor.MonitorIndex == cmd.MonitorIndex {
+			monitorName = monitor.MonitorName
+			break
+		}
+	}
+
+	if monitorName == "" {
+		return fmt.Errorf(
+			"monitor with index %s not found. use %s to list available monitors",
+			ctx.Style.Error(fmt.Sprintf("%d", cmd.MonitorIndex)),
+			ctx.Style.Error("gobs-cli prj ls-m"),
+		)
+	}
+
 	ctx.Client.Ui.OpenSourceProjector(ui.NewOpenSourceProjectorParams().
 		WithSourceName(cmd.SourceName).
 		WithMonitorIndex(cmd.MonitorIndex))
 
-	fmt.Fprintf(ctx.Out, "Opened projector for source '%s' on monitor index %d.\n", cmd.SourceName, cmd.MonitorIndex)
+	fmt.Fprintf(
+		ctx.Out,
+		"Opened projector for source %s on monitor %s.\n",
+		ctx.Style.Highlight(cmd.SourceName),
+		ctx.Style.Highlight(monitorName),
+	)
 	return nil
 }

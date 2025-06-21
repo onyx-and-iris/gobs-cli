@@ -7,7 +7,8 @@ import (
 	"strings"
 
 	"github.com/andreykaipov/goobs/api/requests/filters"
-	"github.com/aquasecurity/table"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/lipgloss/table"
 )
 
 // FilterCmd provides commands to manage filters in OBS Studio.
@@ -25,6 +26,7 @@ type FilterListCmd struct {
 }
 
 // Run executes the command to list all filters in a scene.
+// nolint: misspell
 func (cmd *FilterListCmd) Run(ctx *context) error {
 	if cmd.SourceName == "" {
 		currentScene, err := ctx.Client.Scenes.GetCurrentProgramScene()
@@ -42,14 +44,35 @@ func (cmd *FilterListCmd) Run(ctx *context) error {
 	}
 
 	if len(sourceFilters.Filters) == 0 {
-		fmt.Fprintf(ctx.Out, "No filters found for source %s.\n", cmd.SourceName)
+		fmt.Fprintf(ctx.Out, "No filters found for source %s.\n", ctx.Style.Highlight(cmd.SourceName))
 		return nil
 	}
 
-	t := table.New(ctx.Out)
-	t.SetPadding(3)
-	t.SetAlignment(table.AlignLeft, table.AlignLeft, table.AlignCenter, table.AlignLeft)
-	t.SetHeaders("Filter Name", "Kind", "Enabled", "Settings")
+	t := table.New().Border(lipgloss.RoundedBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground(ctx.Style.border)).
+		Headers("Filter Name", "Kind", "Enabled", "Settings").
+		StyleFunc(func(row, col int) lipgloss.Style {
+			style := lipgloss.NewStyle().Padding(0, 3)
+			switch col {
+			case 0:
+				style = style.Align(lipgloss.Left)
+			case 1:
+				style = style.Align(lipgloss.Left)
+			case 2:
+				style = style.Align(lipgloss.Center)
+			case 3:
+				style = style.Align(lipgloss.Left)
+			}
+			switch {
+			case row == table.HeaderRow:
+				style = style.Bold(true).Align(lipgloss.Center)
+			case row%2 == 0:
+				style = style.Foreground(ctx.Style.evenRows)
+			default:
+				style = style.Foreground(ctx.Style.oddRows)
+			}
+			return style
+		})
 
 	for _, filter := range sourceFilters.Filters {
 		defaultSettings, err := ctx.Client.Filters.GetSourceFilterDefaultSettings(
@@ -58,7 +81,7 @@ func (cmd *FilterListCmd) Run(ctx *context) error {
 		)
 		if err != nil {
 			return fmt.Errorf("failed to get default settings for filter %s: %w",
-				filter.FilterName, err)
+				ctx.Style.Error(filter.FilterName), err)
 		}
 		maps.Insert(defaultSettings.DefaultFilterSettings, maps.All(filter.FilterSettings))
 
@@ -70,14 +93,14 @@ func (cmd *FilterListCmd) Run(ctx *context) error {
 			return strings.ToLower(lines[i]) < strings.ToLower(lines[j])
 		})
 
-		t.AddRow(
+		t.Row(
 			filter.FilterName,
 			snakeCaseToTitleCase(filter.FilterKind),
 			getEnabledMark(filter.FilterEnabled),
 			strings.Join(lines, "\n"),
 		)
 	}
-	t.Render()
+	fmt.Fprintln(ctx.Out, t.Render())
 	return nil
 }
 
@@ -97,10 +120,10 @@ func (cmd *FilterEnableCmd) Run(ctx *context) error {
 	)
 	if err != nil {
 		return fmt.Errorf("failed to enable filter %s on source %s: %w",
-			cmd.FilterName, cmd.SourceName, err)
+			ctx.Style.Error(cmd.FilterName), ctx.Style.Error(cmd.SourceName), err)
 	}
 	fmt.Fprintf(ctx.Out, "Filter %s enabled on source %s.\n",
-		cmd.FilterName, cmd.SourceName)
+		ctx.Style.Highlight(cmd.FilterName), ctx.Style.Highlight(cmd.SourceName))
 	return nil
 }
 
@@ -120,10 +143,10 @@ func (cmd *FilterDisableCmd) Run(ctx *context) error {
 	)
 	if err != nil {
 		return fmt.Errorf("failed to disable filter %s on source %s: %w",
-			cmd.FilterName, cmd.SourceName, err)
+			ctx.Style.Error(cmd.FilterName), ctx.Style.Error(cmd.SourceName), err)
 	}
 	fmt.Fprintf(ctx.Out, "Filter %s disabled on source %s.\n",
-		cmd.FilterName, cmd.SourceName)
+		ctx.Style.Highlight(cmd.FilterName), ctx.Style.Highlight(cmd.SourceName))
 	return nil
 }
 
@@ -142,7 +165,7 @@ func (cmd *FilterToggleCmd) Run(ctx *context) error {
 	)
 	if err != nil {
 		return fmt.Errorf("failed to get filter %s on source %s: %w",
-			cmd.FilterName, cmd.SourceName, err)
+			ctx.Style.Error(cmd.FilterName), ctx.Style.Error(cmd.SourceName), err)
 	}
 
 	newStatus := !filter.FilterEnabled
@@ -154,15 +177,15 @@ func (cmd *FilterToggleCmd) Run(ctx *context) error {
 	)
 	if err != nil {
 		return fmt.Errorf("failed to toggle filter %s on source %s: %w",
-			cmd.FilterName, cmd.SourceName, err)
+			ctx.Style.Error(cmd.FilterName), ctx.Style.Error(cmd.SourceName), err)
 	}
 
 	if newStatus {
 		fmt.Fprintf(ctx.Out, "Filter %s on source %s is now enabled.\n",
-			cmd.FilterName, cmd.SourceName)
+			ctx.Style.Highlight(cmd.FilterName), ctx.Style.Highlight(cmd.SourceName))
 	} else {
 		fmt.Fprintf(ctx.Out, "Filter %s on source %s is now disabled.\n",
-			cmd.FilterName, cmd.SourceName)
+			ctx.Style.Highlight(cmd.FilterName), ctx.Style.Highlight(cmd.SourceName))
 	}
 	return nil
 }
@@ -182,14 +205,14 @@ func (cmd *FilterStatusCmd) Run(ctx *context) error {
 	)
 	if err != nil {
 		return fmt.Errorf("failed to get status of filter %s on source %s: %w",
-			cmd.FilterName, cmd.SourceName, err)
+			ctx.Style.Error(cmd.FilterName), ctx.Style.Error(cmd.SourceName), err)
 	}
 	if filter.FilterEnabled {
 		fmt.Fprintf(ctx.Out, "Filter %s on source %s is enabled.\n",
-			cmd.FilterName, cmd.SourceName)
+			ctx.Style.Highlight(cmd.FilterName), ctx.Style.Highlight(cmd.SourceName))
 	} else {
 		fmt.Fprintf(ctx.Out, "Filter %s on source %s is disabled.\n",
-			cmd.FilterName, cmd.SourceName)
+			ctx.Style.Highlight(cmd.FilterName), ctx.Style.Highlight(cmd.SourceName))
 	}
 	return nil
 }

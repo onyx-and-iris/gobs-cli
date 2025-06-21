@@ -1,3 +1,4 @@
+// nolint: misspell
 package main
 
 import (
@@ -6,7 +7,8 @@ import (
 	"strings"
 
 	"github.com/andreykaipov/goobs/api/requests/inputs"
-	"github.com/aquasecurity/table"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/lipgloss/table"
 )
 
 // InputCmd provides commands to manage inputs in OBS Studio.
@@ -34,15 +36,35 @@ func (cmd *InputListCmd) Run(ctx *context) error {
 		return err
 	}
 
-	t := table.New(ctx.Out)
-	t.SetPadding(3)
+	t := table.New().Border(lipgloss.RoundedBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground(ctx.Style.border))
 	if cmd.UUID {
-		t.SetAlignment(table.AlignLeft, table.AlignLeft, table.AlignCenter, table.AlignLeft)
-		t.SetHeaders("Input Name", "Kind", "Muted", "UUID")
+		t.Headers("Input Name", "Kind", "Muted", "UUID")
 	} else {
-		t.SetAlignment(table.AlignLeft, table.AlignLeft, table.AlignCenter)
-		t.SetHeaders("Input Name", "Kind", "Muted")
+		t.Headers("Input Name", "Kind", "Muted")
 	}
+	t.StyleFunc(func(row, col int) lipgloss.Style {
+		style := lipgloss.NewStyle().Padding(0, 3)
+		switch col {
+		case 0:
+			style = style.Align(lipgloss.Left)
+		case 1:
+			style = style.Align(lipgloss.Left)
+		case 2:
+			style = style.Align(lipgloss.Center)
+		case 3:
+			style = style.Align(lipgloss.Left)
+		}
+		switch {
+		case row == table.HeaderRow:
+			style = style.Bold(true).Align(lipgloss.Center)
+		case row%2 == 0:
+			style = style.Foreground(ctx.Style.evenRows)
+		default:
+			style = style.Foreground(ctx.Style.oddRows)
+		}
+		return style
+	})
 
 	sort.Slice(resp.Inputs, func(i, j int) bool {
 		return resp.Inputs[i].InputName < resp.Inputs[j].InputName
@@ -79,9 +101,9 @@ func (cmd *InputListCmd) Run(ctx *context) error {
 		for _, f := range filters {
 			if f.enabled && strings.Contains(input.InputKind, f.keyword) {
 				if cmd.UUID {
-					t.AddRow(input.InputName, input.InputKind, muteMark, input.InputUuid)
+					t.Row(input.InputName, input.InputKind, muteMark, input.InputUuid)
 				} else {
-					t.AddRow(input.InputName, input.InputKind, muteMark)
+					t.Row(input.InputName, input.InputKind, muteMark)
 				}
 				added = true
 				break
@@ -90,13 +112,13 @@ func (cmd *InputListCmd) Run(ctx *context) error {
 
 		if !added && (!cmd.Input && !cmd.Output && !cmd.Colour && !cmd.Ffmpeg && !cmd.Vlc) {
 			if cmd.UUID {
-				t.AddRow(input.InputName, snakeCaseToTitleCase(input.InputKind), muteMark, input.InputUuid)
+				t.Row(input.InputName, snakeCaseToTitleCase(input.InputKind), muteMark, input.InputUuid)
 			} else {
-				t.AddRow(input.InputName, snakeCaseToTitleCase(input.InputKind), muteMark)
+				t.Row(input.InputName, snakeCaseToTitleCase(input.InputKind), muteMark)
 			}
 		}
 	}
-	t.Render()
+	fmt.Fprintln(ctx.Out, t.Render())
 	return nil
 }
 
@@ -114,7 +136,7 @@ func (cmd *InputMuteCmd) Run(ctx *context) error {
 		return fmt.Errorf("failed to mute input: %w", err)
 	}
 
-	fmt.Fprintf(ctx.Out, "Muted input: %s\n", cmd.InputName)
+	fmt.Fprintf(ctx.Out, "Muted input: %s\n", ctx.Style.Highlight(cmd.InputName))
 	return nil
 }
 
@@ -132,7 +154,7 @@ func (cmd *InputUnmuteCmd) Run(ctx *context) error {
 		return fmt.Errorf("failed to unmute input: %w", err)
 	}
 
-	fmt.Fprintf(ctx.Out, "Unmuted input: %s\n", cmd.InputName)
+	fmt.Fprintf(ctx.Out, "Unmuted input: %s\n", ctx.Style.Highlight(cmd.InputName))
 	return nil
 }
 
@@ -160,9 +182,9 @@ func (cmd *InputToggleCmd) Run(ctx *context) error {
 	}
 
 	if newMuteState {
-		fmt.Fprintf(ctx.Out, "Muted input: %s\n", cmd.InputName)
+		fmt.Fprintf(ctx.Out, "Muted input: %s\n", ctx.Style.Highlight(cmd.InputName))
 	} else {
-		fmt.Fprintf(ctx.Out, "Unmuted input: %s\n", cmd.InputName)
+		fmt.Fprintf(ctx.Out, "Unmuted input: %s\n", ctx.Style.Highlight(cmd.InputName))
 	}
 	return nil
 }

@@ -36,6 +36,6 @@ func (cmd *ScreenshotSaveCmd) Run(ctx *context) error {
 		return fmt.Errorf("failed to take screenshot: %w", err)
 	}
 
-	fmt.Fprintf(ctx.Out, "Screenshot saved to %s.\n", cmd.FilePath)
+	fmt.Fprintf(ctx.Out, "Screenshot saved to %s.\n", ctx.Style.Highlight(cmd.FilePath))
 	return nil
 }

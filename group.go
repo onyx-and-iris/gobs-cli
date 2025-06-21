@@ -4,7 +4,8 @@ import (
 	"fmt"
 
 	"github.com/andreykaipov/goobs/api/requests/sceneitems"
-	"github.com/aquasecurity/table"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/lipgloss/table"
 )
 
 // GroupCmd provides commands to manage groups in OBS Studio.
@@ -22,6 +23,7 @@ type GroupListCmd struct {
 }
 
 // Run executes the command to list all groups in a scene.
+// nolint: misspell
 func (cmd *GroupListCmd) Run(ctx *context) error {
 	if cmd.SceneName == "" {
 		currentScene, err := ctx.Client.Scenes.GetCurrentProgramScene()
@@ -37,17 +39,44 @@ func (cmd *GroupListCmd) Run(ctx *context) error {
 		return fmt.Errorf("failed to get scene item list: %w", err)
 	}
 
-	t := table.New(ctx.Out)
-	t.SetPadding(3)
-	t.SetAlignment(table.AlignCenter, table.AlignLeft, table.AlignCenter)
-	t.SetHeaders("ID", "Group Name", "Enabled")
+	t := table.New().Border(lipgloss.RoundedBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground(ctx.Style.border)).
+		Headers("ID", "Group Name", "Enabled").
+		StyleFunc(func(row, col int) lipgloss.Style {
+			style := lipgloss.NewStyle().Padding(0, 3)
+			switch col {
+			case 0:
+				style = style.Align(lipgloss.Center)
+			case 1:
+				style = style.Align(lipgloss.Left)
+			case 2:
+				style = style.Align(lipgloss.Center)
+			}
+			switch {
+			case row == table.HeaderRow:
+				style = style.Bold(true).Align(lipgloss.Center)
+			case row%2 == 0:
+				style = style.Foreground(ctx.Style.evenRows)
+			default:
+				style = style.Foreground(ctx.Style.oddRows)
+			}
+			return style
+		})
 
+	var found bool
 	for _, item := range resp.SceneItems {
 		if item.IsGroup {
-			t.AddRow(fmt.Sprintf("%d", item.SceneItemID), item.SourceName, getEnabledMark(item.SceneItemEnabled))
+			t.Row(fmt.Sprintf("%d", item.SceneItemID), item.SourceName, getEnabledMark(item.SceneItemEnabled))
+			found = true
 		}
 	}
-	t.Render()
+
+	if !found {
+		fmt.Fprintf(ctx.Out, "No groups found in scene %s.\n", ctx.Style.Highlight(cmd.SceneName))
+		return nil
+	}
+
+	fmt.Fprintln(ctx.Out, t.Render())
 	return nil
 }
 
@@ -75,13 +104,17 @@ func (cmd *GroupShowCmd) Run(ctx *context) error {
 			if err != nil {
 				return fmt.Errorf("failed to set scene item enabled: %w", err)
 			}
-			fmt.Fprintf(ctx.Out, "Group %s is now shown.\n", cmd.GroupName)
+			fmt.Fprintf(ctx.Out, "Group %s is now shown.\n", ctx.Style.Highlight(cmd.GroupName))
 			found = true
 			break
 		}
 	}
 	if !found {
-		return fmt.Errorf("group '%s' not found", cmd.GroupName)
+		return fmt.Errorf(
+			"group %s not found in scene %s",
+			ctx.Style.Error(cmd.GroupName),
+			ctx.Style.Error(cmd.SceneName),
+		)
 	}
 	return nil
 }
@@ -110,13 +143,17 @@ func (cmd *GroupHideCmd) Run(ctx *context) error {
 			if err != nil {
 				return fmt.Errorf("failed to set scene item enabled: %w", err)
 			}
-			fmt.Fprintf(ctx.Out, "Group %s is now hidden.\n", cmd.GroupName)
+			fmt.Fprintf(ctx.Out, "Group %s is now hidden.\n", ctx.Style.Highlight(cmd.GroupName))
 			found = true
 			break
 		}
 	}
 	if !found {
-		return fmt.Errorf("group '%s' not found", cmd.GroupName)
+		return fmt.Errorf(
+			"group %s not found in scene %s",
+			ctx.Style.Error(cmd.GroupName),
+			ctx.Style.Error(cmd.SceneName),
+		)
 	}
 	return nil
 }
@@ -147,16 +184,20 @@ func (cmd *GroupToggleCmd) Run(ctx *context) error {
 				return fmt.Errorf("failed to set scene item enabled: %w", err)
 			}
 			if newState {
-				fmt.Fprintf(ctx.Out, "Group %s is now shown.\n", cmd.GroupName)
+				fmt.Fprintf(ctx.Out, "Group %s is now shown.\n", ctx.Style.Highlight(cmd.GroupName))
 			} else {
-				fmt.Fprintf(ctx.Out, "Group %s is now hidden.\n", cmd.GroupName)
+				fmt.Fprintf(ctx.Out, "Group %s is now hidden.\n", ctx.Style.Highlight(cmd.GroupName))
 			}
 			found = true
 			break
 		}
 	}
 	if !found {
-		return fmt.Errorf("group '%s' not found", cmd.GroupName)
+		return fmt.Errorf(
+			"group %s not found in scene %s",
+			ctx.Style.Error(cmd.GroupName),
+			ctx.Style.Error(cmd.SceneName),
+		)
 	}
 
 	return nil
@@ -178,12 +219,12 @@ func (cmd *GroupStatusCmd) Run(ctx *context) error {
 	for _, item := range resp.SceneItems {
 		if item.IsGroup && item.SourceName == cmd.GroupName {
 			if item.SceneItemEnabled {
-				fmt.Fprintf(ctx.Out, "Group %s is shown.\n", cmd.GroupName)
+				fmt.Fprintf(ctx.Out, "Group %s is shown.\n", ctx.Style.Highlight(cmd.GroupName))
 			} else {
-				fmt.Fprintf(ctx.Out, "Group %s is hidden.\n", cmd.GroupName)
+				fmt.Fprintf(ctx.Out, "Group %s is hidden.\n", ctx.Style.Highlight(cmd.GroupName))
 			}
 			return nil
 		}
 	}
-	return fmt.Errorf("group '%s' not found", cmd.GroupName)
+	return fmt.Errorf("group %s not found in scene %s", ctx.Style.Error(cmd.GroupName), ctx.Style.Error(cmd.SceneName))
 }

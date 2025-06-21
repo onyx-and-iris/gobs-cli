@@ -1,3 +1,4 @@
+// nolint: misspell
 package main
 
 import (
@@ -6,7 +7,8 @@ import (
 
 	"github.com/andreykaipov/goobs"
 	"github.com/andreykaipov/goobs/api/requests/sceneitems"
-	"github.com/aquasecurity/table"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/lipgloss/table"
 )
 
 // SceneItemCmd provides commands to manage scene items in OBS Studio.
@@ -42,19 +44,41 @@ func (cmd *SceneItemListCmd) Run(ctx *context) error {
 	}
 
 	if len(resp.SceneItems) == 0 {
-		fmt.Fprintf(ctx.Out, "No scene items found in scene '%s'.\n", cmd.SceneName)
+		fmt.Fprintf(ctx.Out, "No scene items found in scene %s.\n", ctx.Style.Highlight(cmd.SceneName))
 		return nil
 	}
 
-	t := table.New(ctx.Out)
-	t.SetPadding(3)
+	t := table.New().Border(lipgloss.RoundedBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground(ctx.Style.border))
 	if cmd.UUID {
-		t.SetAlignment(table.AlignCenter, table.AlignLeft, table.AlignCenter, table.AlignCenter, table.AlignCenter)
-		t.SetHeaders("Item ID", "Item Name", "In Group", "Enabled", "UUID")
+		t.Headers("Item ID", "Item Name", "In Group", "Enabled", "UUID")
 	} else {
-		t.SetAlignment(table.AlignCenter, table.AlignLeft, table.AlignCenter, table.AlignCenter)
-		t.SetHeaders("Item ID", "Item Name", "In Group", "Enabled")
+		t.Headers("Item ID", "Item Name", "In Group", "Enabled")
 	}
+	t.StyleFunc(func(row, col int) lipgloss.Style {
+		style := lipgloss.NewStyle().Padding(0, 3)
+		switch col {
+		case 0:
+			style = style.Align(lipgloss.Left)
+		case 1:
+			style = style.Align(lipgloss.Left)
+		case 2:
+			style = style.Align(lipgloss.Center)
+		case 3:
+			style = style.Align(lipgloss.Center)
+		case 4:
+			style = style.Align(lipgloss.Left)
+		}
+		switch {
+		case row == table.HeaderRow:
+			style = style.Bold(true).Align(lipgloss.Center)
+		case row%2 == 0:
+			style = style.Foreground(ctx.Style.evenRows)
+		default:
+			style = style.Foreground(ctx.Style.oddRows)
+		}
+		return style
+	})
 
 	sort.Slice(resp.SceneItems, func(i, j int) bool {
 		return resp.SceneItems[i].SceneItemID < resp.SceneItems[j].SceneItemID
@@ -65,7 +89,11 @@ func (cmd *SceneItemListCmd) Run(ctx *context) error {
 			resp, err := ctx.Client.SceneItems.GetGroupSceneItemList(sceneitems.NewGetGroupSceneItemListParams().
 				WithSceneName(item.SourceName))
 			if err != nil {
-				return fmt.Errorf("failed to get group scene item list for '%s': %w", item.SourceName, err)
+				return fmt.Errorf(
+					"failed to get group scene item list for group %s: %w",
+					ctx.Style.Error(item.SourceName),
+					err,
+				)
 			}
 
 			sort.Slice(resp.SceneItems, func(i, j int) bool {
@@ -74,7 +102,7 @@ func (cmd *SceneItemListCmd) Run(ctx *context) error {
 
 			for _, groupItem := range resp.SceneItems {
 				if cmd.UUID {
-					t.AddRow(
+					t.Row(
 						fmt.Sprintf("%d", groupItem.SceneItemID),
 						groupItem.SourceName,
 						item.SourceName,
@@ -82,7 +110,7 @@ func (cmd *SceneItemListCmd) Run(ctx *context) error {
 						groupItem.SourceUuid,
 					)
 				} else {
-					t.AddRow(
+					t.Row(
 						fmt.Sprintf("%d", groupItem.SceneItemID),
 						groupItem.SourceName,
 						item.SourceName,
@@ -92,26 +120,26 @@ func (cmd *SceneItemListCmd) Run(ctx *context) error {
 			}
 		} else {
 			if cmd.UUID {
-				t.AddRow(fmt.Sprintf("%d", item.SceneItemID), item.SourceName, "",
+				t.Row(fmt.Sprintf("%d", item.SceneItemID), item.SourceName, "",
 					getEnabledMark(item.SceneItemEnabled), item.SourceUuid)
 			} else {
-				t.AddRow(fmt.Sprintf("%d", item.SceneItemID), item.SourceName, "", getEnabledMark(item.SceneItemEnabled))
+				t.Row(fmt.Sprintf("%d", item.SceneItemID), item.SourceName, "", getEnabledMark(item.SceneItemEnabled))
 			}
 		}
 	}
-	t.Render()
+	fmt.Fprintln(ctx.Out, t.Render())
 	return nil
 }
 
 // getSceneNameAndItemID retrieves the scene name and item ID for a given item in a scene or group.
 func getSceneNameAndItemID(
-	client *goobs.Client,
+	ctx *context,
 	sceneName string,
 	itemName string,
 	group string,
 ) (string, int, error) {
 	if group != "" {
-		resp, err := client.SceneItems.GetGroupSceneItemList(sceneitems.NewGetGroupSceneItemListParams().
+		resp, err := ctx.Client.SceneItems.GetGroupSceneItemList(sceneitems.NewGetGroupSceneItemListParams().
 			WithSceneName(group))
 		if err != nil {
 			return "", 0, err
@@ -121,13 +149,22 @@ func getSceneNameAndItemID(
 				return group, int(item.SceneItemID), nil
 			}
 		}
-		return "", 0, fmt.Errorf("item '%s' not found in scene '%s'", itemName, sceneName)
+		return "", 0, fmt.Errorf("item %s not found in scene %s", ctx.Style.Error(itemName), ctx.Style.Error(sceneName))
 	}
 
-	itemID, err := client.SceneItems.GetSceneItemId(sceneitems.NewGetSceneItemIdParams().
+	itemID, err := ctx.Client.SceneItems.GetSceneItemId(sceneitems.NewGetSceneItemIdParams().
 		WithSceneName(sceneName).
 		WithSourceName(itemName))
 	if err != nil {
+		if err.Error() == "request GetSceneItemId: ResourceNotFound (600): No scene items were found in the specified scene by that name or offset." {
+			return "", 0, fmt.Errorf(
+				"item %s not found in scene %s. is it in a group? if so use the %s flag to specify the parent group\nuse %s for a list of items in the scene",
+				ctx.Style.Error(itemName),
+				ctx.Style.Error(sceneName),
+				ctx.Style.Error("--group"),
+				ctx.Style.Error("gobs-cli si ls"),
+			)
+		}
 		return "", 0, err
 	}
 	return sceneName, int(itemID.SceneItemId), nil
@@ -143,7 +180,7 @@ type SceneItemShowCmd struct {
 
 // Run executes the command to show a scene item.
 func (cmd *SceneItemShowCmd) Run(ctx *context) error {
-	sceneName, sceneItemID, err := getSceneNameAndItemID(ctx.Client, cmd.SceneName, cmd.ItemName, cmd.Group)
+	sceneName, sceneItemID, err := getSceneNameAndItemID(ctx, cmd.SceneName, cmd.ItemName, cmd.Group)
 	if err != nil {
 		return err
 	}
@@ -157,9 +194,14 @@ func (cmd *SceneItemShowCmd) Run(ctx *context) error {
 	}
 
 	if cmd.Group != "" {
-		fmt.Fprintf(ctx.Out, "Scene item '%s' in group '%s' is now visible.\n", cmd.ItemName, cmd.Group)
+		fmt.Fprintf(
+			ctx.Out,
+			"Scene item %s in group %s is now visible.\n",
+			ctx.Style.Highlight(cmd.ItemName),
+			ctx.Style.Highlight(cmd.Group),
+		)
 	} else {
-		fmt.Fprintf(ctx.Out, "Scene item '%s' in scene '%s' is now visible.\n", cmd.ItemName, cmd.SceneName)
+		fmt.Fprintf(ctx.Out, "Scene item %s in scene %s is now visible.\n", ctx.Style.Highlight(cmd.ItemName), ctx.Style.Highlight(cmd.SceneName))
 	}
 
 	return nil
@@ -175,7 +217,7 @@ type SceneItemHideCmd struct {
 
 // Run executes the command to hide a scene item.
 func (cmd *SceneItemHideCmd) Run(ctx *context) error {
-	sceneName, sceneItemID, err := getSceneNameAndItemID(ctx.Client, cmd.SceneName, cmd.ItemName, cmd.Group)
+	sceneName, sceneItemID, err := getSceneNameAndItemID(ctx, cmd.SceneName, cmd.ItemName, cmd.Group)
 	if err != nil {
 		return err
 	}
@@ -189,9 +231,14 @@ func (cmd *SceneItemHideCmd) Run(ctx *context) error {
 	}
 
 	if cmd.Group != "" {
-		fmt.Fprintf(ctx.Out, "Scene item '%s' in group '%s' is now hidden.\n", cmd.ItemName, cmd.Group)
+		fmt.Fprintf(
+			ctx.Out,
+			"Scene item %s in group %s is now hidden.\n",
+			ctx.Style.Highlight(cmd.ItemName),
+			ctx.Style.Highlight(cmd.Group),
+		)
 	} else {
-		fmt.Fprintf(ctx.Out, "Scene item '%s' in scene '%s' is now hidden.\n", cmd.ItemName, cmd.SceneName)
+		fmt.Fprintf(ctx.Out, "Scene item %s in scene %s is now hidden.\n", ctx.Style.Highlight(cmd.ItemName), ctx.Style.Highlight(cmd.SceneName))
 	}
 
 	return nil
@@ -218,7 +265,7 @@ type SceneItemToggleCmd struct {
 
 // Run executes the command to toggle the visibility of a scene item.
 func (cmd *SceneItemToggleCmd) Run(ctx *context) error {
-	sceneName, sceneItemID, err := getSceneNameAndItemID(ctx.Client, cmd.SceneName, cmd.ItemName, cmd.Group)
+	sceneName, sceneItemID, err := getSceneNameAndItemID(ctx, cmd.SceneName, cmd.ItemName, cmd.Group)
 	if err != nil {
 		return err
 	}
@@ -237,9 +284,14 @@ func (cmd *SceneItemToggleCmd) Run(ctx *context) error {
 	}
 
 	if itemEnabled {
-		fmt.Fprintf(ctx.Out, "Scene item '%s' in scene '%s' is now hidden.\n", cmd.ItemName, cmd.SceneName)
+		fmt.Fprintf(
+			ctx.Out,
+			"Scene item %s in scene %s is now hidden.\n",
+			ctx.Style.Highlight(cmd.ItemName),
+			ctx.Style.Highlight(cmd.SceneName),
+		)
 	} else {
-		fmt.Fprintf(ctx.Out, "Scene item '%s' in scene '%s' is now visible.\n", cmd.ItemName, cmd.SceneName)
+		fmt.Fprintf(ctx.Out, "Scene item %s in scene %s is now visible.\n", ctx.Style.Highlight(cmd.ItemName), ctx.Style.Highlight(cmd.SceneName))
 	}
 
 	return nil
@@ -255,7 +307,7 @@ type SceneItemVisibleCmd struct {
 
 // Run executes the command to check the visibility of a scene item.
 func (cmd *SceneItemVisibleCmd) Run(ctx *context) error {
-	sceneName, sceneItemID, err := getSceneNameAndItemID(ctx.Client, cmd.SceneName, cmd.ItemName, cmd.Group)
+	sceneName, sceneItemID, err := getSceneNameAndItemID(ctx, cmd.SceneName, cmd.ItemName, cmd.Group)
 	if err != nil {
 		return err
 	}
@@ -266,9 +318,14 @@ func (cmd *SceneItemVisibleCmd) Run(ctx *context) error {
 	}
 
 	if itemEnabled {
-		fmt.Fprintf(ctx.Out, "Scene item '%s' in scene '%s' is visible.\n", cmd.ItemName, cmd.SceneName)
+		fmt.Fprintf(
+			ctx.Out,
+			"Scene item %s in scene %s is visible.\n",
+			ctx.Style.Highlight(cmd.ItemName),
+			ctx.Style.Highlight(cmd.SceneName),
+		)
 	} else {
-		fmt.Fprintf(ctx.Out, "Scene item '%s' in scene '%s' is hidden.\n", cmd.ItemName, cmd.SceneName)
+		fmt.Fprintf(ctx.Out, "Scene item %s in scene %s is hidden.\n", ctx.Style.Highlight(cmd.ItemName), ctx.Style.Highlight(cmd.SceneName))
 	}
 	return nil
 }
@@ -299,7 +356,7 @@ type SceneItemTransformCmd struct {
 
 // Run executes the command to transform a scene item.
 func (cmd *SceneItemTransformCmd) Run(ctx *context) error {
-	sceneName, sceneItemID, err := getSceneNameAndItemID(ctx.Client, cmd.SceneName, cmd.ItemName, cmd.Group)
+	sceneName, sceneItemID, err := getSceneNameAndItemID(ctx, cmd.SceneName, cmd.ItemName, cmd.Group)
 	if err != nil {
 		return err
 	}
@@ -372,9 +429,14 @@ func (cmd *SceneItemTransformCmd) Run(ctx *context) error {
 	}
 
 	if cmd.Group != "" {
-		fmt.Fprintf(ctx.Out, "Scene item '%s' in group '%s' transformed.\n", cmd.ItemName, cmd.Group)
+		fmt.Fprintf(
+			ctx.Out,
+			"Scene item %s in group %s transformed.\n",
+			ctx.Style.Highlight(cmd.ItemName),
+			ctx.Style.Highlight(cmd.Group),
+		)
 	} else {
-		fmt.Fprintf(ctx.Out, "Scene item '%s' in scene '%s' transformed.\n", cmd.ItemName, cmd.SceneName)
+		fmt.Fprintf(ctx.Out, "Scene item %s in scene %s transformed.\n", ctx.Style.Highlight(cmd.ItemName), ctx.Style.Highlight(cmd.SceneName))
 	}
 
 	return nil

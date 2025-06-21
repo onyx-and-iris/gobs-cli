@@ -5,7 +5,8 @@ import (
 	"slices"
 
 	"github.com/andreykaipov/goobs/api/requests/config"
-	"github.com/aquasecurity/table"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/lipgloss/table"
 )
 
 // ProfileCmd provides commands to manage profiles in OBS Studio.
@@ -21,16 +22,34 @@ type ProfileCmd struct {
 type ProfileListCmd struct{} // size = 0x0
 
 // Run executes the command to list all profiles.
+// nolint: misspell
 func (cmd *ProfileListCmd) Run(ctx *context) error {
 	profiles, err := ctx.Client.Config.GetProfileList()
 	if err != nil {
 		return err
 	}
 
-	t := table.New(ctx.Out)
-	t.SetPadding(3)
-	t.SetAlignment(table.AlignLeft, table.AlignCenter)
-	t.SetHeaders("Profile Name", "Current")
+	t := table.New().Border(lipgloss.RoundedBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground(ctx.Style.border)).
+		Headers("Profile Name", "Current").
+		StyleFunc(func(row, col int) lipgloss.Style {
+			style := lipgloss.NewStyle().Padding(0, 3)
+			switch col {
+			case 0:
+				style = style.Align(lipgloss.Left)
+			case 1:
+				style = style.Align(lipgloss.Center)
+			}
+			switch {
+			case row == table.HeaderRow:
+				style = style.Bold(true).Align(lipgloss.Center)
+			case row%2 == 0:
+				style = style.Foreground(ctx.Style.evenRows)
+			default:
+				style = style.Foreground(ctx.Style.oddRows)
+			}
+			return style
+		})
 
 	for _, profile := range profiles.Profiles {
 		var enabledMark string
@@ -38,9 +57,9 @@ func (cmd *ProfileListCmd) Run(ctx *context) error {
 			enabledMark = getEnabledMark(true)
 		}
 
-		t.AddRow(profile, enabledMark)
+		t.Row(profile, enabledMark)
 	}
-	t.Render()
+	fmt.Fprintln(ctx.Out, t.Render())
 	return nil
 }
 
@@ -53,7 +72,7 @@ func (cmd *ProfileCurrentCmd) Run(ctx *context) error {
 	if err != nil {
 		return err
 	}
-	fmt.Fprintf(ctx.Out, "Current profile: %s\n", profiles.CurrentProfileName)
+	fmt.Fprintf(ctx.Out, "Current profile: %s\n", ctx.Style.Highlight(profiles.CurrentProfileName))
 
 	return nil
 }
@@ -72,15 +91,20 @@ func (cmd *ProfileSwitchCmd) Run(ctx *context) error {
 	current := profiles.CurrentProfileName
 
 	if current == cmd.Name {
-		return nil
+		return fmt.Errorf("already using profile %s", ctx.Style.Error(cmd.Name))
 	}
 
 	_, err = ctx.Client.Config.SetCurrentProfile(config.NewSetCurrentProfileParams().WithProfileName(cmd.Name))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to switch to profile %s: %w", ctx.Style.Error(cmd.Name), err)
 	}
 
-	fmt.Fprintf(ctx.Out, "Switched from profile %s to %s\n", current, cmd.Name)
+	fmt.Fprintf(
+		ctx.Out,
+		"Switched from profile %s to %s\n",
+		ctx.Style.Highlight(current),
+		ctx.Style.Highlight(cmd.Name),
+	)
 
 	return nil
 }
@@ -98,15 +122,15 @@ func (cmd *ProfileCreateCmd) Run(ctx *context) error {
 	}
 
 	if slices.Contains(profiles.Profiles, cmd.Name) {
-		return fmt.Errorf("profile %s already exists", cmd.Name)
+		return fmt.Errorf("profile %s already exists", ctx.Style.Error(cmd.Name))
 	}
 
 	_, err = ctx.Client.Config.CreateProfile(config.NewCreateProfileParams().WithProfileName(cmd.Name))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create profile %s: %w", ctx.Style.Error(cmd.Name), err)
 	}
 
-	fmt.Fprintf(ctx.Out, "Created profile: %s\n", cmd.Name)
+	fmt.Fprintf(ctx.Out, "Created profile: %s\n", ctx.Style.Highlight(cmd.Name))
 
 	return nil
 }
@@ -124,19 +148,21 @@ func (cmd *ProfileRemoveCmd) Run(ctx *context) error {
 	}
 
 	if !slices.Contains(profiles.Profiles, cmd.Name) {
-		return fmt.Errorf("profile %s does not exist", cmd.Name)
+		return fmt.Errorf("profile %s does not exist", ctx.Style.Error(cmd.Name))
 	}
 
+	// Prevent deletion of the current profile
+	// This is allowed in OBS Studio (with a confirmation prompt), but we want to prevent it here
 	if profiles.CurrentProfileName == cmd.Name {
-		return fmt.Errorf("cannot delete current profile %s", cmd.Name)
+		return fmt.Errorf("cannot delete current profile %s", ctx.Style.Error(cmd.Name))
 	}
 
 	_, err = ctx.Client.Config.RemoveProfile(config.NewRemoveProfileParams().WithProfileName(cmd.Name))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to delete profile %s: %w", ctx.Style.Error(cmd.Name), err)
 	}
 
-	fmt.Fprintf(ctx.Out, "Deleted profile: %s\n", cmd.Name)
+	fmt.Fprintf(ctx.Out, "Deleted profile: %s\n", ctx.Style.Highlight(cmd.Name))
 
 	return nil
 }
