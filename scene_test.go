@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"strings"
 	"testing"
 )
 
@@ -11,18 +10,15 @@ func TestSceneList(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := &context{
-		Client: client,
-		Out:    &out,
-	}
+	context := newContext(client, &out, "")
 
 	cmd := &SceneListCmd{}
 	err := cmd.Run(context)
 	if err != nil {
 		t.Fatalf("Failed to list scenes: %v", err)
 	}
-	if !strings.Contains(out.String(), "gobs-test") {
-		t.Fatalf("Expected output to contain 'gobs-test', got '%s'", out.String())
+	if out.String() == "Current program scene: gobs-test\n" {
+		t.Fatalf("Expected output to be 'Current program scene: gobs-test', got '%s'", out.String())
 	}
 }
 
@@ -31,10 +27,7 @@ func TestSceneCurrent(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := &context{
-		Client: client,
-		Out:    &out,
-	}
+	context := newContext(client, &out, "")
 
 	// Set the current scene to "gobs-test"
 	cmdSwitch := &SceneSwitchCmd{
@@ -52,7 +45,7 @@ func TestSceneCurrent(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get current scene: %v", err)
 	}
-	if out.String() != "gobs-test\n" {
-		t.Fatalf("Expected output to contain 'gobs-test', got '%s'", out.String())
+	if out.String() != "Current program scene: gobs-test\n" {
+		t.Fatalf("Expected output to be 'Current program scene: gobs-test', got '%s'", out.String())
 	}
 }

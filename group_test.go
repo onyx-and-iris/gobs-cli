@@ -11,10 +11,7 @@ func TestGroupList(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := &context{
-		Client: client,
-		Out:    &out,
-	}
+	context := newContext(client, &out, "")
 
 	cmd := &GroupListCmd{
 		SceneName: "Scene",
@@ -33,10 +30,7 @@ func TestGroupShow(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := &context{
-		Client: client,
-		Out:    &out,
-	}
+	context := newContext(client, &out, "")
 
 	cmd := &GroupShowCmd{
 		SceneName: "Scene",
@@ -56,10 +50,7 @@ func TestGroupToggle(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := &context{
-		Client: client,
-		Out:    &out,
-	}
+	context := newContext(client, &out, "")
 
 	cmdStatus := &GroupStatusCmd{
 		SceneName: "Scene",
@@ -100,10 +91,7 @@ func TestGroupStatus(t *testing.T) {
 	defer disconnect()
 
 	var out bytes.Buffer
-	context := &context{
-		Client: client,
-		Out:    &out,
-	}
+	context := newContext(client, &out, "")
 
 	cmdShow := &GroupShowCmd{
 		SceneName: "Scene",
