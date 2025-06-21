@@ -26,88 +26,88 @@ func (s *Style) Error(text string) string {
 	return lipgloss.NewStyle().Foreground(lipgloss.Color("#FF0000")).Render(text) // Red for errors
 }
 
-func newRedStyle() *Style {
-	return &Style{
+func newRedStyle() Style {
+	return Style{
 		name:      "red",
 		border:    lipgloss.Color("#D32F2F"), // Strong red for border
 		oddRows:   lipgloss.Color("#FFCDD2"), // Very light red for odd rows
 		evenRows:  lipgloss.Color("#EF9A9A"), // Light red for even rows
-		highlight: lipgloss.Color("#EF9A9A"),
+		highlight: lipgloss.Color("#EF9A9A"), // Highlight in light red
 	}
 }
 
-func newMagentaStyle() *Style {
-	return &Style{
+func newMagentaStyle() Style {
+	return Style{
 		name:      "magenta",
 		border:    lipgloss.Color("#C2185B"), // Strong magenta for border
 		oddRows:   lipgloss.Color("#F8BBD0"), // Very light magenta/pink for odd rows
 		evenRows:  lipgloss.Color("#F48FB1"), // Light magenta/pink for even rows
-		highlight: lipgloss.Color("#F48FB1"),
+		highlight: lipgloss.Color("#F48FB1"), // Highlight in light magenta/pink
 	}
 }
 
-func newPurpleStyle() *Style {
-	return &Style{
+func newPurpleStyle() Style {
+	return Style{
 		name:      "purple",
 		border:    lipgloss.Color("#7B1FA2"), // Strong purple for border
 		oddRows:   lipgloss.Color("#E1BEE7"), // Very light purple for odd rows
 		evenRows:  lipgloss.Color("#CE93D8"), // Light purple for even rows
-		highlight: lipgloss.Color("#CE93D8"),
+		highlight: lipgloss.Color("#CE93D8"), // Highlight in light purple
 	}
 }
 
-func newBlueStyle() *Style {
-	return &Style{
+func newBlueStyle() Style {
+	return Style{
 		name:      "blue",
 		border:    lipgloss.Color("#1976D2"), // Medium blue for border
 		oddRows:   lipgloss.Color("#E3F2FD"), // Very light blue for odd rows
 		evenRows:  lipgloss.Color("#BBDEFB"), // Light blue for even rows
-		highlight: lipgloss.Color("#1976D2"),
+		highlight: lipgloss.Color("#1976D2"), // Highlight in medium blue
 	}
 }
 
-func newCyanStyle() *Style {
-	return &Style{
+func newCyanStyle() Style {
+	return Style{
 		name:      "cyan",
 		border:    lipgloss.Color("#00BFCF"), // A strong cyan for border
 		oddRows:   lipgloss.Color("#E0F7FA"), // Very light cyan for odd rows
 		evenRows:  lipgloss.Color("#B2EBF2"), // Slightly darker light cyan for even rows
-		highlight: lipgloss.Color("#00BFCF"),
+		highlight: lipgloss.Color("#00BFCF"), // Highlight in strong cyan
 	}
 }
 
-func newGreenStyle() *Style {
-	return &Style{
+func newGreenStyle() Style {
+	return Style{
 		name:      "green",
 		border:    lipgloss.Color("#43A047"), // Medium green for border
 		oddRows:   lipgloss.Color("#E8F5E9"), // Very light green for odd rows
 		evenRows:  lipgloss.Color("#C8E6C9"), // Light green for even rows
-		highlight: lipgloss.Color("#43A047"),
+		highlight: lipgloss.Color("#43A047"), // Highlight in medium green
 	}
 }
 
-func newYellowStyle() *Style {
-	return &Style{
+func newYellowStyle() Style {
+	return Style{
 		name:      "yellow",
 		border:    lipgloss.Color("#FBC02D"), // Strong yellow for border
 		oddRows:   lipgloss.Color("#FFF9C4"), // Very light yellow for odd rows
 		evenRows:  lipgloss.Color("#FFF59D"), // Light yellow for even rows
-		highlight: lipgloss.Color("#FBC02D"),
+		highlight: lipgloss.Color("#FBC02D"), // Highlight in strong yellow
 	}
 }
 
-func newOrangeStyle() *Style {
-	return &Style{
+func newOrangeStyle() Style {
+	return Style{
 		name:      "orange",
 		border:    lipgloss.Color("#F57C00"), // Strong orange for border
 		oddRows:   lipgloss.Color("#FFF3E0"), // Very light orange for odd rows
 		evenRows:  lipgloss.Color("#FFE0B2"), // Light orange for even rows
-		highlight: lipgloss.Color("#F57C00"),
+		highlight: lipgloss.Color("#F57C00"), // Highlight in strong orange
 	}
 }
 
-func newWhiteStyle() *Style {
-	return &Style{
+func newWhiteStyle() Style {
+	return Style{
 		name:      "white",
 		border:    lipgloss.Color("#FFFFFF"), // White for border
 		oddRows:   lipgloss.Color("#F0F0F0"), // Very light grey for odd rows
@@ -116,8 +116,8 @@ func newWhiteStyle() *Style {
 	}
 }
 
-func newGreyStyle() *Style {
-	return &Style{
+func newGreyStyle() Style {
+	return Style{
 		name:      "grey",
 		border:    lipgloss.Color("#9E9E9E"), // Medium grey for border
 		oddRows:   lipgloss.Color("#F5F5F5"), // Very light grey for odd rows
@@ -126,8 +126,8 @@ func newGreyStyle() *Style {
 	}
 }
 
-func newNavyBlueStyle() *Style {
-	return &Style{
+func newNavyBlueStyle() Style {
+	return Style{
 		name:      "navy",
 		border:    lipgloss.Color("#001F3F"), // Navy blue for border
 		oddRows:   lipgloss.Color("#CFE2F3"), // Very light blue for odd rows
@@ -136,8 +136,8 @@ func newNavyBlueStyle() *Style {
 	}
 }
 
-func newBlackStyle() *Style {
-	return &Style{
+func newBlackStyle() Style {
+	return Style{
 		name:      "black",
 		border:    lipgloss.Color("#000000"), // Black for border
 		oddRows:   lipgloss.Color("#333333"), // Dark grey for odd rows
@@ -146,32 +146,34 @@ func newBlackStyle() *Style {
 	}
 }
 
-func styleFromFlag(colour string) *Style {
-	switch colour {
+func styleFromFlag(cfg StyleConfig) *Style {
+	var style Style
+
+	switch cfg.Style {
 	case "red":
-		return newRedStyle()
+		style = newRedStyle()
 	case "magenta":
-		return newMagentaStyle()
+		style = newMagentaStyle()
 	case "purple":
-		return newPurpleStyle()
+		style = newPurpleStyle()
 	case "blue":
-		return newBlueStyle()
+		style = newBlueStyle()
 	case "cyan":
-		return newCyanStyle()
+		style = newCyanStyle()
 	case "green":
-		return newGreenStyle()
+		style = newGreenStyle()
 	case "yellow":
-		return newYellowStyle()
+		style = newYellowStyle()
 	case "orange":
-		return newOrangeStyle()
+		style = newOrangeStyle()
 	case "white":
-		return newWhiteStyle()
+		style = newWhiteStyle()
 	case "grey":
-		return newGreyStyle()
+		style = newGreyStyle()
 	case "navy":
-		return newNavyBlueStyle()
+		style = newNavyBlueStyle()
 	case "black":
-		return newBlackStyle()
+		style = newBlackStyle()
 	default:
 		err := os.Setenv("NO_COLOR", "1") // nolint: misspell
 		if err != nil {
@@ -179,6 +181,12 @@ func styleFromFlag(colour string) *Style {
 			// This is a fallback to ensure that the application can still run
 			fmt.Fprintf(os.Stderr, "Error setting NO_COLOR: %v\n", err)
 		}
-		return &Style{}
 	}
+
+	// If noBorder is true, we disable the border styling
+	if cfg.NoBorder {
+		style.border = ""
+	}
+
+	return &style
 }
