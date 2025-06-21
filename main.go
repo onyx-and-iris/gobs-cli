@@ -26,7 +26,8 @@ type ObsConfig struct {
 
 // StyleConfig holds the configuration for styling the CLI output.
 type StyleConfig struct {
-	Style string `help:"Style used in output." flag:"style" default:"" env:"GOBS_STYLE" short:"s" enum:",red,magenta,purple,blue,cyan,green,yellow,orange,white,grey,navy,black"`
+	Style    string `help:"Style used in output."                   flag:"style"     default:""      env:"GOBS_STYLE"           short:"s" enum:",red,magenta,purple,blue,cyan,green,yellow,orange,white,grey,navy,black"`
+	NoBorder bool   `help:"Disable table border styling in output." flag:"no-border" default:"false" env:"GOBS_STYLE_NO_BORDER" short:"b"`
 }
 
 // CLI is the main command line interface structure.
@@ -62,11 +63,11 @@ type context struct {
 	Style  *Style
 }
 
-func newContext(client *goobs.Client, out io.Writer, styleName string) *context {
+func newContext(client *goobs.Client, out io.Writer, styleCfg StyleConfig) *context {
 	return &context{
 		Client: client,
 		Out:    out,
-		Style:  styleFromFlag(styleName),
+		Style:  styleFromFlag(styleCfg),
 	}
 }
 
@@ -88,7 +89,7 @@ func main() {
 	client, err := connectObs(cli.ObsConfig)
 	ctx.FatalIfErrorf(err)
 
-	ctx.Bind(newContext(client, os.Stdout, cli.StyleConfig.Style))
+	ctx.Bind(newContext(client, os.Stdout, cli.StyleConfig))
 
 	ctx.FatalIfErrorf(run(ctx, client))
 }
