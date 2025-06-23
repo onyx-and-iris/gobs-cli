@@ -204,6 +204,9 @@ func (cmd *RecordSplitCmd) Run(ctx *context) error {
 	if !status.OutputActive {
 		return fmt.Errorf("recording is not in progress")
 	}
+	if status.OutputPaused {
+		return fmt.Errorf("recording is paused, cannot split")
+	}
 
 	_, err = ctx.Client.Record.SplitRecordFile()
 	if err != nil {
@@ -228,6 +231,9 @@ func (cmd *RecordChapterCmd) Run(ctx *context) error {
 
 	if !status.OutputActive {
 		return fmt.Errorf("recording is not in progress")
+	}
+	if status.OutputPaused {
+		return fmt.Errorf("recording is paused, cannot create chapter")
 	}
 
 	var params *record.CreateRecordChapterParams

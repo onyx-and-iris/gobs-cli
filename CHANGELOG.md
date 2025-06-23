@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 -   record split and record chapter commands, see [RecordCmd](https://github.com/onyx-and-iris/gobs-cli?tab=readme-ov-file#recordcmd)
+    -   As of OBS 30.2.0, the only file format supporting *record chapter* is Hybrid MP4.
 
 # [0.12.1] - 2025-06-21
 
