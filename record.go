@@ -4,17 +4,20 @@ import (
 	"fmt"
 
 	"github.com/andreykaipov/goobs/api/requests/config"
+	"github.com/andreykaipov/goobs/api/requests/record"
 )
 
 // RecordCmd handles the recording commands.
 type RecordCmd struct {
-	Start     RecordStartCmd     `cmd:"" help:"Start recording."             aliases:"s"`
-	Stop      RecordStopCmd      `cmd:"" help:"Stop recording."              aliases:"st"`
-	Toggle    RecordToggleCmd    `cmd:"" help:"Toggle recording."            aliases:"tg"`
-	Status    RecordStatusCmd    `cmd:"" help:"Show recording status."       aliases:"ss"`
-	Pause     RecordPauseCmd     `cmd:"" help:"Pause recording."             aliases:"p"`
-	Resume    RecordResumeCmd    `cmd:"" help:"Resume recording."            aliases:"r"`
-	Directory RecordDirectoryCmd `cmd:"" help:"Get/Set recording directory." aliases:"d"`
+	Start     RecordStartCmd     `cmd:"" help:"Start recording."                   aliases:"s"`
+	Stop      RecordStopCmd      `cmd:"" help:"Stop recording."                    aliases:"st"`
+	Toggle    RecordToggleCmd    `cmd:"" help:"Toggle recording."                  aliases:"tg"`
+	Status    RecordStatusCmd    `cmd:"" help:"Show recording status."             aliases:"ss"`
+	Pause     RecordPauseCmd     `cmd:"" help:"Pause recording."                   aliases:"p"`
+	Resume    RecordResumeCmd    `cmd:"" help:"Resume recording."                  aliases:"r"`
+	Directory RecordDirectoryCmd `cmd:"" help:"Get/Set recording directory."       aliases:"d"`
+	Split     RecordSplitCmd     `cmd:"" help:"Split recording."                   aliases:"sp"`
+	Chapter   RecordChapterCmd   `cmd:"" help:"Create a chapter in the recording." aliases:"c"`
 }
 
 // RecordStartCmd starts the recording.
@@ -185,5 +188,64 @@ func (cmd *RecordDirectoryCmd) Run(ctx *context) error {
 	}
 
 	fmt.Fprintf(ctx.Out, "Recording directory set to: %s\n", ctx.Style.Highlight(cmd.RecordDirectory))
+	return nil
+}
+
+// RecordSplitCmd splits the current recording.
+type RecordSplitCmd struct{} // size = 0x0
+
+// Run executes the command to split the recording.
+func (cmd *RecordSplitCmd) Run(ctx *context) error {
+	status, err := ctx.Client.Record.GetRecordStatus()
+	if err != nil {
+		return err
+	}
+
+	if !status.OutputActive {
+		return fmt.Errorf("recording is not in progress")
+	}
+
+	_, err = ctx.Client.Record.SplitRecordFile()
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprintln(ctx.Out, "Recording split successfully.")
+	return nil
+}
+
+// RecordChapterCmd creates a chapter in the recording.
+type RecordChapterCmd struct {
+	ChapterName string `arg:"" help:"Name of the chapter to create." default:""`
+}
+
+// Run executes the command to create a chapter in the recording.
+func (cmd *RecordChapterCmd) Run(ctx *context) error {
+	status, err := ctx.Client.Record.GetRecordStatus()
+	if err != nil {
+		return err
+	}
+
+	if !status.OutputActive {
+		return fmt.Errorf("recording is not in progress")
+	}
+
+	var params *record.CreateRecordChapterParams
+	if cmd.ChapterName == "" {
+		params = record.NewCreateRecordChapterParams()
+	} else {
+		params = record.NewCreateRecordChapterParams().WithChapterName(cmd.ChapterName)
+	}
+
+	_, err = ctx.Client.Record.CreateRecordChapter(params)
+	if err != nil {
+		return err
+	}
+
+	if cmd.ChapterName == "" {
+		cmd.ChapterName = "unnamed"
+	}
+
+	fmt.Fprintf(ctx.Out, "Chapter %s created successfully.\n", ctx.Style.Highlight(cmd.ChapterName))
 	return nil
 }

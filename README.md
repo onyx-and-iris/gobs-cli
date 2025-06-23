@@ -313,6 +313,21 @@ gobs-cli record directory "/home/me/obs-vids/"
 gobs-cli record directory "C:/Users/me/Videos"
 ```
 
+-   split: Split recording.
+
+```console
+gobs-cli record split
+```
+
+-   chapter: Create a chapter in the recording.
+
+    *optional*
+    -   arg: ChapterName
+
+```console
+gobs-cli record chapter "Chapter Name"
+```
+
 ### StreamCmd
 
 -   start: Start streaming.
