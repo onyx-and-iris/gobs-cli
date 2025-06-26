@@ -8,6 +8,8 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime/debug"
+	"strings"
 	"time"
 
 	"github.com/alecthomas/kong"
@@ -15,6 +17,19 @@ import (
 	"github.com/andreykaipov/goobs"
 	kongdotenv "github.com/titusjaka/kong-dotenv-go"
 )
+
+var version string // Version of the CLI, set at build time.
+
+// VersionFlag is a custom flag type that prints the version and exits.
+type VersionFlag string
+
+func (v VersionFlag) Decode(_ *kong.DecodeContext) error { return nil }  // nolint: revive
+func (v VersionFlag) IsBool() bool                       { return true } // nolint: revive
+func (v VersionFlag) BeforeApply(app *kong.Kong, vars kong.Vars) error { // nolint: revive, unparam
+	fmt.Printf("gobs-cli version: %s\n", vars["version"])
+	app.Exit(0)
+	return nil
+}
 
 // ObsConfig holds the configuration for connecting to the OBS WebSocket server.
 type ObsConfig struct {
@@ -31,7 +46,7 @@ type StyleConfig struct {
 }
 
 // CLI is the main command line interface structure.
-// It embeds the ObsConfig struct to inherit its fields and flags.
+// It embeds ObsConfig and StyleConfig to provide configuration options.
 type CLI struct {
 	ObsConfig   `embed:"" help:"OBS WebSocket configuration."`
 	StyleConfig `embed:"" help:"Style configuration."`
@@ -81,10 +96,25 @@ func main() {
 	var cli CLI
 	ctx := kong.Parse(
 		&cli,
-		kong.Name("GOBS-CLI"),
+		kong.Name("gobs-cli"),
 		kong.Description("A command line tool to interact with OBS Websocket."),
 		kong.Configuration(kongdotenv.ENVFileReader, ".env", filepath.Join(userConfigDir, "gobs-cli", "config.env")),
-	)
+		kong.UsageOnError(),
+		kong.ConfigureHelp(kong.HelpOptions{
+			Compact: true,
+		}),
+		kong.Vars{
+			"version": func() string {
+				if version == "" {
+					info, ok := debug.ReadBuildInfo()
+					if !ok {
+						return "(unable to read build info)"
+					}
+					version = strings.Split(info.Main.Version, "-")[0]
+				}
+				return version
+			}(),
+		})
 
 	client, err := connectObs(cli.ObsConfig)
 	ctx.FatalIfErrorf(err)
