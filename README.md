@@ -10,6 +10,7 @@ For an outline of past/future changes refer to: [CHANGELOG](CHANGELOG.md)
 
 - [Installation](#installation)
 - [Configuration](#configuration)
+- [Style](#style)
 - [Commands](#commands)
 - [License](#license)
 
