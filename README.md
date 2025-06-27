@@ -77,7 +77,7 @@ gobs-cli --style="red" --no-border sceneitem list
 Or with environment variables:
 
 ```env
-GOBS_STYLE=cyan
+GOBS_STYLE=red
 GOBS_STYLE_NO_BORDER=true
 ```
 
