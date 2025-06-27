@@ -4,6 +4,15 @@ A command line interface for OBS Websocket v5
 
 For an outline of past/future changes refer to: [CHANGELOG](CHANGELOG.md)
 
+-----
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Commands](#commands)
+- [License](#license)
+
 ## Installation
 
 ```console
@@ -40,6 +49,36 @@ OBS_PASSWORD=<websocket password>
 OBS_TIMEOUT=5
 ```
 
+## Style
+
+Styling is opt-in, by default you will get a colourless output:
+
+![colourless](./img/colourless.png)
+
+You may enable styling with the --style/-s flag:
+
+```console
+gobs-cli --style="red" sceneitem list
+```
+
+Available styles: _red, magenta, purple, blue, cyan, green, yellow, orange, white, grey, navy, black_
+
+![coloured](./img/coloured-border.png)
+
+Optionally you may disable border colouring with the --no-border flag:
+
+![coloured-no-border](./img/coloured-no-border.png)
+
+```console
+gobs-cli --style="red" --no-border sceneitem list
+```
+
+Or with environment variables:
+
+```env
+GOBS_STYLE=cyan
+GOBS_STYLE_NO_BORDER=true
+```
 
 ## Commands
 
@@ -621,33 +660,9 @@ gobs-cli projector open --monitor-index=1 "test_group"
 gobs-cli screenshot save --width=2560 --height=1440 "Scene" "C:\Users\me\Videos\screenshot.png"
 ```
 
-## Style
+## License
 
-By default styling is disabled but you may enable and configure it in the following ways:
-
--   --style/-s: Style used in output.
-    -  GOBS_STYLE
--   --no-border/-b: Disable table border styling in output.
-    -   GOBS_STYLE_NO_BORDER
-
-Available styles:
-
-- red
-- magenta
-- purple
-- blue
-- cyan
-- green
-- yellow
-- orange
-- white
-- grey
-- navy
-- black
-
-```console
-gobs-cli --style=cyan --no-border scene list
-```
+`gobs-cli` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
 
 
 [userconfigdir]: https://pkg.go.dev/os#UserConfigDir
