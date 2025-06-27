@@ -5,12 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-# [0.13.2] - 2025-06-26
+# [0.13.3] - 2025-06-27
 
 ### Changed
 
 -   usage is now printed on errors.
 -   help is printed in compact mode. This should make it easier to page through help on the root command.
+
+### Fixed
+
+-   Item ID alignment in sceneitem list table.
 
 # [0.13.0] - 2025-06-23
 
