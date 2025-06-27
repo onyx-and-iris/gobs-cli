@@ -59,7 +59,7 @@ func (cmd *SceneItemListCmd) Run(ctx *context) error {
 		style := lipgloss.NewStyle().Padding(0, 3)
 		switch col {
 		case 0:
-			style = style.Align(lipgloss.Left)
+			style = style.Align(lipgloss.Center)
 		case 1:
 			style = style.Align(lipgloss.Left)
 		case 2:
