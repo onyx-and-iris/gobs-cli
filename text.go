@@ -33,11 +33,18 @@ func (cmd *TextCurrentCmd) Run(ctx *context) error {
 		return fmt.Errorf("input %s is of %s", cmd.InputName, kind)
 	}
 
+	currentText, ok := resp.InputSettings["text"]
+	if !ok {
+		return fmt.Errorf("input %s does not have a 'text' setting", cmd.InputName)
+	}
+	if currentText == "" {
+		currentText = "(empty)"
+	}
 	fmt.Fprintf(
 		ctx.Out,
 		"Current text for source %s: %s\n",
 		ctx.Style.Highlight(cmd.InputName),
-		resp.InputSettings["text"],
+		currentText,
 	)
 	return nil
 }
