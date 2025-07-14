@@ -59,6 +59,7 @@ type CLI struct {
 	Sceneitem       SceneItemCmd       `help:"Manage scene items."                     cmd:"" aliases:"si"  group:"Scene Item"`
 	Group           GroupCmd           `help:"Manage groups."                          cmd:"" aliases:"g"   group:"Group"`
 	Input           InputCmd           `help:"Manage inputs."                          cmd:"" aliases:"i"   group:"Input"`
+	Text            TextCmd            `help:"Manage text inputs."                     cmd:"" aliases:"t"   group:"Text Input"`
 	Record          RecordCmd          `help:"Manage recording."                       cmd:"" aliases:"rec" group:"Recording"`
 	Stream          StreamCmd          `help:"Manage streaming."                       cmd:"" aliases:"st"  group:"Streaming"`
 	Scenecollection SceneCollectionCmd `help:"Manage scene collections."               cmd:"" aliases:"scn" group:"Scene Collection"`
