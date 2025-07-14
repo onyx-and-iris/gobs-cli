@@ -302,6 +302,22 @@ gobs-cli input unmute "Mic/Aux"
 gobs-cli input toggle "Mic/Aux"
 ```
 
+### TextCmd
+
+-   current: Display current text for a text input.
+    -   args: InputName
+
+```console
+gobs-cli text current "My Text Input"
+```
+
+-   update: Update the text of a text input.
+    -   args: InputName NewText
+
+```console
+gobs-cli text update "My Text Input" "hi OBS!"
+```
+
 ### RecordCmd
 
 -   start: Start recording.
