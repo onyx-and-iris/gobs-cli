@@ -2,11 +2,20 @@ package main
 
 import (
 	"bytes"
+	"os"
 	"strings"
 	"testing"
 )
 
+func skipIfSkipGroupTests(t *testing.T) {
+	if os.Getenv("GOBS_TEST_SKIP_GROUP_TESTS") != "" {
+		t.Skip("Skipping group tests due to GOBS_TEST_SKIP_GROUP_TESTS environment variable")
+	}
+}
+
 func TestGroupList(t *testing.T) {
+	skipIfSkipGroupTests(t)
+
 	client, disconnect := getClient(t)
 	defer disconnect()
 
@@ -26,6 +35,8 @@ func TestGroupList(t *testing.T) {
 }
 
 func TestGroupShow(t *testing.T) {
+	skipIfSkipGroupTests(t)
+
 	client, disconnect := getClient(t)
 	defer disconnect()
 
@@ -46,6 +57,8 @@ func TestGroupShow(t *testing.T) {
 }
 
 func TestGroupToggle(t *testing.T) {
+	skipIfSkipGroupTests(t)
+
 	client, disconnect := getClient(t)
 	defer disconnect()
 
@@ -87,6 +100,8 @@ func TestGroupToggle(t *testing.T) {
 }
 
 func TestGroupStatus(t *testing.T) {
+	skipIfSkipGroupTests(t)
+
 	client, disconnect := getClient(t)
 	defer disconnect()
 

@@ -2,11 +2,20 @@ package main
 
 import (
 	"bytes"
+	"os"
 	"strings"
 	"testing"
 )
 
+func skipIfSkipReplayBufferTests(t *testing.T) {
+	if os.Getenv("GOBS_TEST_SKIP_REPLAYBUFFER_TESTS") != "" {
+		t.Skip("Skipping replay buffer tests due to GOBS_TEST_SKIP_REPLAYBUFFER_TESTS environment variable")
+	}
+}
+
 func TestReplayBufferStart(t *testing.T) {
+	skipIfSkipReplayBufferTests(t)
+
 	client, disconnect := getClient(t)
 	defer disconnect()
 
@@ -24,6 +33,8 @@ func TestReplayBufferStart(t *testing.T) {
 }
 
 func TestReplayBufferStop(t *testing.T) {
+	skipIfSkipReplayBufferTests(t)
+
 	client, disconnect := getClient(t)
 	defer disconnect()
 
@@ -41,6 +52,8 @@ func TestReplayBufferStop(t *testing.T) {
 }
 
 func TestReplayBufferToggle(t *testing.T) {
+	skipIfSkipReplayBufferTests(t)
+
 	client, disconnect := getClient(t)
 	defer disconnect()
 

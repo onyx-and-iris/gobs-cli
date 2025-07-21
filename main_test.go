@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"testing"
+	"time"
 
 	"github.com/andreykaipov/goobs"
 	"github.com/andreykaipov/goobs/api/requests/config"
@@ -55,6 +56,22 @@ func TestMain(m *testing.M) {
 }
 
 func setup(client *goobs.Client) {
+	client.Config.CreateProfile(config.NewCreateProfileParams().
+		WithProfileName("gobs-test-profile"))
+	time.Sleep(2 * time.Second) // wait for profile creation to propagate
+	client.Config.SetProfileParameter(config.NewSetProfileParameterParams().
+		WithParameterCategory("SimpleOutput").
+		WithParameterName("RecRB").
+		WithParameterValue("true"))
+	client.Config.SetProfileParameter(config.NewSetProfileParameterParams().
+		WithParameterCategory("AdvOut").
+		WithParameterName("RecRB").
+		WithParameterValue("true"))
+	client.Config.SetCurrentProfile(config.NewSetCurrentProfileParams().
+		WithProfileName("Untitled"))
+	client.Config.SetCurrentProfile(config.NewSetCurrentProfileParams().
+		WithProfileName("gobs-test-profile"))
+
 	client.Config.SetStreamServiceSettings(config.NewSetStreamServiceSettingsParams().
 		WithStreamServiceType("rtmp_common").
 		WithStreamServiceSettings(&typedefs.StreamServiceSettings{
@@ -90,6 +107,15 @@ func setup(client *goobs.Client) {
 		}).
 		WithSceneItemEnabled(true))
 
+	// ensure Desktop Audio input is created
+	client.Inputs.CreateInput(inputs.NewCreateInputParams().
+		WithSceneName("gobs-test").
+		WithInputName("Desktop Audio").
+		WithInputKind("wasapi_output_capture").
+		WithInputSettings(map[string]any{
+			"device_id": "default",
+		}))
+
 	// Create source filter on an audio input
 	client.Filters.CreateSourceFilter(filters.NewCreateSourceFilterParams().
 		WithSourceName("Mic/Aux").
@@ -115,6 +141,9 @@ func setup(client *goobs.Client) {
 }
 
 func teardown(client *goobs.Client) {
+	client.Config.RemoveProfile(config.NewRemoveProfileParams().
+		WithProfileName("gobs-test-profile"))
+
 	client.Filters.RemoveSourceFilter(filters.NewRemoveSourceFilterParams().
 		WithSourceName("Mic/Aux").
 		WithFilterName("test_filter"))

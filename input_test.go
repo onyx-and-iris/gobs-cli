@@ -22,9 +22,8 @@ func TestInputList(t *testing.T) {
 	expectedInputs := []string{
 		"Desktop Audio",
 		"Mic/Aux",
-		"Colour Source",
-		"Colour Source 2",
-		"Colour Source 3",
+		"gobs-test-input",
+		"gobs-test-input-2",
 	}
 	output := out.String()
 	for _, input := range expectedInputs {
@@ -52,9 +51,8 @@ func TestInputListFilterInput(t *testing.T) {
 	}
 	expectedFilteredOut := []string{
 		"Desktop Audio",
-		"Colour Source",
-		"Colour Source 2",
-		"Colour Source 3",
+		"gobs-test-input",
+		"gobs-test-input-2",
 	}
 	for _, input := range expectedInputs {
 		if !strings.Contains(out.String(), input) {
@@ -86,9 +84,8 @@ func TestInputListFilterOutput(t *testing.T) {
 	}
 	expectedFilteredOut := []string{
 		"Mic/Aux",
-		"Colour Source",
-		"Colour Source 2",
-		"Colour Source 3",
+		"gobs-test-input",
+		"gobs-test-input-2",
 	}
 	for _, input := range expectedInputs {
 		if !strings.Contains(out.String(), input) {
@@ -116,9 +113,8 @@ func TestInputListFilterColour(t *testing.T) {
 	}
 
 	expectedInputs := []string{
-		"Colour Source",
-		"Colour Source 2",
-		"Colour Source 3",
+		"gobs-test-input",
+		"gobs-test-input-2",
 	}
 	for _, input := range expectedInputs {
 		if !strings.Contains(out.String(), input) {
