@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"runtime"
 	"testing"
 	"time"
 
@@ -108,10 +109,19 @@ func setup(client *goobs.Client) {
 		WithSceneItemEnabled(true))
 
 	// ensure Desktop Audio input is created
+	var inputKind string
+	switch runtime.GOOS {
+	case "windows":
+		inputKind = "wasapi_output_capture"
+	case "linux":
+		inputKind = "pulse_output_capture"
+	case "darwin":
+		inputKind = "coreaudio_output_capture"
+	}
 	client.Inputs.CreateInput(inputs.NewCreateInputParams().
 		WithSceneName("gobs-test").
 		WithInputName("Desktop Audio").
-		WithInputKind("wasapi_output_capture").
+		WithInputKind(inputKind).
 		WithInputSettings(map[string]any{
 			"device_id": "default",
 		}))
