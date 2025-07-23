@@ -22,6 +22,7 @@ tasks:
     cmds:
       - task: build-windows
       - task: build-linux
+      - task: build-macos
 
   vet:
     desc: Vet the code
@@ -44,6 +45,12 @@ tasks:
     desc: Build the gobs-cli project for Linux
     cmds:
       - GOOS=linux GOARCH=amd64 go build -ldflags "-X 'main.version={{.VERSION}}'" -o {{.BIN_DIR}}/{{.PROGRAM}}_linux_amd64
+    internal: true
+
+  build-macos:
+    desc: Build the gobs-cli project for macOS
+    cmds:
+      - GOOS=darwin GOARCH=amd64 go build -ldflags "-X 'main.version={{.VERSION}}'" -o {{.BIN_DIR}}/{{.PROGRAM}}_darwin_amd64
     internal: true
 
   test:
