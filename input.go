@@ -13,10 +13,17 @@ import (
 
 // InputCmd provides commands to manage inputs in OBS Studio.
 type InputCmd struct {
+	Create InputCreateCmd `cmd:"" help:"Create input." aliases:"c"`
 	List   InputListCmd   `cmd:"" help:"List all inputs." aliases:"ls"`
 	Mute   InputMuteCmd   `cmd:"" help:"Mute input."      aliases:"m"`
 	Unmute InputUnmuteCmd `cmd:"" help:"Unmute input."    aliases:"um"`
 	Toggle InputToggleCmd `cmd:"" help:"Toggle input."    aliases:"tg"`
+}
+
+// InputCreateCmd provides a command to create an input.
+type InputCreateCmd struct {
+	Kind string `arg:"" help:"Input kind (e.g., coreaudio_input_capture, macos-avcapture)." required:""`
+	Name string `arg:"" help:"Name for the input." required:""`
 }
 
 // InputListCmd provides a command to list all inputs.
@@ -27,6 +34,28 @@ type InputListCmd struct {
 	Ffmpeg bool `flag:"" help:"List all ffmpeg sources." aliases:"f"`
 	Vlc    bool `flag:"" help:"List all VLC sources."    aliases:"v"`
 	UUID   bool `flag:"" help:"Display UUIDs of inputs." aliases:"u"`
+}
+
+// Run executes the command to create an input.
+func (cmd *InputCreateCmd) Run(ctx *context) error {
+	currentScene, err := ctx.Client.Scenes.GetCurrentProgramScene()
+	if err != nil {
+		return err
+	}
+
+	_, err = ctx.Client.Inputs.CreateInput(
+		inputs.NewCreateInputParams().
+			WithInputKind(cmd.Kind).
+			WithInputName(cmd.Name).
+			WithSceneName(currentScene.CurrentProgramSceneName),
+	)
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprintf(ctx.Out, "Created input: %s (%s) in scene %s\n",
+		ctx.Style.Highlight(cmd.Name), cmd.Kind, ctx.Style.Highlight(currentScene.CurrentProgramSceneName))
+	return nil
 }
 
 // Run executes the command to list all inputs.
