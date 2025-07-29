@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"maps"
 	"sort"
 	"strings"
 
@@ -21,6 +22,7 @@ type InputCmd struct {
 	Unmute InputUnmuteCmd `cmd:"" help:"Unmute input."    aliases:"um"`
 	Show   InputShowCmd   `cmd:"" help:"Show input details." aliases:"s"`
 	Toggle InputToggleCmd `cmd:"" help:"Toggle input."    aliases:"tg"`
+	Update InputUpdateCmd `cmd:"" help:"Update input settings." aliases:"up"`
 }
 
 // InputCreateCmd provides a command to create an input.
@@ -378,5 +380,71 @@ func (cmd *InputToggleCmd) Run(ctx *context) error {
 	} else {
 		fmt.Fprintf(ctx.Out, "Unmuted input: %s\n", ctx.Style.Highlight(cmd.InputName))
 	}
+	return nil
+}
+
+// InputUpdateCmd provides a command to update input settings.
+type InputUpdateCmd struct {
+	InputName  string `arg:"" help:"Name of the input to update." required:""`
+	DeviceName string `arg:"" help:"Name of the device to set." required:""`
+}
+
+// Run executes the command to update input settings.
+func (cmd *InputUpdateCmd) Run(ctx *context) error {
+	// Use the device helper to find the correct device property name
+	prop, _, _, err := device(ctx.Client, cmd.InputName)
+	if err != nil {
+		return fmt.Errorf("failed to get device property: %w", err)
+	}
+	if prop == "" {
+		return fmt.Errorf("no device property found for input '%s'", cmd.InputName)
+	}
+
+	resp, err := ctx.Client.Inputs.GetInputPropertiesListPropertyItems(
+		inputs.NewGetInputPropertiesListPropertyItemsParams().
+			WithInputName(cmd.InputName).
+			WithPropertyName(prop),
+	)
+	if err != nil {
+		return err
+	}
+
+	var deviceValue any
+	var found bool
+	for _, item := range resp.PropertyItems {
+		if item.ItemName == cmd.DeviceName {
+			deviceValue = item.ItemValue
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		return fmt.Errorf("device '%s' not found for input '%s'", cmd.DeviceName, cmd.InputName)
+	}
+
+	sresp, err := ctx.Client.Inputs.GetInputSettings(
+		inputs.NewGetInputSettingsParams().WithInputName(cmd.InputName),
+	)
+	if err != nil {
+		return err
+	}
+
+	settings := make(map[string]any)
+	maps.Copy(settings, sresp.InputSettings)
+	settings[prop] = deviceValue
+
+	_, err = ctx.Client.Inputs.SetInputSettings(
+		inputs.NewSetInputSettingsParams().
+			WithInputName(cmd.InputName).
+			WithInputSettings(settings),
+	)
+	if err != nil {
+		return fmt.Errorf("failed to update input settings: %w", err)
+	}
+
+	fmt.Fprintf(ctx.Out, "Input %s %s set to %s\n",
+		ctx.Style.Highlight(cmd.InputName), prop, ctx.Style.Highlight(cmd.DeviceName))
+
 	return nil
 }
