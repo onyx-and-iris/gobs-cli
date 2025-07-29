@@ -15,6 +15,7 @@ import (
 // InputCmd provides commands to manage inputs in OBS Studio.
 type InputCmd struct {
 	Create InputCreateCmd `cmd:"" help:"Create input." aliases:"c"`
+	Kinds  InputKindsCmd  `cmd:"" help:"List input kinds." aliases:"k"`
 	List   InputListCmd   `cmd:"" help:"List all inputs." aliases:"ls"`
 	Mute   InputMuteCmd   `cmd:"" help:"Mute input."      aliases:"m"`
 	Unmute InputUnmuteCmd `cmd:"" help:"Unmute input."    aliases:"um"`
@@ -57,6 +58,47 @@ func (cmd *InputCreateCmd) Run(ctx *context) error {
 
 	fmt.Fprintf(ctx.Out, "Created input: %s (%s) in scene %s\n",
 		ctx.Style.Highlight(cmd.Name), cmd.Kind, ctx.Style.Highlight(currentScene.CurrentProgramSceneName))
+	return nil
+}
+
+// InputKindsCmd provides a command to list all input kinds.
+type InputKindsCmd struct{}
+
+// Run executes the command to list all input kinds.
+func (cmd *InputKindsCmd) Run(ctx *context) error {
+	resp, err := ctx.Client.Inputs.GetInputKindList(
+		inputs.NewGetInputKindListParams().WithUnversioned(false),
+	)
+	if err != nil {
+		return fmt.Errorf("failed to get input kinds: %w", err)
+	}
+
+	t := table.New().Border(lipgloss.RoundedBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground(ctx.Style.border))
+	t.Headers("Kind")
+	t.StyleFunc(func(row, col int) lipgloss.Style {
+		style := lipgloss.NewStyle().Padding(0, 3)
+		switch col {
+		case 0:
+			style = style.Align(lipgloss.Left)
+		}
+		switch {
+		case row == table.HeaderRow:
+			style = style.Bold(true).Align(lipgloss.Center)
+		case row%2 == 0:
+			style = style.Foreground(ctx.Style.evenRows)
+		default:
+			style = style.Foreground(ctx.Style.oddRows)
+		}
+		return style
+	})
+
+	for _, kind := range resp.InputKinds {
+		t.Row(kind)
+	}
+
+	fmt.Fprintln(ctx.Out, t.Render())
+
 	return nil
 }
 
