@@ -16,6 +16,7 @@ import (
 // InputCmd provides commands to manage inputs in OBS Studio.
 type InputCmd struct {
 	Create InputCreateCmd `cmd:"" help:"Create input." aliases:"c"`
+	Delete InputDeleteCmd `cmd:"" help:"Delete input." aliases:"d"`
 	Kinds  InputKindsCmd  `cmd:"" help:"List input kinds." aliases:"k"`
 	List   InputListCmd   `cmd:"" help:"List all inputs." aliases:"ls"`
 	Mute   InputMuteCmd   `cmd:"" help:"Mute input."      aliases:"m"`
@@ -29,6 +30,11 @@ type InputCmd struct {
 type InputCreateCmd struct {
 	Kind string `arg:"" help:"Input kind (e.g., coreaudio_input_capture, macos-avcapture)." required:""`
 	Name string `arg:"" help:"Name for the input." required:""`
+}
+
+// InputDeleteCmd provides a command to delete an input.
+type InputDeleteCmd struct {
+	Name string `arg:"" help:"Name of the input to delete." required:""`
 }
 
 // InputListCmd provides a command to list all inputs.
@@ -60,6 +66,19 @@ func (cmd *InputCreateCmd) Run(ctx *context) error {
 
 	fmt.Fprintf(ctx.Out, "Created input: %s (%s) in scene %s\n",
 		ctx.Style.Highlight(cmd.Name), cmd.Kind, ctx.Style.Highlight(currentScene.CurrentProgramSceneName))
+	return nil
+}
+
+// Run executes the command to delete an input.
+func (cmd *InputDeleteCmd) Run(ctx *context) error {
+	_, err := ctx.Client.Inputs.RemoveInput(
+		inputs.NewRemoveInputParams().WithInputName(cmd.Name),
+	)
+	if err != nil {
+		return fmt.Errorf("failed to delete input: %w", err)
+	}
+
+	fmt.Fprintf(ctx.Out, "Deleted input: %s\n", ctx.Style.Highlight(cmd.Name))
 	return nil
 }
 
@@ -247,11 +266,17 @@ func (cmd *InputShowCmd) Run(ctx *context) error {
 	}
 
 	var inputKind string
+	var found bool
 	for _, input := range lresp.Inputs {
 		if input.InputName == cmd.Name {
 			inputKind = input.InputKind
+			found = true
 			break
 		}
+	}
+
+	if !found {
+		return fmt.Errorf("input '%s' not found", cmd.Name)
 	}
 
 	prop, name, _, err := device(ctx.Client, cmd.Name)
