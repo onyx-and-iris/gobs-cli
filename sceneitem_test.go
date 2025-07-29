@@ -14,7 +14,7 @@ func TestSceneItemList(t *testing.T) {
 	context := newContext(client, &out, StyleConfig{})
 
 	cmd := &SceneItemListCmd{
-		SceneName: "gobs-test",
+		SceneName: "gobs-test-scene",
 	}
 	err := cmd.Run(context)
 	if err != nil {

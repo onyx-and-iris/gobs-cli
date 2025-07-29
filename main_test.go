@@ -57,22 +57,6 @@ func TestMain(m *testing.M) {
 }
 
 func setup(client *goobs.Client) {
-	client.Config.CreateProfile(config.NewCreateProfileParams().
-		WithProfileName("gobs-test-profile"))
-	time.Sleep(2 * time.Second) // wait for profile creation to propagate
-	client.Config.SetProfileParameter(config.NewSetProfileParameterParams().
-		WithParameterCategory("SimpleOutput").
-		WithParameterName("RecRB").
-		WithParameterValue("true"))
-	client.Config.SetProfileParameter(config.NewSetProfileParameterParams().
-		WithParameterCategory("AdvOut").
-		WithParameterName("RecRB").
-		WithParameterValue("true"))
-	client.Config.SetCurrentProfile(config.NewSetCurrentProfileParams().
-		WithProfileName("Untitled"))
-	client.Config.SetCurrentProfile(config.NewSetCurrentProfileParams().
-		WithProfileName("gobs-test-profile"))
-
 	client.Config.SetStreamServiceSettings(config.NewSetStreamServiceSettingsParams().
 		WithStreamServiceType("rtmp_common").
 		WithStreamServiceSettings(&typedefs.StreamServiceSettings{
@@ -80,13 +64,23 @@ func setup(client *goobs.Client) {
 			Key:    os.Getenv("OBS_STREAM_KEY"),
 		}))
 
-	client.Config.SetCurrentSceneCollection(config.NewSetCurrentSceneCollectionParams().
-		WithSceneCollectionName("test-collection"))
+	client.Config.CreateProfile(config.NewCreateProfileParams().
+		WithProfileName("gobs-test-profile"))
+	time.Sleep(100 * time.Millisecond) // Wait for the profile to be created
+	client.Config.SetProfileParameter(config.NewSetProfileParameterParams().
+		WithParameterCategory("SimpleOutput").
+		WithParameterName("RecRB").
+		WithParameterValue("true"))
+	// hack to ensure the Replay Buffer setting is applied
+	client.Config.SetCurrentProfile(config.NewSetCurrentProfileParams().
+		WithProfileName("Untitled"))
+	client.Config.SetCurrentProfile(config.NewSetCurrentProfileParams().
+		WithProfileName("gobs-test-profile"))
 
 	client.Scenes.CreateScene(scenes.NewCreateSceneParams().
-		WithSceneName("gobs-test"))
+		WithSceneName("gobs-test-scene"))
 	client.Inputs.CreateInput(inputs.NewCreateInputParams().
-		WithSceneName("gobs-test").
+		WithSceneName("gobs-test-scene").
 		WithInputName("gobs-test-input").
 		WithInputKind("color_source_v3").
 		WithInputSettings(map[string]any{
@@ -97,7 +91,7 @@ func setup(client *goobs.Client) {
 		}).
 		WithSceneItemEnabled(true))
 	client.Inputs.CreateInput(inputs.NewCreateInputParams().
-		WithSceneName("gobs-test").
+		WithSceneName("gobs-test-scene").
 		WithInputName("gobs-test-input-2").
 		WithInputKind("color_source_v3").
 		WithInputSettings(map[string]any{
@@ -109,19 +103,32 @@ func setup(client *goobs.Client) {
 		WithSceneItemEnabled(true))
 
 	// ensure Desktop Audio input is created
-	var inputKind string
-	switch runtime.GOOS {
-	case "windows":
-		inputKind = "wasapi_output_capture"
-	case "linux":
-		inputKind = "pulse_output_capture"
-	case "darwin":
-		inputKind = "coreaudio_output_capture"
+	desktopAudioKinds := map[string]string{
+		"windows": "wasapi_output_capture",
+		"linux":   "pulse_output_capture",
+		"darwin":  "coreaudio_output_capture",
+	}
+	platform := os.Getenv("GOBS_TEST_PLATFORM")
+	if platform == "" {
+		platform = runtime.GOOS
 	}
 	client.Inputs.CreateInput(inputs.NewCreateInputParams().
-		WithSceneName("gobs-test").
+		WithSceneName("gobs-test-scene").
 		WithInputName("Desktop Audio").
-		WithInputKind(inputKind).
+		WithInputKind(desktopAudioKinds[platform]).
+		WithInputSettings(map[string]any{
+			"device_id": "default",
+		}))
+	// ensure Mic/Aux input is created
+	micKinds := map[string]string{
+		"windows": "wasapi_input_capture",
+		"linux":   "pulse_input_capture",
+		"darwin":  "coreaudio_input_capture",
+	}
+	client.Inputs.CreateInput(inputs.NewCreateInputParams().
+		WithSceneName("gobs-test-scene").
+		WithInputName("Mic/Aux").
+		WithInputKind(micKinds[platform]).
 		WithInputSettings(map[string]any{
 			"device_id": "default",
 		}))
@@ -142,7 +149,7 @@ func setup(client *goobs.Client) {
 
 	// Create source filter on a scene
 	client.Filters.CreateSourceFilter(filters.NewCreateSourceFilterParams().
-		WithSourceName("gobs-test").
+		WithSourceName("gobs-test-scene").
 		WithFilterName("test_filter").
 		WithFilterKind("luma_key_filter_v2").
 		WithFilterSettings(map[string]any{
@@ -158,14 +165,14 @@ func teardown(client *goobs.Client) {
 		WithSourceName("Mic/Aux").
 		WithFilterName("test_filter"))
 	client.Filters.RemoveSourceFilter(filters.NewRemoveSourceFilterParams().
-		WithSourceName("gobs-test").
+		WithSourceName("gobs-test-scene").
 		WithFilterName("test_filter"))
 
 	client.Scenes.RemoveScene(scenes.NewRemoveSceneParams().
-		WithSceneName("gobs-test"))
+		WithSceneName("gobs-test-scene"))
 
 	client.Config.SetCurrentSceneCollection(config.NewSetCurrentSceneCollectionParams().
-		WithSceneCollectionName("default"))
+		WithSceneCollectionName("Untitled"))
 
 	client.Stream.StopStream()
 	client.Record.StopRecord()

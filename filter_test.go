@@ -33,7 +33,7 @@ func TestFilterListScene(t *testing.T) {
 	context := newContext(client, &out, StyleConfig{})
 
 	cmd := &FilterListCmd{
-		SourceName: "gobs-test",
+		SourceName: "gobs-test-scene",
 	}
 	err := cmd.Run(context)
 	if err != nil {
