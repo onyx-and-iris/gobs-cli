@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/andreykaipov/goobs"
 	"github.com/andreykaipov/goobs/api/requests/inputs"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/lipgloss/table"
@@ -17,6 +18,7 @@ type InputCmd struct {
 	List   InputListCmd   `cmd:"" help:"List all inputs." aliases:"ls"`
 	Mute   InputMuteCmd   `cmd:"" help:"Mute input."      aliases:"m"`
 	Unmute InputUnmuteCmd `cmd:"" help:"Unmute input."    aliases:"um"`
+	Show   InputShowCmd   `cmd:"" help:"Show input details." aliases:"s"`
 	Toggle InputToggleCmd `cmd:"" help:"Toggle input."    aliases:"tg"`
 }
 
@@ -185,6 +187,86 @@ func (cmd *InputUnmuteCmd) Run(ctx *context) error {
 
 	fmt.Fprintf(ctx.Out, "Unmuted input: %s\n", ctx.Style.Highlight(cmd.InputName))
 	return nil
+}
+
+// InputShowCmd provides a command to show input details.
+type InputShowCmd struct {
+	Name string `arg:"" help:"Name of the input to show." required:""`
+}
+
+// Run executes the command to show input details.
+func (cmd *InputShowCmd) Run(ctx *context) error {
+	lresp, err := ctx.Client.Inputs.GetInputList(inputs.NewGetInputListParams())
+	if err != nil {
+		return fmt.Errorf("failed to get input list: %w", err)
+	}
+
+	var inputKind string
+	for _, input := range lresp.Inputs {
+		if input.InputName == cmd.Name {
+			inputKind = input.InputKind
+			break
+		}
+	}
+
+	prop, name, _, err := device(ctx.Client, cmd.Name)
+	if err != nil {
+		return fmt.Errorf("failed to get device: %w", err)
+	}
+
+	t := table.New().Border(lipgloss.RoundedBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground(ctx.Style.border))
+	t.Headers("Input Name", "Kind", "Device")
+	t.StyleFunc(func(row, col int) lipgloss.Style {
+		style := lipgloss.NewStyle().Padding(0, 3)
+		switch col {
+		case 0:
+			style = style.Align(lipgloss.Left)
+		case 1:
+			style = style.Align(lipgloss.Left)
+		case 2:
+			style = style.Align(lipgloss.Center)
+		case 3:
+			style = style.Align(lipgloss.Left)
+		}
+		switch {
+		case row == table.HeaderRow:
+			style = style.Bold(true).Align(lipgloss.Center)
+		case row%2 == 0:
+			style = style.Foreground(ctx.Style.evenRows)
+		default:
+			style = style.Foreground(ctx.Style.oddRows)
+		}
+		return style
+	})
+	t.Row(cmd.Name, snakeCaseToTitleCase(inputKind), fmt.Sprintf("%s %s", prop, name))
+
+	fmt.Fprintln(ctx.Out, t.Render())
+
+	return nil
+}
+
+func device(c *goobs.Client, inputName string) (string, string, string, error) {
+	propNames := []string{
+		"device", "device_id",
+	}
+
+	for _, propName := range propNames {
+		deviceListResp, err := c.Inputs.GetInputPropertiesListPropertyItems(
+			inputs.NewGetInputPropertiesListPropertyItemsParams().
+				WithInputName(inputName).
+				WithPropertyName(propName),
+		)
+		if err == nil && len(deviceListResp.PropertyItems) > 0 {
+			for _, item := range deviceListResp.PropertyItems {
+				if item.ItemName != "" {
+					return propName, item.ItemName, fmt.Sprint(item.ItemValue), nil
+				}
+			}
+		}
+	}
+
+	return "", "", "", nil
 }
 
 // InputToggleCmd provides a command to toggle the mute state of an input.
