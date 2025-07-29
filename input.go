@@ -233,7 +233,8 @@ func (cmd *InputUnmuteCmd) Run(ctx *context) error {
 
 // InputShowCmd provides a command to show input details.
 type InputShowCmd struct {
-	Name string `arg:"" help:"Name of the input to show." required:""`
+	Name    string `arg:"" help:"Name of the input to show." required:""`
+	Verbose bool   `flag:"" help:"Show all properties and their keys and values."`
 }
 
 // Run executes the command to show input details.
@@ -268,8 +269,6 @@ func (cmd *InputShowCmd) Run(ctx *context) error {
 			style = style.Align(lipgloss.Left)
 		case 2:
 			style = style.Align(lipgloss.Center)
-		case 3:
-			style = style.Align(lipgloss.Left)
 		}
 		switch {
 		case row == table.HeaderRow:
@@ -281,9 +280,49 @@ func (cmd *InputShowCmd) Run(ctx *context) error {
 		}
 		return style
 	})
-	t.Row(cmd.Name, snakeCaseToTitleCase(inputKind), fmt.Sprintf("%s %s", prop, name))
+	t.Row(cmd.Name, snakeCaseToTitleCase(inputKind), name)
 
 	fmt.Fprintln(ctx.Out, t.Render())
+
+	if cmd.Verbose {
+		resp, err := ctx.Client.Inputs.GetInputPropertiesListPropertyItems(
+			inputs.NewGetInputPropertiesListPropertyItemsParams().
+				WithInputName(cmd.Name).
+				WithPropertyName(prop),
+		)
+		if err != nil {
+			return err
+		}
+
+		t := table.New().Border(lipgloss.RoundedBorder()).
+			BorderStyle(lipgloss.NewStyle().Foreground(ctx.Style.border))
+		t.StyleFunc(func(row, col int) lipgloss.Style {
+			style := lipgloss.NewStyle().Padding(0, 3)
+			switch col {
+			case 0:
+				style = style.Align(lipgloss.Left)
+			}
+			switch {
+			case row == table.HeaderRow:
+				style = style.Bold(true).Align(lipgloss.Center)
+			case row%2 == 0:
+				style = style.Foreground(ctx.Style.evenRows)
+			default:
+				style = style.Foreground(ctx.Style.oddRows)
+			}
+			return style
+		})
+
+		t.Headers("Devices")
+
+		for _, item := range resp.PropertyItems {
+			if item.ItemName != "" {
+				t.Row(item.ItemName)
+			}
+		}
+
+		fmt.Fprintln(ctx.Out, t.Render())
+	}
 
 	return nil
 }
