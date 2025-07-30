@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 )
 
 func skipIfSkipReplayBufferTests(t *testing.T) {
@@ -30,6 +31,7 @@ func TestReplayBufferStart(t *testing.T) {
 	if out.String() != "Replay buffer started.\n" {
 		t.Fatalf("Expected output to be 'Replay buffer started', got '%s'", out.String())
 	}
+	time.Sleep(500 * time.Millisecond) // Wait for the replay buffer to start
 }
 
 func TestReplayBufferStop(t *testing.T) {
@@ -49,6 +51,7 @@ func TestReplayBufferStop(t *testing.T) {
 	if out.String() != "Replay buffer stopped.\n" {
 		t.Fatalf("Expected output to be 'Replay buffer stopped.', got '%s'", out.String())
 	}
+	time.Sleep(500 * time.Millisecond) // Wait for the replay buffer to stop
 }
 
 func TestReplayBufferToggle(t *testing.T) {
@@ -86,4 +89,5 @@ func TestReplayBufferToggle(t *testing.T) {
 			t.Fatalf("Expected output to be 'Replay buffer started.', got '%s'", out.String())
 		}
 	}
+	time.Sleep(500 * time.Millisecond) // Wait for the toggle to take effect
 }
