@@ -44,7 +44,7 @@ func TestRecordStart(t *testing.T) {
 	if out.String() != "Recording started successfully.\n" {
 		t.Fatalf("Expected output to contain 'Recording started successfully.', got '%s'", out.String())
 	}
-	time.Sleep(1 * time.Second) // Wait for the recording to start
+	time.Sleep(500 * time.Millisecond) // Wait for the recording to start
 }
 
 func TestRecordStop(t *testing.T) {
@@ -84,7 +84,7 @@ func TestRecordStop(t *testing.T) {
 	if !strings.Contains(out.String(), "Recording stopped successfully. Output file: ") {
 		t.Fatalf("Expected output to contain 'Recording stopped successfully. Output file: ', got '%s'", out.String())
 	}
-	time.Sleep(1 * time.Second) // Wait for the recording to stop
+	time.Sleep(500 * time.Millisecond) // Wait for the recording to stop
 }
 
 func TestRecordToggle(t *testing.T) {
@@ -112,8 +112,6 @@ func TestRecordToggle(t *testing.T) {
 		t.Fatalf("Failed to toggle recording: %v", err)
 	}
 
-	time.Sleep(1 * time.Second) // Wait for a second to ensure toggle has taken effect
-
 	if active {
 		if out.String() != "Recording stopped successfully.\n" {
 			t.Fatalf("Expected output to be 'Recording stopped successfully.', got '%s'", out.String())
@@ -123,4 +121,5 @@ func TestRecordToggle(t *testing.T) {
 			t.Fatalf("Expected output to be 'Recording started successfully.', got '%s'", out.String())
 		}
 	}
+	time.Sleep(500 * time.Millisecond) // Wait for the toggle to take effect
 }

@@ -43,7 +43,7 @@ func TestStreamStart(t *testing.T) {
 	if out.String() != "Stream started successfully.\n" {
 		t.Fatalf("Expected output to contain 'Stream started successfully.', got '%s'", out.String())
 	}
-	time.Sleep(2 * time.Second) // Wait for the stream to start
+	time.Sleep(500 * time.Millisecond) // Wait for the stream to start
 }
 
 func TestStreamStop(t *testing.T) {
@@ -82,7 +82,7 @@ func TestStreamStop(t *testing.T) {
 	if out.String() != "Stream stopped successfully.\n" {
 		t.Fatalf("Expected output to contain 'Stream stopped successfully.', got '%s'", out.String())
 	}
-	time.Sleep(2 * time.Second) // Wait for the stream to stop
+	time.Sleep(500 * time.Millisecond) // Wait for the stream to stop
 }
 
 func TestStreamToggle(t *testing.T) {
@@ -119,5 +119,5 @@ func TestStreamToggle(t *testing.T) {
 			t.Fatalf("Expected 'Stream started successfully.', got: %s", out.String())
 		}
 	}
-	time.Sleep(2 * time.Second) // Wait for the stream to toggle
+	time.Sleep(500 * time.Millisecond) // Wait for the stream to toggle
 }
