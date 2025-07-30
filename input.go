@@ -28,8 +28,8 @@ type InputCmd struct {
 
 // InputCreateCmd provides a command to create an input.
 type InputCreateCmd struct {
-	Kind string `arg:"" help:"Input kind (e.g., coreaudio_input_capture, macos-avcapture)." required:""`
 	Name string `arg:"" help:"Name for the input." required:""`
+	Kind string `arg:"" help:"Input kind (e.g., coreaudio_input_capture, macos-avcapture)." required:""`
 }
 
 // InputDeleteCmd provides a command to delete an input.
@@ -78,7 +78,7 @@ func (cmd *InputDeleteCmd) Run(ctx *context) error {
 		return fmt.Errorf("failed to delete input: %w", err)
 	}
 
-	fmt.Fprintf(ctx.Out, "Deleted input: %s\n", ctx.Style.Highlight(cmd.Name))
+	fmt.Fprintf(ctx.Out, "Deleted %s\n", ctx.Style.Highlight(cmd.Name))
 	return nil
 }
 
