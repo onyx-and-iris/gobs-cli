@@ -264,6 +264,20 @@ gobs-cli group status START "test_group"
 
 ### InputCmd
 
+-   create: Create input.
+    -   args: Name Kind
+
+```console
+gobs-cli input create 'stream mix' 'wasapi_input_capture'
+```
+
+-   remove: Remove input.
+    -   args: Name
+
+```console
+gobs-cli input remove 'stream mix'
+```
+
 -   list: List all inputs.
     -   flags:
 
@@ -279,6 +293,12 @@ gobs-cli group status START "test_group"
 gobs-cli input list
 
 gobs-cli input list --input --colour
+```
+
+-   list-kinds: List input kinds.
+
+```console
+gobs-cli input list-kinds
 ```
 
 -   mute: Mute input.
@@ -300,6 +320,34 @@ gobs-cli input unmute "Mic/Aux"
 
 ```console
 gobs-cli input toggle "Mic/Aux"
+```
+
+-   volume: Set input volume.
+    -   args: InputName Volume
+
+```console
+gobs-cli input volume -- 'Mic/Aux' -30.6
+```
+
+-   show: Show input details.
+    -   args: Name
+    -   flags:
+
+        *optional*
+        -   --verbose: List all available input devices.
+
+-   update: Update input settings.
+    -   args: InputName DeviceName
+
+```console
+gobs-cli input update 'Mic/Aux' 'Voicemeeter Out B1 (VB-Audio Voicemeeter VAIO)'
+```
+
+-   kind-defaults: Get default settings for an input kind.
+    -   args: Kind
+
+```console
+gobs-cli input kind-defaults 'wasapi_input_capture'
 ```
 
 ### TextCmd
