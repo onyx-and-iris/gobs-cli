@@ -7,7 +7,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/andreykaipov/goobs"
 	"github.com/andreykaipov/goobs/api/requests/inputs"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/lipgloss/table"
@@ -15,36 +14,22 @@ import (
 
 // InputCmd provides commands to manage inputs in OBS Studio.
 type InputCmd struct {
-	Create InputCreateCmd `cmd:"" help:"Create input." aliases:"c"`
-	Delete InputDeleteCmd `cmd:"" help:"Delete input." aliases:"d"`
-	Kinds  InputKindsCmd  `cmd:"" help:"List input kinds." aliases:"k"`
-	List   InputListCmd   `cmd:"" help:"List all inputs." aliases:"ls"`
-	Mute   InputMuteCmd   `cmd:"" help:"Mute input."      aliases:"m"`
-	Unmute InputUnmuteCmd `cmd:"" help:"Unmute input."    aliases:"um"`
-	Show   InputShowCmd   `cmd:"" help:"Show input details." aliases:"s"`
-	Toggle InputToggleCmd `cmd:"" help:"Toggle input."    aliases:"tg"`
-	Update InputUpdateCmd `cmd:"" help:"Update input settings." aliases:"up"`
+	Create    InputCreateCmd    `cmd:"" help:"Create input."          aliases:"c"`
+	Remove    InputRemoveCmd    `cmd:"" help:"Remove input."          aliases:"d"`
+	ListKinds InputListKindsCmd `cmd:"" help:"List input kinds."      aliases:"k"`
+	List      InputListCmd      `cmd:"" help:"List all inputs."       aliases:"ls"`
+	Mute      InputMuteCmd      `cmd:"" help:"Mute input."            aliases:"m"`
+	Unmute    InputUnmuteCmd    `cmd:"" help:"Unmute input."          aliases:"um"`
+	Volume    InputVolumeCmd    `cmd:"" help:"Set input volume."      aliases:"v"`
+	Show      InputShowCmd      `cmd:"" help:"Show input details."    aliases:"s"`
+	Toggle    InputToggleCmd    `cmd:"" help:"Toggle input."          aliases:"tg"`
+	Update    InputUpdateCmd    `cmd:"" help:"Update input settings." aliases:"up"`
 }
 
 // InputCreateCmd provides a command to create an input.
 type InputCreateCmd struct {
-	Name string `arg:"" help:"Name for the input." required:""`
+	Name string `arg:"" help:"Name for the input."                                          required:""`
 	Kind string `arg:"" help:"Input kind (e.g., coreaudio_input_capture, macos-avcapture)." required:""`
-}
-
-// InputDeleteCmd provides a command to delete an input.
-type InputDeleteCmd struct {
-	Name string `arg:"" help:"Name of the input to delete." required:""`
-}
-
-// InputListCmd provides a command to list all inputs.
-type InputListCmd struct {
-	Input  bool `flag:"" help:"List all inputs."         aliases:"i"`
-	Output bool `flag:"" help:"List all outputs."        aliases:"o"`
-	Colour bool `flag:"" help:"List all colour sources." aliases:"c"`
-	Ffmpeg bool `flag:"" help:"List all ffmpeg sources." aliases:"f"`
-	Vlc    bool `flag:"" help:"List all VLC sources."    aliases:"v"`
-	UUID   bool `flag:"" help:"Display UUIDs of inputs." aliases:"u"`
 }
 
 // Run executes the command to create an input.
@@ -69,8 +54,13 @@ func (cmd *InputCreateCmd) Run(ctx *context) error {
 	return nil
 }
 
-// Run executes the command to delete an input.
-func (cmd *InputDeleteCmd) Run(ctx *context) error {
+// InputRemoveCmd provides a command to remove an input.
+type InputRemoveCmd struct {
+	Name string `arg:"" help:"Name of the input to remove." required:""`
+}
+
+// Run executes the command to remove an input.
+func (cmd *InputRemoveCmd) Run(ctx *context) error {
 	_, err := ctx.Client.Inputs.RemoveInput(
 		inputs.NewRemoveInputParams().WithInputName(cmd.Name),
 	)
@@ -82,11 +72,11 @@ func (cmd *InputDeleteCmd) Run(ctx *context) error {
 	return nil
 }
 
-// InputKindsCmd provides a command to list all input kinds.
-type InputKindsCmd struct{}
+// InputListKindsCmd provides a command to list all input kinds.
+type InputListKindsCmd struct{}
 
 // Run executes the command to list all input kinds.
-func (cmd *InputKindsCmd) Run(ctx *context) error {
+func (cmd *InputListKindsCmd) Run(ctx *context) error {
 	resp, err := ctx.Client.Inputs.GetInputKindList(
 		inputs.NewGetInputKindListParams().WithUnversioned(false),
 	)
@@ -121,6 +111,16 @@ func (cmd *InputKindsCmd) Run(ctx *context) error {
 	fmt.Fprintln(ctx.Out, t.Render())
 
 	return nil
+}
+
+// InputListCmd provides a command to list all inputs.
+type InputListCmd struct {
+	Input  bool `flag:"" help:"List all inputs."         aliases:"i"`
+	Output bool `flag:"" help:"List all outputs."        aliases:"o"`
+	Colour bool `flag:"" help:"List all colour sources." aliases:"c"`
+	Ffmpeg bool `flag:"" help:"List all ffmpeg sources." aliases:"f"`
+	Vlc    bool `flag:"" help:"List all VLC sources."    aliases:"v"`
+	UUID   bool `flag:"" help:"Display UUIDs of inputs." aliases:"u"`
 }
 
 // Run executes the command to list all inputs.
@@ -252,10 +252,37 @@ func (cmd *InputUnmuteCmd) Run(ctx *context) error {
 	return nil
 }
 
+// InputVolumeCmd provides a command to set the volume of an input.
+type InputVolumeCmd struct {
+	InputName string  `arg:"" help:"Name of the input to set volume for." required:""`
+	Volume    float64 `arg:"" help:"Volume level (-90.0 to 0.0)."         required:""`
+}
+
+// Run executes the command to set the volume of an input.
+// accepts values between -90.0 and 0.0 representing decibels (dB).
+func (cmd *InputVolumeCmd) Run(ctx *context) error {
+	if cmd.Volume < -90.0 || cmd.Volume > 0.0 {
+		return fmt.Errorf("volume must be between -90.0 and 0.0 dB")
+	}
+
+	_, err := ctx.Client.Inputs.SetInputVolume(
+		inputs.NewSetInputVolumeParams().
+			WithInputName(cmd.InputName).
+			WithInputVolumeDb(cmd.Volume),
+	)
+	if err != nil {
+		return fmt.Errorf("failed to set input volume: %w", err)
+	}
+
+	fmt.Fprintf(ctx.Out, "Set volume of input %s to %.1f dB\n",
+		ctx.Style.Highlight(cmd.InputName), cmd.Volume)
+	return nil
+}
+
 // InputShowCmd provides a command to show input details.
 type InputShowCmd struct {
-	Name    string `arg:"" help:"Name of the input to show." required:""`
-	Verbose bool   `flag:"" help:"Show all properties and their keys and values."`
+	Name    string `arg:"" help:"Name of the input to show."                     required:""`
+	Verbose bool   `       help:"Show all properties and their keys and values."             flag:""`
 }
 
 // Run executes the command to show input details.
@@ -279,9 +306,9 @@ func (cmd *InputShowCmd) Run(ctx *context) error {
 		return fmt.Errorf("input '%s' not found", cmd.Name)
 	}
 
-	prop, name, _, err := device(ctx.Client, cmd.Name)
-	if err != nil {
-		return fmt.Errorf("failed to get device: %w", err)
+	prop, name := device(ctx, cmd.Name)
+	if prop == "" {
+		return fmt.Errorf("no device property found for input '%s'", cmd.Name)
 	}
 
 	t := table.New().Border(lipgloss.RoundedBorder()).
@@ -312,13 +339,13 @@ func (cmd *InputShowCmd) Run(ctx *context) error {
 	fmt.Fprintln(ctx.Out, t.Render())
 
 	if cmd.Verbose {
-		resp, err := ctx.Client.Inputs.GetInputPropertiesListPropertyItems(
+		deviceListResp, err := ctx.Client.Inputs.GetInputPropertiesListPropertyItems(
 			inputs.NewGetInputPropertiesListPropertyItemsParams().
 				WithInputName(cmd.Name).
 				WithPropertyName(prop),
 		)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to get device list: %w", err)
 		}
 
 		t := table.New().Border(lipgloss.RoundedBorder()).
@@ -342,7 +369,7 @@ func (cmd *InputShowCmd) Run(ctx *context) error {
 
 		t.Headers("Devices")
 
-		for _, item := range resp.PropertyItems {
+		for _, item := range deviceListResp.PropertyItems {
 			if item.ItemName != "" {
 				t.Row(item.ItemName)
 			}
@@ -354,27 +381,30 @@ func (cmd *InputShowCmd) Run(ctx *context) error {
 	return nil
 }
 
-func device(c *goobs.Client, inputName string) (string, string, string, error) {
-	propNames := []string{
-		"device", "device_id",
+func device(ctx *context, inputName string) (string, string) {
+	settings, err := ctx.Client.Inputs.GetInputSettings(
+		inputs.NewGetInputSettingsParams().WithInputName(inputName),
+	)
+	if err != nil {
+		return "", ""
 	}
 
-	for _, propName := range propNames {
-		deviceListResp, err := c.Inputs.GetInputPropertiesListPropertyItems(
+	for _, propName := range []string{"device", "device_id"} {
+		deviceListResp, err := ctx.Client.Inputs.GetInputPropertiesListPropertyItems(
 			inputs.NewGetInputPropertiesListPropertyItemsParams().
 				WithInputName(inputName).
 				WithPropertyName(propName),
 		)
 		if err == nil && len(deviceListResp.PropertyItems) > 0 {
 			for _, item := range deviceListResp.PropertyItems {
-				if item.ItemName != "" {
-					return propName, item.ItemName, fmt.Sprint(item.ItemValue), nil
+				if item.ItemValue == settings.InputSettings[propName] {
+					return propName, item.ItemName
 				}
 			}
 		}
 	}
 
-	return "", "", "", nil
+	return "", ""
 }
 
 // InputToggleCmd provides a command to toggle the mute state of an input.
@@ -411,16 +441,13 @@ func (cmd *InputToggleCmd) Run(ctx *context) error {
 // InputUpdateCmd provides a command to update input settings.
 type InputUpdateCmd struct {
 	InputName  string `arg:"" help:"Name of the input to update." required:""`
-	DeviceName string `arg:"" help:"Name of the device to set." required:""`
+	DeviceName string `arg:"" help:"Name of the device to set."   required:""`
 }
 
 // Run executes the command to update input settings.
 func (cmd *InputUpdateCmd) Run(ctx *context) error {
 	// Use the device helper to find the correct device property name
-	prop, _, _, err := device(ctx.Client, cmd.InputName)
-	if err != nil {
-		return fmt.Errorf("failed to get device property: %w", err)
-	}
+	prop, _ := device(ctx, cmd.InputName)
 	if prop == "" {
 		return fmt.Errorf("no device property found for input '%s'", cmd.InputName)
 	}
