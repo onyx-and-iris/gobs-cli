@@ -14,16 +14,17 @@ import (
 
 // InputCmd provides commands to manage inputs in OBS Studio.
 type InputCmd struct {
-	Create    InputCreateCmd    `cmd:"" help:"Create input."          aliases:"c"`
-	Remove    InputRemoveCmd    `cmd:"" help:"Remove input."          aliases:"d"`
-	ListKinds InputListKindsCmd `cmd:"" help:"List input kinds."      aliases:"k"`
-	List      InputListCmd      `cmd:"" help:"List all inputs."       aliases:"ls"`
-	Mute      InputMuteCmd      `cmd:"" help:"Mute input."            aliases:"m"`
-	Unmute    InputUnmuteCmd    `cmd:"" help:"Unmute input."          aliases:"um"`
-	Volume    InputVolumeCmd    `cmd:"" help:"Set input volume."      aliases:"v"`
-	Show      InputShowCmd      `cmd:"" help:"Show input details."    aliases:"s"`
-	Toggle    InputToggleCmd    `cmd:"" help:"Toggle input."          aliases:"tg"`
-	Update    InputUpdateCmd    `cmd:"" help:"Update input settings." aliases:"up"`
+	Create       InputCreateCmd       `cmd:"" help:"Create input."                           aliases:"c"`
+	Remove       InputRemoveCmd       `cmd:"" help:"Remove input."                           aliases:"d"`
+	List         InputListCmd         `cmd:"" help:"List all inputs."                        aliases:"ls"`
+	ListKinds    InputListKindsCmd    `cmd:"" help:"List input kinds."                       aliases:"k"`
+	Mute         InputMuteCmd         `cmd:"" help:"Mute input."                             aliases:"m"`
+	Unmute       InputUnmuteCmd       `cmd:"" help:"Unmute input."                           aliases:"um"`
+	Toggle       InputToggleCmd       `cmd:"" help:"Toggle input."                           aliases:"tg"`
+	Volume       InputVolumeCmd       `cmd:"" help:"Set input volume."                       aliases:"v"`
+	Show         InputShowCmd         `cmd:"" help:"Show input details."                     aliases:"s"`
+	Update       InputUpdateCmd       `cmd:"" help:"Update input settings."                  aliases:"up"`
+	KindDefaults InputKindDefaultsCmd `cmd:"" help:"Get default settings for an input kind." aliases:"df"`
 }
 
 // InputCreateCmd provides a command to create an input.
@@ -69,47 +70,6 @@ func (cmd *InputRemoveCmd) Run(ctx *context) error {
 	}
 
 	fmt.Fprintf(ctx.Out, "Deleted %s\n", ctx.Style.Highlight(cmd.Name))
-	return nil
-}
-
-// InputListKindsCmd provides a command to list all input kinds.
-type InputListKindsCmd struct{}
-
-// Run executes the command to list all input kinds.
-func (cmd *InputListKindsCmd) Run(ctx *context) error {
-	resp, err := ctx.Client.Inputs.GetInputKindList(
-		inputs.NewGetInputKindListParams().WithUnversioned(false),
-	)
-	if err != nil {
-		return fmt.Errorf("failed to get input kinds: %w", err)
-	}
-
-	t := table.New().Border(lipgloss.RoundedBorder()).
-		BorderStyle(lipgloss.NewStyle().Foreground(ctx.Style.border))
-	t.Headers("Kind")
-	t.StyleFunc(func(row, col int) lipgloss.Style {
-		style := lipgloss.NewStyle().Padding(0, 3)
-		switch col {
-		case 0:
-			style = style.Align(lipgloss.Left)
-		}
-		switch {
-		case row == table.HeaderRow:
-			style = style.Bold(true).Align(lipgloss.Center)
-		case row%2 == 0:
-			style = style.Foreground(ctx.Style.evenRows)
-		default:
-			style = style.Foreground(ctx.Style.oddRows)
-		}
-		return style
-	})
-
-	for _, kind := range resp.InputKinds {
-		t.Row(kind)
-	}
-
-	fmt.Fprintln(ctx.Out, t.Render())
-
 	return nil
 }
 
@@ -216,6 +176,47 @@ func (cmd *InputListCmd) Run(ctx *context) error {
 	return nil
 }
 
+// InputListKindsCmd provides a command to list all input kinds.
+type InputListKindsCmd struct{}
+
+// Run executes the command to list all input kinds.
+func (cmd *InputListKindsCmd) Run(ctx *context) error {
+	resp, err := ctx.Client.Inputs.GetInputKindList(
+		inputs.NewGetInputKindListParams().WithUnversioned(false),
+	)
+	if err != nil {
+		return fmt.Errorf("failed to get input kinds: %w", err)
+	}
+
+	t := table.New().Border(lipgloss.RoundedBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground(ctx.Style.border))
+	t.Headers("Kind")
+	t.StyleFunc(func(row, col int) lipgloss.Style {
+		style := lipgloss.NewStyle().Padding(0, 3)
+		switch col {
+		case 0:
+			style = style.Align(lipgloss.Left)
+		}
+		switch {
+		case row == table.HeaderRow:
+			style = style.Bold(true).Align(lipgloss.Center)
+		case row%2 == 0:
+			style = style.Foreground(ctx.Style.evenRows)
+		default:
+			style = style.Foreground(ctx.Style.oddRows)
+		}
+		return style
+	})
+
+	for _, kind := range resp.InputKinds {
+		t.Row(kind)
+	}
+
+	fmt.Fprintln(ctx.Out, t.Render())
+
+	return nil
+}
+
 // InputMuteCmd provides a command to mute an input.
 type InputMuteCmd struct {
 	InputName string `arg:"" help:"Name of the input to mute."`
@@ -252,6 +253,37 @@ func (cmd *InputUnmuteCmd) Run(ctx *context) error {
 	return nil
 }
 
+// InputToggleCmd provides a command to toggle the mute state of an input.
+type InputToggleCmd struct {
+	InputName string `arg:"" help:"Name of the input to toggle."`
+}
+
+// Run executes the command to toggle the mute state of an input.
+func (cmd *InputToggleCmd) Run(ctx *context) error {
+	// Get the current mute state of the input
+	resp, err := ctx.Client.Inputs.GetInputMute(
+		inputs.NewGetInputMuteParams().WithInputName(cmd.InputName),
+	)
+	if err != nil {
+		return fmt.Errorf("failed to get input mute state: %w", err)
+	}
+	// Toggle the mute state
+	newMuteState := !resp.InputMuted
+	_, err = ctx.Client.Inputs.SetInputMute(
+		inputs.NewSetInputMuteParams().WithInputName(cmd.InputName).WithInputMuted(newMuteState),
+	)
+	if err != nil {
+		return fmt.Errorf("failed to toggle input mute state: %w", err)
+	}
+
+	if newMuteState {
+		fmt.Fprintf(ctx.Out, "Muted input: %s\n", ctx.Style.Highlight(cmd.InputName))
+	} else {
+		fmt.Fprintf(ctx.Out, "Unmuted input: %s\n", ctx.Style.Highlight(cmd.InputName))
+	}
+	return nil
+}
+
 // InputVolumeCmd provides a command to set the volume of an input.
 type InputVolumeCmd struct {
 	InputName string  `arg:"" help:"Name of the input to set volume for." required:""`
@@ -281,8 +313,8 @@ func (cmd *InputVolumeCmd) Run(ctx *context) error {
 
 // InputShowCmd provides a command to show input details.
 type InputShowCmd struct {
-	Name    string `arg:"" help:"Name of the input to show."                     required:""`
-	Verbose bool   `       help:"Show all properties and their keys and values."             flag:""`
+	Name    string `arg:"" help:"Name of the input to show."        required:""`
+	Verbose bool   `       help:"List all available input devices."             flag:""`
 }
 
 // Run executes the command to show input details.
@@ -407,37 +439,6 @@ func device(ctx *context, inputName string) (string, string) {
 	return "", ""
 }
 
-// InputToggleCmd provides a command to toggle the mute state of an input.
-type InputToggleCmd struct {
-	InputName string `arg:"" help:"Name of the input to toggle."`
-}
-
-// Run executes the command to toggle the mute state of an input.
-func (cmd *InputToggleCmd) Run(ctx *context) error {
-	// Get the current mute state of the input
-	resp, err := ctx.Client.Inputs.GetInputMute(
-		inputs.NewGetInputMuteParams().WithInputName(cmd.InputName),
-	)
-	if err != nil {
-		return fmt.Errorf("failed to get input mute state: %w", err)
-	}
-	// Toggle the mute state
-	newMuteState := !resp.InputMuted
-	_, err = ctx.Client.Inputs.SetInputMute(
-		inputs.NewSetInputMuteParams().WithInputName(cmd.InputName).WithInputMuted(newMuteState),
-	)
-	if err != nil {
-		return fmt.Errorf("failed to toggle input mute state: %w", err)
-	}
-
-	if newMuteState {
-		fmt.Fprintf(ctx.Out, "Muted input: %s\n", ctx.Style.Highlight(cmd.InputName))
-	} else {
-		fmt.Fprintf(ctx.Out, "Unmuted input: %s\n", ctx.Style.Highlight(cmd.InputName))
-	}
-	return nil
-}
-
 // InputUpdateCmd provides a command to update input settings.
 type InputUpdateCmd struct {
 	InputName  string `arg:"" help:"Name of the input to update." required:""`
@@ -498,5 +499,57 @@ func (cmd *InputUpdateCmd) Run(ctx *context) error {
 	fmt.Fprintf(ctx.Out, "Input %s %s set to %s\n",
 		ctx.Style.Highlight(cmd.InputName), prop, ctx.Style.Highlight(cmd.DeviceName))
 
+	return nil
+}
+
+// InputKindDefaultsCmd provides a command to get default settings for an input kind.
+type InputKindDefaultsCmd struct {
+	Kind string `arg:"" help:"Input kind to get default settings for." required:""`
+}
+
+// Run executes the command to get default settings for an input kind.
+func (cmd *InputKindDefaultsCmd) Run(ctx *context) error {
+	resp, err := ctx.Client.Inputs.GetInputDefaultSettings(
+		inputs.NewGetInputDefaultSettingsParams().
+			WithInputKind(cmd.Kind),
+	)
+	if err != nil {
+		return fmt.Errorf("failed to get default settings for input kind '%s': %w", cmd.Kind, err)
+	}
+
+	t := table.New().Border(lipgloss.RoundedBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground(ctx.Style.border))
+	t.Headers("Setting", "Value")
+	t.StyleFunc(func(row, col int) lipgloss.Style {
+		style := lipgloss.NewStyle().Padding(0, 3)
+		switch col {
+		case 0:
+			style = style.Align(lipgloss.Left)
+		case 1:
+			style = style.Align(lipgloss.Center)
+		}
+		switch {
+		case row == table.HeaderRow:
+			style = style.Bold(true).Align(lipgloss.Center)
+		case row%2 == 0:
+			style = style.Foreground(ctx.Style.evenRows)
+		default:
+			style = style.Foreground(ctx.Style.oddRows)
+		}
+		return style
+	})
+
+	keys := make([]string, 0, len(resp.DefaultInputSettings))
+	for k := range resp.DefaultInputSettings {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, key := range keys {
+		value := resp.DefaultInputSettings[key]
+		t.Row(key, fmt.Sprintf("%v", value))
+	}
+
+	fmt.Fprintln(ctx.Out, t.Render())
 	return nil
 }
