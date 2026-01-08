@@ -725,7 +725,7 @@ gobs-cli projector open --monitor-index=1 "test_group"
 gobs-cli screenshot save --width=2560 --height=1440 "Scene" "C:\Users\me\Videos\screenshot.png"
 ```
 
-### Settings
+### SettingsCmd
 
 -   show: Show settings.
     -   flags:
