@@ -3,8 +3,10 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"strings"
+	"time"
 )
 
 func snakeCaseToTitleCase(snake string) string {
@@ -35,4 +37,30 @@ func trimPrefix(s, prefix string) string {
 		return s[len(prefix):]
 	}
 	return s
+}
+
+func parseTimeStringToSeconds(timeStr string) (float64, error) {
+	parts := strings.Split(timeStr, ":")
+	var durationStr string
+
+	switch len(parts) {
+	case 1:
+		// Format: SS -> "SSs"
+		durationStr = parts[0] + "s"
+	case 2:
+		// Format: MM:SS -> "MMmSSs"
+		durationStr = parts[0] + "m" + parts[1] + "s"
+	case 3:
+		// Format: HH:MM:SS -> "HHhMMmSSs"
+		durationStr = parts[0] + "h" + parts[1] + "m" + parts[2] + "s"
+	default:
+		return 0, fmt.Errorf("invalid time format: %s", timeStr)
+	}
+
+	duration, err := time.ParseDuration(durationStr)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse duration: %w", err)
+	}
+
+	return duration.Seconds(), nil
 }
