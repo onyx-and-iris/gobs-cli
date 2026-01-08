@@ -725,6 +725,58 @@ gobs-cli projector open --monitor-index=1 "test_group"
 gobs-cli screenshot save --width=2560 --height=1440 "Scene" "C:\Users\me\Videos\screenshot.png"
 ```
 
+### Settings
+
+-   show: Show settings.
+    -   flags:
+
+        *optional*
+        -   --video: Show video settings.
+        -   --record: Show record directory.
+        -   --profile: Show profile parameters.
+
+```console
+gobs-cli settings show --video --record
+```
+
+-   profile: Get/Set profile parameter setting.
+    -   args: Category Name Value
+
+```console
+gobs-cli settings profile SimpleOutput VBitrate
+
+gobs-cli settings profile SimpleOutput VBitrate 6000
+```
+
+-   stream-service: Get/Set stream service setting.
+    -   args: Type
+    -   flags:
+        -   --key: Stream key.
+        -   --server: Stream server URL.
+
+```console
+gobs-cli settings stream-service
+
+gobs-cli settings stream-service rtmp_common --key='live_xyzxyzxyzxyz'
+```
+
+-   video: Get/Set video setting.
+-   flags:
+    -   --show: Show video settings.
+    -   --base-width: Base (canvas) width.
+    -   --base-height: Base (canvas) height.
+    -   --output-width: Output (scaled) width.
+    -   --output-height: Output (scaled) height.
+    -   --fps-num: Frames per second numerator.
+    -   --fps-den: Frames per second denominator.
+
+```console
+gobs-cli settings video --show
+
+gobs-cli settings video --base-width=1920 --base-height=1080
+```
+
+
 ## License
 
 `gobs-cli` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
