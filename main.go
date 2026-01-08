@@ -72,6 +72,7 @@ type CLI struct {
 	Projector       ProjectorCmd       `help:"Manage projectors."                      cmd:"" aliases:"prj" group:"Projector"`
 	Screenshot      ScreenshotCmd      `help:"Take screenshots."                       cmd:"" aliases:"ss"  group:"Screenshot"`
 	Settings        SettingsCmd        `help:"Manage video and profile settings."      cmd:"" aliases:"set" group:"Settings"`
+	Mediainput      Mediainput         `help:"Manage media inputs."                    cmd:"" aliases:"mi"  group:"Media Input"`
 }
 
 type context struct {
