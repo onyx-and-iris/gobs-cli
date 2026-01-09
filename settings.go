@@ -252,13 +252,12 @@ func (cmd *SettingsStreamServiceCmd) Run(ctx *context) error {
 
 // SettingsVideoCmd gets/ sets video settings.
 type SettingsVideoCmd struct {
-	Show         bool `flag:"" help:"Show video settings."`
-	BaseWidth    int  `flag:"" help:"Base (canvas) width."           min:"8"`
-	BaseHeight   int  `flag:"" help:"Base (canvas) height."          min:"8"`
-	OutputWidth  int  `flag:"" help:"Output (scaled) width."         min:"8"`
-	OutputHeight int  `flag:"" help:"Output (scaled) height."        min:"8"`
-	FPSNum       int  `flag:"" help:"Frames per second numerator."   min:"1"`
-	FPSDen       int  `flag:"" help:"Frames per second denominator." min:"1"`
+	BaseWidth    int `flag:"" help:"Base (canvas) width."           min:"8"`
+	BaseHeight   int `flag:"" help:"Base (canvas) height."          min:"8"`
+	OutputWidth  int `flag:"" help:"Output (scaled) width."         min:"8"`
+	OutputHeight int `flag:"" help:"Output (scaled) height."        min:"8"`
+	FPSNum       int `flag:"" help:"Frames per second numerator."   min:"1"`
+	FPSDen       int `flag:"" help:"Frames per second denominator." min:"1"`
 }
 
 // Run executes the gets/ set video command.
@@ -269,7 +268,8 @@ func (cmd *SettingsVideoCmd) Run(ctx *context) error {
 		return fmt.Errorf("failed to get video settings: %w", err)
 	}
 
-	if cmd.Show {
+	if cmd.BaseWidth == 0 && cmd.BaseHeight == 0 && cmd.OutputWidth == 0 &&
+		cmd.OutputHeight == 0 && cmd.FPSNum == 0 && cmd.FPSDen == 0 {
 		t := table.New().Border(lipgloss.RoundedBorder()).
 			BorderStyle(lipgloss.NewStyle().Foreground(ctx.Style.border)).
 			Headers("Video Setting", "Value").

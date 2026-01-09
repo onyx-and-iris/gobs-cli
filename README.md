@@ -764,7 +764,8 @@ gobs-cli settings stream-service --key='live_xyzxyzxyzxyz' rtmp_common
 
 -   video: Get/Set video setting.
     -   flags:
-        -   --show: Show video settings.
+
+        *optional*
         -   --base-width: Base (canvas) width.
         -   --base-height: Base (canvas) height.
         -   --output-width: Output (scaled) width.
@@ -773,7 +774,7 @@ gobs-cli settings stream-service --key='live_xyzxyzxyzxyz' rtmp_common
         -   --fps-den: Frames per second denominator.
 
 ```console
-gobs-cli settings video --show
+gobs-cli settings video
 
 gobs-cli settings video --base-width=1920 --base-height=1080
 ```
