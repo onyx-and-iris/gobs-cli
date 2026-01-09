@@ -23,7 +23,7 @@ type MediainputSetCursorCmd struct {
 
 // Run executes the command to set the cursor position of the media input.
 func (cmd *MediainputSetCursorCmd) Run(ctx *context) error {
-	position, err := parseTimeStringToSeconds(cmd.TimeString)
+	position, err := parseTimeStringToMilliseconds(cmd.TimeString)
 	if err != nil {
 		return fmt.Errorf("failed to parse time string: %w", err)
 	}
@@ -36,7 +36,13 @@ func (cmd *MediainputSetCursorCmd) Run(ctx *context) error {
 		return fmt.Errorf("failed to set media input cursor: %w", err)
 	}
 
-	fmt.Fprintln(ctx.Out, "Set media input cursor to position (seconds):", position)
+	fmt.Fprintf(
+		ctx.Out,
+		"Set %s cursor to %s (%.0f ms)\n",
+		ctx.Style.Highlight(cmd.InputName),
+		ctx.Style.Highlight(cmd.TimeString),
+		position,
+	)
 	return nil
 }
 

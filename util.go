@@ -39,7 +39,7 @@ func trimPrefix(s, prefix string) string {
 	return s
 }
 
-func parseTimeStringToSeconds(timeStr string) (float64, error) {
+func parseTimeStringToMilliseconds(timeStr string) (float64, error) {
 	parts := strings.Split(timeStr, ":")
 	var durationStr string
 
@@ -62,5 +62,5 @@ func parseTimeStringToSeconds(timeStr string) (float64, error) {
 		return 0, fmt.Errorf("failed to parse duration: %w", err)
 	}
 
-	return duration.Seconds(), nil
+	return duration.Seconds() * 1000, nil
 }
