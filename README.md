@@ -781,7 +781,7 @@ gobs-cli settings video --base-width=1920 --base-height=1080
 
 ### MediaCmd
 
--   set-cursor: Get/set the cursor position of a media input.
+-   cursor: Get/set the cursor position of a media input.
     -   args: InputName
 
         *optional*
