@@ -8,11 +8,11 @@ import (
 
 // MediaCmd represents a collection of commands to control media inputs.
 type MediaCmd struct {
-	Cursor  MediaCursorCmd  `cmd:"" help:"Get/set the cursor position of a media input."`
-	Play    MediaPlayCmd    `cmd:"" help:"Plays a media input."`
-	Pause   MediaPauseCmd   `cmd:"" help:"Pauses a media input."`
-	Stop    MediaStopCmd    `cmd:"" help:"Stops a media input."`
-	Restart MediaRestartCmd `cmd:"" help:"Restarts a media input."`
+	Cursor  MediaCursorCmd  `cmd:"" help:"Get/set the cursor position of a media input." aliases:"c"`
+	Play    MediaPlayCmd    `cmd:"" help:"Plays a media input."                          aliases:"p"`
+	Pause   MediaPauseCmd   `cmd:"" help:"Pauses a media input."                         aliases:"pa"`
+	Stop    MediaStopCmd    `cmd:"" help:"Stops a media input."                          aliases:"s"`
+	Restart MediaRestartCmd `cmd:"" help:"Restarts a media input."                       aliases:"r"`
 }
 
 // MediaCursorCmd represents the command to get or set the cursor position of a media input.
