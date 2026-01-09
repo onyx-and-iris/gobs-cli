@@ -6,23 +6,40 @@ import (
 	"github.com/andreykaipov/goobs/api/requests/mediainputs"
 )
 
-// Mediainput represents a collection of commands to control media inputs.
-type Mediainput struct {
-	SetCursor MediainputSetCursorCmd `cmd:"" help:"Sets the cursor position of a media input."`
-	Play      MediainputPlayCmd      `cmd:"" help:"Plays a media input."`
-	Pause     MediainputPauseCmd     `cmd:"" help:"Pauses a media input."`
-	Stop      MediainputStopCmd      `cmd:"" help:"Stops a media input."`
-	Restart   MediainputRestartCmd   `cmd:"" help:"Restarts a media input."`
+// MediaCmd represents a collection of commands to control media inputs.
+type MediaCmd struct {
+	Cursor  MediaCursorCmd  `cmd:"" help:"Get/set the cursor position of a media input."`
+	Play    MediaPlayCmd    `cmd:"" help:"Plays a media input."`
+	Pause   MediaPauseCmd   `cmd:"" help:"Pauses a media input."`
+	Stop    MediaStopCmd    `cmd:"" help:"Stops a media input."`
+	Restart MediaRestartCmd `cmd:"" help:"Restarts a media input."`
 }
 
-// MediainputSetCursorCmd represents the command to set the cursor position of a media input.
-type MediainputSetCursorCmd struct {
+// MediaCursorCmd represents the command to get or set the cursor position of a media input.
+type MediaCursorCmd struct {
 	InputName  string `arg:"" help:"Name of the media input."`
-	TimeString string `arg:"" help:"Time position to set the cursor to (e.g., '00:01:30' for 1 minute 30 seconds)."`
+	TimeString string `arg:"" help:"Time position to set the cursor to (e.g., '00:01:30' for 1 minute 30 seconds). If not provided, the current cursor position will be displayed." optional:""`
 }
 
 // Run executes the command to set the cursor position of the media input.
-func (cmd *MediainputSetCursorCmd) Run(ctx *context) error {
+func (cmd *MediaCursorCmd) Run(ctx *context) error {
+	if cmd.TimeString == "" {
+		resp, err := ctx.Client.MediaInputs.GetMediaInputStatus(
+			mediainputs.NewGetMediaInputStatusParams().
+				WithInputName(cmd.InputName))
+		if err != nil {
+			return fmt.Errorf("failed to get media input cursor: %w", err)
+		}
+
+		fmt.Fprintf(
+			ctx.Out,
+			"%s cursor position: %s\n",
+			ctx.Style.Highlight(cmd.InputName),
+			formatMillisecondsToTimeString(resp.MediaCursor),
+		)
+		return nil
+	}
+
 	position, err := parseTimeStringToMilliseconds(cmd.TimeString)
 	if err != nil {
 		return fmt.Errorf("failed to parse time string: %w", err)
@@ -46,13 +63,13 @@ func (cmd *MediainputSetCursorCmd) Run(ctx *context) error {
 	return nil
 }
 
-// MediainputPlayCmd represents the command to play a media input.
-type MediainputPlayCmd struct {
+// MediaPlayCmd represents the command to play a media input.
+type MediaPlayCmd struct {
 	InputName string `arg:"" help:"Name of the media input."`
 }
 
 // Run executes the command to play the media input.
-func (cmd *MediainputPlayCmd) Run(ctx *context) error {
+func (cmd *MediaPlayCmd) Run(ctx *context) error {
 	_, err := ctx.Client.MediaInputs.TriggerMediaInputAction(
 		mediainputs.NewTriggerMediaInputActionParams().
 			WithInputName(cmd.InputName).
@@ -65,13 +82,13 @@ func (cmd *MediainputPlayCmd) Run(ctx *context) error {
 	return nil
 }
 
-// MediainputPauseCmd represents the command to pause a media input.
-type MediainputPauseCmd struct {
+// MediaPauseCmd represents the command to pause a media input.
+type MediaPauseCmd struct {
 	InputName string `arg:"" help:"Name of the media input."`
 }
 
 // Run executes the command to pause the media input.
-func (cmd *MediainputPauseCmd) Run(ctx *context) error {
+func (cmd *MediaPauseCmd) Run(ctx *context) error {
 	_, err := ctx.Client.MediaInputs.TriggerMediaInputAction(
 		mediainputs.NewTriggerMediaInputActionParams().
 			WithInputName(cmd.InputName).
@@ -84,13 +101,13 @@ func (cmd *MediainputPauseCmd) Run(ctx *context) error {
 	return nil
 }
 
-// MediainputStopCmd represents the command to stop a media input.
-type MediainputStopCmd struct {
+// MediaStopCmd represents the command to stop a media input.
+type MediaStopCmd struct {
 	InputName string `arg:"" help:"Name of the media input."`
 }
 
 // Run executes the command to stop the media input.
-func (cmd *MediainputStopCmd) Run(ctx *context) error {
+func (cmd *MediaStopCmd) Run(ctx *context) error {
 	_, err := ctx.Client.MediaInputs.TriggerMediaInputAction(
 		mediainputs.NewTriggerMediaInputActionParams().
 			WithInputName(cmd.InputName).
@@ -103,13 +120,13 @@ func (cmd *MediainputStopCmd) Run(ctx *context) error {
 	return nil
 }
 
-// MediainputRestartCmd represents the command to restart a media input.
-type MediainputRestartCmd struct {
+// MediaRestartCmd represents the command to restart a media input.
+type MediaRestartCmd struct {
 	InputName string `arg:"" help:"Name of the media input."`
 }
 
 // Run executes the command to restart the media input.
-func (cmd *MediainputRestartCmd) Run(ctx *context) error {
+func (cmd *MediaRestartCmd) Run(ctx *context) error {
 	_, err := ctx.Client.MediaInputs.TriggerMediaInputAction(
 		mediainputs.NewTriggerMediaInputActionParams().
 			WithInputName(cmd.InputName).
