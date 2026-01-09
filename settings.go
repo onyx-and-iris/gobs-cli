@@ -189,7 +189,7 @@ func (cmd *SettingsProfileCmd) Run(ctx *context) error {
 
 // SettingsStreamServiceCmd gets/ sets stream service settings.
 type SettingsStreamServiceCmd struct {
-	Type   string `arg:"" help:"Stream type (e.g., rtmp_common, rtmp_custom)." required:""`
+	Type   string `arg:"" help:"Stream type (e.g., rtmp_common, rtmp_custom)." optional:""`
 	Key    string `       help:"Stream key."                                               flag:""`
 	Server string `       help:"Stream server URL."                                        flag:""`
 }
@@ -202,7 +202,7 @@ func (cmd *SettingsStreamServiceCmd) Run(ctx *context) error {
 		return fmt.Errorf("failed to get stream service settings: %w", err)
 	}
 
-	if cmd.Key == "" && cmd.Server == "" {
+	if cmd.Type == "" {
 		t := table.New().Border(lipgloss.RoundedBorder()).
 			BorderStyle(lipgloss.NewStyle().Foreground(ctx.Style.border)).
 			Headers("Stream Service Setting", "Value").
@@ -219,7 +219,7 @@ func (cmd *SettingsStreamServiceCmd) Run(ctx *context) error {
 				return style
 			})
 
-		t.Row("Type", cmd.Type)
+		t.Row("Type", resp.StreamServiceType)
 		t.Row("Key", resp.StreamServiceSettings.Key)
 		t.Row("Server", resp.StreamServiceSettings.Server)
 

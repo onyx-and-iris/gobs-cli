@@ -749,26 +749,28 @@ gobs-cli settings profile SimpleOutput VBitrate 6000
 ```
 
 -   stream-service: Get/Set stream service setting.
-    -   args: Type
     -   flags:
         -   --key: Stream key.
         -   --server: Stream server URL.
 
+    *optional*
+    -   args: Type
+
 ```console
 gobs-cli settings stream-service
 
-gobs-cli settings stream-service rtmp_common --key='live_xyzxyzxyzxyz'
+gobs-cli settings stream-service --key='live_xyzxyzxyzxyz' rtmp_common
 ```
 
 -   video: Get/Set video setting.
--   flags:
-    -   --show: Show video settings.
-    -   --base-width: Base (canvas) width.
-    -   --base-height: Base (canvas) height.
-    -   --output-width: Output (scaled) width.
-    -   --output-height: Output (scaled) height.
-    -   --fps-num: Frames per second numerator.
-    -   --fps-den: Frames per second denominator.
+    -   flags:
+        -   --show: Show video settings.
+        -   --base-width: Base (canvas) width.
+        -   --base-height: Base (canvas) height.
+        -   --output-width: Output (scaled) width.
+        -   --output-height: Output (scaled) height.
+        -   --fps-num: Frames per second numerator.
+        -   --fps-den: Frames per second denominator.
 
 ```console
 gobs-cli settings video --show
