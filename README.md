@@ -779,6 +779,38 @@ gobs-cli settings video
 gobs-cli settings video --base-width=1920 --base-height=1080
 ```
 
+### MediaInputCmd
+
+-   set-cursor: Sets the cursor position of a media input.
+
+```console
+gobs-cli mediainput set-cursor "Media" "00:08:30"
+```
+
+-   play: Plays a media input.
+
+```console
+gobs-cli mediainput play "Media"
+```
+
+-   pause: Pauses a media input.
+
+```console
+gobs-cli mediainput pause "Media"
+```
+
+-   stop: Stops a media input.
+
+```console
+gobs-cli mediainput stop "Media"
+```
+
+-   restart: Restarts a media input.
+
+```console
+gobs-cli mediainput restart "Media"
+```
+
 
 ## License
 
