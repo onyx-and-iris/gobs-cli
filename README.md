@@ -12,6 +12,7 @@ For an outline of past/future changes refer to: [CHANGELOG](CHANGELOG.md)
 - [Configuration](#configuration)
 - [Style](#style)
 - [Commands](#commands)
+- [Shell Completion](#shell-completion)
 - [License](#license)
 
 ## Installation
@@ -816,6 +817,22 @@ gobs-cli media stop "Media"
 ```console
 gobs-cli media restart "Media"
 ```
+
+
+## Shell Completion
+
+-   completion:
+
+    *optional*
+    -   args: Shell
+
+```console
+gobs-cli completion
+
+gobs-cli completion bash
+```
+
+Currently supported shells: *bash* *zsh* *fish*. If no shell is passed completion will attempt to detect the current user shell.
 
 
 ## License

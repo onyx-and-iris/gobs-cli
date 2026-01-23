@@ -15,6 +15,7 @@ import (
 	"github.com/alecthomas/kong"
 	mangokong "github.com/alecthomas/mango-kong"
 	"github.com/andreykaipov/goobs"
+	kongcompletion "github.com/jotaen/kong-completion"
 	kongdotenv "github.com/titusjaka/kong-dotenv-go"
 )
 
@@ -53,6 +54,8 @@ type CLI struct {
 
 	Man     mangokong.ManFlag `help:"Print man page."`
 	Version VersionFlag       `help:"Print gobs-cli version information and quit" name:"version" short:"v"`
+
+	Completion kongcompletion.Completion `help:"Generate shell completion scripts." cmd:"" aliases:"c"`
 
 	ObsVersion      ObsVersionCmd      `help:"Print OBS client and websocket version." cmd:"" aliases:"v"`
 	Scene           SceneCmd           `help:"Manage scenes."                          cmd:"" aliases:"sc"  group:"Scene"`
@@ -97,6 +100,7 @@ func main() {
 	}
 
 	var cli CLI
+	kongcompletion.Register(kong.Must(&cli))
 	ctx := kong.Parse(
 		&cli,
 		kong.Name("gobs-cli"),
