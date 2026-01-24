@@ -24,12 +24,12 @@ func getEnabledMark(enabled bool) string {
 		if os.Getenv("NO_COLOR") != "" { // nolint: misspell
 			return "✓"
 		}
-		return "✅"
+		return "●"
 	}
 	if os.Getenv("NO_COLOR") != "" { // nolint: misspell
 		return "✗"
 	}
-	return "❌"
+	return "○"
 }
 
 func trimPrefix(s, prefix string) string {

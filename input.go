@@ -131,7 +131,7 @@ func (cmd *InputListCmd) Run(ctx *context) error {
 		)
 		if err != nil {
 			if err.Error() == "request GetInputMute: InvalidResourceState (604): The specified input does not support audio." {
-				muteMark = "N/A"
+				muteMark = "—"
 			} else {
 				return fmt.Errorf("failed to get input mute state: %w", err)
 			}
