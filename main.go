@@ -123,12 +123,7 @@ func main() {
 			}(),
 		})
 
-	client, err := connectObs(cli.ObsConfig)
-	ctx.FatalIfErrorf(err)
-
-	ctx.Bind(newContext(client, os.Stdout, cli.StyleConfig))
-
-	ctx.FatalIfErrorf(run(ctx, client))
+	ctx.FatalIfErrorf(run(ctx, cli.ObsConfig, cli.StyleConfig))
 }
 
 // connectObs creates a new OBS client and connects to the OBS WebSocket server.
@@ -145,14 +140,26 @@ func connectObs(cfg ObsConfig) (*goobs.Client, error) {
 }
 
 // run executes the command line interface.
-// It disconnects the OBS client after the command is executed.
-func run(ctx *kong.Context, client *goobs.Client) error {
+// It connects to the OBS WebSocket server and binds the context to the selected command.
+// It also handles the "completion" command separately to avoid unnecessary connections.
+func run(ctx *kong.Context, obsCfg ObsConfig, styleCfg StyleConfig) error {
+	if ctx.Selected().Name == "completion" {
+		return ctx.Run()
+	}
+
+	client, err := connectObs(obsCfg)
+	if err != nil {
+		return err
+	}
+
 	defer func() error {
 		if err := client.Disconnect(); err != nil {
 			return fmt.Errorf("failed to disconnect from OBS: %w", err)
 		}
 		return nil
 	}()
+
+	ctx.Bind(newContext(client, os.Stdout, styleCfg))
 
 	return ctx.Run()
 }
