@@ -39,6 +39,7 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+      - '^chore:'
 
 release:
   footer: >-
