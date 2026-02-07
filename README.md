@@ -825,7 +825,7 @@ gobs-cli media restart "Media"
 
     *optional*
     -   args: Shell
-        - If no shell is passed completion will attempt to detect the current user shell.
+        - If no shell is passed completion will attempt to detect the current login shell.
 
 ```console
 gobs-cli completion
