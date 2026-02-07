@@ -825,6 +825,7 @@ gobs-cli media restart "Media"
 
     *optional*
     -   args: Shell
+        - If no shell is passed completion will attempt to detect the current user shell.
 
 ```console
 gobs-cli completion
@@ -832,7 +833,7 @@ gobs-cli completion
 gobs-cli completion bash
 ```
 
-Currently supported shells: *bash* *zsh* *fish*. If no shell is passed completion will attempt to detect the current user shell.
+Currently supported shells: *bash* *zsh* *fish*.
 
 
 ## License
