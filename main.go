@@ -126,19 +126,6 @@ func main() {
 	ctx.FatalIfErrorf(run(ctx, cli.ObsConfig, cli.StyleConfig))
 }
 
-// connectObs creates a new OBS client and connects to the OBS WebSocket server.
-func connectObs(cfg ObsConfig) (*goobs.Client, error) {
-	client, err := goobs.New(
-		fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
-		goobs.WithPassword(cfg.Password),
-		goobs.WithResponseTimeout(time.Duration(cfg.Timeout)*time.Second),
-	)
-	if err != nil {
-		return nil, err
-	}
-	return client, nil
-}
-
 // run executes the command line interface.
 // It connects to the OBS WebSocket server and binds the context to the selected command.
 // It also handles the "completion" command separately to avoid unnecessary connections.
@@ -162,4 +149,17 @@ func run(ctx *kong.Context, obsCfg ObsConfig, styleCfg StyleConfig) error {
 	ctx.Bind(newContext(client, os.Stdout, styleCfg))
 
 	return ctx.Run()
+}
+
+// connectObs creates a new OBS client and connects to the OBS WebSocket server.
+func connectObs(cfg ObsConfig) (*goobs.Client, error) {
+	client, err := goobs.New(
+		fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
+		goobs.WithPassword(cfg.Password),
+		goobs.WithResponseTimeout(time.Duration(cfg.Timeout)*time.Second),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
 }
