@@ -137,5 +137,8 @@ formatters:
       - vendor
 
 issues:
-  max-same-issues: 0
-  max-issues-per-linter: 0
+  # Limit the number of same issues reported to avoid spam
+  max-same-issues: 50
+
+  # Limit the number of issues per linter to keep output manageable
+  max-issues-per-linter: 100
