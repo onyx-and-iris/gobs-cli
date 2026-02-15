@@ -66,7 +66,10 @@ func (cmd *RecordStopCmd) Run(ctx *context) error {
 	fmt.Fprintf(
 		ctx.Out,
 		"%s",
-		fmt.Sprintf("Recording stopped successfully. Output file: %s\n", ctx.Style.Highlight(resp.OutputPath)),
+		fmt.Sprintf(
+			"Recording stopped successfully. Output file: %s\n",
+			ctx.Style.Highlight(resp.OutputPath),
+		),
 	)
 	return nil
 }
@@ -176,7 +179,11 @@ func (cmd *RecordDirectoryCmd) Run(ctx *context) error {
 		if err != nil {
 			return err
 		}
-		fmt.Fprintf(ctx.Out, "Current recording directory: %s\n", ctx.Style.Highlight(resp.RecordDirectory))
+		fmt.Fprintf(
+			ctx.Out,
+			"Current recording directory: %s\n",
+			ctx.Style.Highlight(resp.RecordDirectory),
+		)
 		return nil
 	}
 
@@ -187,7 +194,11 @@ func (cmd *RecordDirectoryCmd) Run(ctx *context) error {
 		return err
 	}
 
-	fmt.Fprintf(ctx.Out, "Recording directory set to: %s\n", ctx.Style.Highlight(cmd.RecordDirectory))
+	fmt.Fprintf(
+		ctx.Out,
+		"Recording directory set to: %s\n",
+		ctx.Style.Highlight(cmd.RecordDirectory),
+	)
 	return nil
 }
 

@@ -66,7 +66,11 @@ func (cmd *GroupListCmd) Run(ctx *context) error {
 	var found bool
 	for _, item := range resp.SceneItems {
 		if item.IsGroup {
-			t.Row(fmt.Sprintf("%d", item.SceneItemID), item.SourceName, getEnabledMark(item.SceneItemEnabled))
+			t.Row(
+				fmt.Sprintf("%d", item.SceneItemID),
+				item.SourceName,
+				getEnabledMark(item.SceneItemEnabled),
+			)
 			found = true
 		}
 	}
@@ -97,10 +101,12 @@ func (cmd *GroupShowCmd) Run(ctx *context) error {
 	var found bool
 	for _, item := range resp.SceneItems {
 		if item.IsGroup && item.SourceName == cmd.GroupName {
-			_, err := ctx.Client.SceneItems.SetSceneItemEnabled(sceneitems.NewSetSceneItemEnabledParams().
-				WithSceneName(cmd.SceneName).
-				WithSceneItemId(item.SceneItemID).
-				WithSceneItemEnabled(true))
+			_, err := ctx.Client.SceneItems.SetSceneItemEnabled(
+				sceneitems.NewSetSceneItemEnabledParams().
+					WithSceneName(cmd.SceneName).
+					WithSceneItemId(item.SceneItemID).
+					WithSceneItemEnabled(true),
+			)
 			if err != nil {
 				return fmt.Errorf("failed to set scene item enabled: %w", err)
 			}
@@ -136,10 +142,12 @@ func (cmd *GroupHideCmd) Run(ctx *context) error {
 	var found bool
 	for _, item := range resp.SceneItems {
 		if item.IsGroup && item.SourceName == cmd.GroupName {
-			_, err := ctx.Client.SceneItems.SetSceneItemEnabled(sceneitems.NewSetSceneItemEnabledParams().
-				WithSceneName(cmd.SceneName).
-				WithSceneItemId(item.SceneItemID).
-				WithSceneItemEnabled(false))
+			_, err := ctx.Client.SceneItems.SetSceneItemEnabled(
+				sceneitems.NewSetSceneItemEnabledParams().
+					WithSceneName(cmd.SceneName).
+					WithSceneItemId(item.SceneItemID).
+					WithSceneItemEnabled(false),
+			)
 			if err != nil {
 				return fmt.Errorf("failed to set scene item enabled: %w", err)
 			}
@@ -176,17 +184,23 @@ func (cmd *GroupToggleCmd) Run(ctx *context) error {
 	for _, item := range resp.SceneItems {
 		if item.IsGroup && item.SourceName == cmd.GroupName {
 			newState := !item.SceneItemEnabled
-			_, err := ctx.Client.SceneItems.SetSceneItemEnabled(sceneitems.NewSetSceneItemEnabledParams().
-				WithSceneName(cmd.SceneName).
-				WithSceneItemId(item.SceneItemID).
-				WithSceneItemEnabled(newState))
+			_, err := ctx.Client.SceneItems.SetSceneItemEnabled(
+				sceneitems.NewSetSceneItemEnabledParams().
+					WithSceneName(cmd.SceneName).
+					WithSceneItemId(item.SceneItemID).
+					WithSceneItemEnabled(newState),
+			)
 			if err != nil {
 				return fmt.Errorf("failed to set scene item enabled: %w", err)
 			}
 			if newState {
 				fmt.Fprintf(ctx.Out, "Group %s is now shown.\n", ctx.Style.Highlight(cmd.GroupName))
 			} else {
-				fmt.Fprintf(ctx.Out, "Group %s is now hidden.\n", ctx.Style.Highlight(cmd.GroupName))
+				fmt.Fprintf(
+					ctx.Out,
+					"Group %s is now hidden.\n",
+					ctx.Style.Highlight(cmd.GroupName),
+				)
 			}
 			found = true
 			break
@@ -226,5 +240,9 @@ func (cmd *GroupStatusCmd) Run(ctx *context) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("group %s not found in scene %s", ctx.Style.Error(cmd.GroupName), ctx.Style.Error(cmd.SceneName))
+	return fmt.Errorf(
+		"group %s not found in scene %s",
+		ctx.Style.Error(cmd.GroupName),
+		ctx.Style.Error(cmd.SceneName),
+	)
 }

@@ -32,8 +32,7 @@ func (cmd *SceneCollectionListCmd) Run(ctx *context) error {
 		Headers("Scene Collection Name").
 		StyleFunc(func(row, col int) lipgloss.Style {
 			style := lipgloss.NewStyle().Padding(0, 3)
-			switch col {
-			case 0:
+			if col == 0 {
 				style = style.Align(lipgloss.Left)
 			}
 			switch {
@@ -89,7 +88,11 @@ func (cmd *SceneCollectionSwitchCmd) Run(ctx *context) error {
 		config.NewSetCurrentSceneCollectionParams().WithSceneCollectionName(cmd.Name),
 	)
 	if err != nil {
-		return fmt.Errorf("failed to switch scene collection %s: %w", ctx.Style.Error(cmd.Name), err)
+		return fmt.Errorf(
+			"failed to switch scene collection %s: %w",
+			ctx.Style.Error(cmd.Name),
+			err,
+		)
 	}
 
 	fmt.Fprintf(ctx.Out, "Switched to scene collection: %s\n", ctx.Style.Highlight(cmd.Name))
@@ -108,7 +111,11 @@ func (cmd *SceneCollectionCreateCmd) Run(ctx *context) error {
 		config.NewCreateSceneCollectionParams().WithSceneCollectionName(cmd.Name),
 	)
 	if err != nil {
-		return fmt.Errorf("failed to create scene collection %s: %w", ctx.Style.Error(cmd.Name), err)
+		return fmt.Errorf(
+			"failed to create scene collection %s: %w",
+			ctx.Style.Error(cmd.Name),
+			err,
+		)
 	}
 
 	fmt.Fprintf(ctx.Out, "Created scene collection: %s\n", ctx.Style.Highlight(cmd.Name))

@@ -44,7 +44,11 @@ func (cmd *FilterListCmd) Run(ctx *context) error {
 	}
 
 	if len(sourceFilters.Filters) == 0 {
-		fmt.Fprintf(ctx.Out, "No filters found for source %s.\n", ctx.Style.Highlight(cmd.SourceName))
+		fmt.Fprintf(
+			ctx.Out,
+			"No filters found for source %s.\n",
+			ctx.Style.Highlight(cmd.SourceName),
+		)
 		return nil
 	}
 

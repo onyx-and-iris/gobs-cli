@@ -43,7 +43,6 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		os.Exit(1)
 	}
-	defer client.Disconnect()
 
 	setup(client)
 
@@ -51,11 +50,13 @@ func TestMain(m *testing.M) {
 	exitCode := m.Run()
 
 	teardown(client)
+	client.Disconnect()
 
 	// Exit with the appropriate code
 	os.Exit(exitCode)
 }
 
+// nolint: misspell
 func setup(client *goobs.Client) {
 	client.Config.SetStreamServiceSettings(config.NewSetStreamServiceSettingsParams().
 		WithStreamServiceType("rtmp_common").

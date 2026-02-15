@@ -94,7 +94,9 @@ func (cmd *ProfileSwitchCmd) Run(ctx *context) error {
 		return fmt.Errorf("already using profile %s", ctx.Style.Error(cmd.Name))
 	}
 
-	_, err = ctx.Client.Config.SetCurrentProfile(config.NewSetCurrentProfileParams().WithProfileName(cmd.Name))
+	_, err = ctx.Client.Config.SetCurrentProfile(
+		config.NewSetCurrentProfileParams().WithProfileName(cmd.Name),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to switch to profile %s: %w", ctx.Style.Error(cmd.Name), err)
 	}
@@ -125,7 +127,9 @@ func (cmd *ProfileCreateCmd) Run(ctx *context) error {
 		return fmt.Errorf("profile %s already exists", ctx.Style.Error(cmd.Name))
 	}
 
-	_, err = ctx.Client.Config.CreateProfile(config.NewCreateProfileParams().WithProfileName(cmd.Name))
+	_, err = ctx.Client.Config.CreateProfile(
+		config.NewCreateProfileParams().WithProfileName(cmd.Name),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to create profile %s: %w", ctx.Style.Error(cmd.Name), err)
 	}
@@ -157,7 +161,9 @@ func (cmd *ProfileRemoveCmd) Run(ctx *context) error {
 		return fmt.Errorf("cannot delete current profile %s", ctx.Style.Error(cmd.Name))
 	}
 
-	_, err = ctx.Client.Config.RemoveProfile(config.NewRemoveProfileParams().WithProfileName(cmd.Name))
+	_, err = ctx.Client.Config.RemoveProfile(
+		config.NewRemoveProfileParams().WithProfileName(cmd.Name),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to delete profile %s: %w", ctx.Style.Error(cmd.Name), err)
 	}

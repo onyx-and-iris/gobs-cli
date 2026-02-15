@@ -105,7 +105,11 @@ func main() {
 		&cli,
 		kong.Name("gobs-cli"),
 		kong.Description("A command line tool to interact with OBS Websocket."),
-		kong.Configuration(kongdotenv.ENVFileReader, ".env", filepath.Join(userConfigDir, "gobs-cli", "config.env")),
+		kong.Configuration(
+			kongdotenv.ENVFileReader,
+			".env",
+			filepath.Join(userConfigDir, "gobs-cli", "config.env"),
+		),
 		kong.UsageOnError(),
 		kong.ConfigureHelp(kong.HelpOptions{
 			Compact: true,
@@ -121,7 +125,8 @@ func main() {
 				}
 				return version
 			}(),
-		})
+		},
+	)
 
 	ctx.FatalIfErrorf(run(ctx, cli.ObsConfig, cli.StyleConfig))
 }
@@ -144,7 +149,7 @@ func run(ctx *kong.Context, obsCfg ObsConfig, styleCfg StyleConfig) error {
 			return fmt.Errorf("failed to disconnect from OBS: %w", err)
 		}
 		return nil
-	}()
+	}() // nolint: errcheck
 
 	ctx.Bind(newContext(client, os.Stdout, styleCfg))
 

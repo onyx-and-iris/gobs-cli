@@ -80,6 +80,11 @@ func (cmd *TextUpdateCmd) Run(ctx *context) error {
 	if cmd.NewText == "" {
 		cmd.NewText = "(empty)"
 	}
-	fmt.Fprintf(ctx.Out, "Updated text for source %s to: %s\n", ctx.Style.Highlight(cmd.InputName), cmd.NewText)
+	fmt.Fprintf(
+		ctx.Out,
+		"Updated text for source %s to: %s\n",
+		ctx.Style.Highlight(cmd.InputName),
+		cmd.NewText,
+	)
 	return nil
 }

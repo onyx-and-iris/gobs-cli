@@ -19,7 +19,9 @@ type StudioModeEnableCmd struct{} // size = 0x0
 
 // Run executes the command to enable studio mode.
 func (cmd *StudioModeEnableCmd) Run(ctx *context) error {
-	_, err := ctx.Client.Ui.SetStudioModeEnabled(ui.NewSetStudioModeEnabledParams().WithStudioModeEnabled(true))
+	_, err := ctx.Client.Ui.SetStudioModeEnabled(
+		ui.NewSetStudioModeEnabledParams().WithStudioModeEnabled(true),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to enable studio mode: %w", err)
 	}
@@ -33,7 +35,9 @@ type StudioModeDisableCmd struct{} // size = 0x0
 
 // Run executes the command to disable studio mode.
 func (cmd *StudioModeDisableCmd) Run(ctx *context) error {
-	_, err := ctx.Client.Ui.SetStudioModeEnabled(ui.NewSetStudioModeEnabledParams().WithStudioModeEnabled(false))
+	_, err := ctx.Client.Ui.SetStudioModeEnabled(
+		ui.NewSetStudioModeEnabledParams().WithStudioModeEnabled(false),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to disable studio mode: %w", err)
 	}
@@ -53,7 +57,9 @@ func (cmd *StudioModeToggleCmd) Run(ctx *context) error {
 	}
 
 	newStatus := !status.StudioModeEnabled
-	_, err = ctx.Client.Ui.SetStudioModeEnabled(ui.NewSetStudioModeEnabledParams().WithStudioModeEnabled(newStatus))
+	_, err = ctx.Client.Ui.SetStudioModeEnabled(
+		ui.NewSetStudioModeEnabledParams().WithStudioModeEnabled(newStatus),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to toggle studio mode: %w", err)
 	}

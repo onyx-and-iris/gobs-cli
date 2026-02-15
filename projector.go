@@ -97,9 +97,12 @@ func (cmd *ProjectorOpenCmd) Run(ctx *context) error {
 		)
 	}
 
-	ctx.Client.Ui.OpenSourceProjector(ui.NewOpenSourceProjectorParams().
+	_, err = ctx.Client.Ui.OpenSourceProjector(ui.NewOpenSourceProjectorParams().
 		WithSourceName(cmd.SourceName).
 		WithMonitorIndex(cmd.MonitorIndex))
+	if err != nil {
+		return fmt.Errorf("failed to open projector: %w", err)
+	}
 
 	fmt.Fprintf(
 		ctx.Out,

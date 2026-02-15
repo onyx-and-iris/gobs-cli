@@ -91,7 +91,12 @@ func (cmd *StreamStatusCmd) Run(ctx *context) error {
 		minutes := int(seconds / 60)
 		secondsInt := int(seconds) % 60
 		if minutes > 0 {
-			fmt.Fprintf(ctx.Out, "Output duration: %d minutes and %d seconds\n", minutes, secondsInt)
+			fmt.Fprintf(
+				ctx.Out,
+				"Output duration: %d minutes and %d seconds\n",
+				minutes,
+				secondsInt,
+			)
 		} else {
 			fmt.Fprintf(ctx.Out, "Output duration: %d seconds\n", secondsInt)
 		}

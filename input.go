@@ -50,8 +50,15 @@ func (cmd *InputCreateCmd) Run(ctx *context) error {
 		return err
 	}
 
-	fmt.Fprintf(ctx.Out, "Created input: %s (%s) in scene %s\n",
-		ctx.Style.Highlight(cmd.Name), cmd.Kind, ctx.Style.Highlight(currentScene.CurrentProgramSceneName))
+	fmt.Fprintf(
+		ctx.Out,
+		"Created input: %s (%s) in scene %s\n",
+		ctx.Style.Highlight(
+			cmd.Name,
+		),
+		cmd.Kind,
+		ctx.Style.Highlight(currentScene.CurrentProgramSceneName),
+	)
 	return nil
 }
 
@@ -166,7 +173,12 @@ func (cmd *InputListCmd) Run(ctx *context) error {
 
 		if !added && (!cmd.Input && !cmd.Output && !cmd.Colour && !cmd.Ffmpeg && !cmd.Vlc) {
 			if cmd.UUID {
-				t.Row(input.InputName, snakeCaseToTitleCase(input.InputKind), muteMark, input.InputUuid)
+				t.Row(
+					input.InputName,
+					snakeCaseToTitleCase(input.InputKind),
+					muteMark,
+					input.InputUuid,
+				)
 			} else {
 				t.Row(input.InputName, snakeCaseToTitleCase(input.InputKind), muteMark)
 			}
@@ -193,8 +205,7 @@ func (cmd *InputListKindsCmd) Run(ctx *context) error {
 	t.Headers("Kind")
 	t.StyleFunc(func(row, col int) lipgloss.Style {
 		style := lipgloss.NewStyle().Padding(0, 3)
-		switch col {
-		case 0:
+		if col == 0 {
 			style = style.Align(lipgloss.Left)
 		}
 		switch {
@@ -384,8 +395,7 @@ func (cmd *InputShowCmd) Run(ctx *context) error {
 			BorderStyle(lipgloss.NewStyle().Foreground(ctx.Style.border))
 		t.StyleFunc(func(row, col int) lipgloss.Style {
 			style := lipgloss.NewStyle().Padding(0, 3)
-			switch col {
-			case 0:
+			if col == 0 {
 				style = style.Align(lipgloss.Left)
 			}
 			switch {
