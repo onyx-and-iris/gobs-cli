@@ -116,14 +116,15 @@ func main() {
 		}),
 		kong.Vars{
 			"version": func() string {
-				if version == "" {
-					info, ok := debug.ReadBuildInfo()
-					if !ok {
-						return "(unable to read build info)"
-					}
-					version = strings.Split(info.Main.Version, "-")[0]
+				if version != "" {
+					return version
 				}
-				return version
+
+				info, ok := debug.ReadBuildInfo()
+				if !ok {
+					return "(unable to read version)"
+				}
+				return strings.Split(info.Main.Version, "-")[0]
 			}(),
 		},
 	)
