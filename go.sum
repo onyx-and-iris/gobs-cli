@@ -6,8 +6,8 @@ github.com/alecthomas/mango-kong v0.1.0 h1:iFVfP1k1K4qpml3JUQmD5I8MCQYfIvsD9mRdr
 github.com/alecthomas/mango-kong v0.1.0/go.mod h1:t+TYVdsONUolf/BwVcm+15eqcdAj15h4Qe9MMFAwwT4=
 github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
 github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
-github.com/andreykaipov/goobs v1.7.1 h1:1Wh7batGb/eRs6ywVwqD7JljxdNxQpz1kpJK2j4dhAI=
-github.com/andreykaipov/goobs v1.7.1/go.mod h1:4Dl/G+rQXCywV85hdAKwsj8h352KsfILP+QUB1FvRSc=
+github.com/andreykaipov/goobs v1.8.1 h1:wLxgSOsN3Dv4iozDW/vpxQpMJ0VxB0nVYAx2q0dDpBE=
+github.com/andreykaipov/goobs v1.8.1/go.mod h1:4Dl/G+rQXCywV85hdAKwsj8h352KsfILP+QUB1FvRSc=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1 h1:HwpRHbFMcZLEVr42D4p7XBqjyuxQH5SMiErDT4WkJ2k=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1/go.mod h1:uYgXzlJ7ZpABp8OJ+exZzJJhRNQ2ASbcXHWsFqH8hp8=
 github.com/aymanbagabas/go-udiff v0.2.0 h1:TK0fH4MteXUDspT88n8CKzvK0X9O2xu9yQjWpi6yML8=
