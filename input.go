@@ -14,17 +14,17 @@ import (
 
 // InputCmd provides commands to manage inputs in OBS Studio.
 type InputCmd struct {
-	Create       InputCreateCmd       `cmd:"" help:"Create input."                           aliases:"c"`
-	Remove       InputRemoveCmd       `cmd:"" help:"Remove input."                           aliases:"d"`
-	List         InputListCmd         `cmd:"" help:"List all inputs."                        aliases:"ls"`
-	ListKinds    InputListKindsCmd    `cmd:"" help:"List input kinds."                       aliases:"k"`
-	Mute         InputMuteCmd         `cmd:"" help:"Mute input."                             aliases:"m"`
-	Unmute       InputUnmuteCmd       `cmd:"" help:"Unmute input."                           aliases:"um"`
-	Toggle       InputToggleCmd       `cmd:"" help:"Toggle input."                           aliases:"tg"`
-	Volume       InputVolumeCmd       `cmd:"" help:"Set input volume."                       aliases:"v"`
-	Show         InputShowCmd         `cmd:"" help:"Show input details."                     aliases:"s"`
-	Update       InputUpdateCmd       `cmd:"" help:"Update input settings."                  aliases:"up"`
-	KindDefaults InputKindDefaultsCmd `cmd:"" help:"Get default settings for an input kind." aliases:"df"`
+	Create       InputCreateCmd       `cmd:"" help:"Create input."                           aliases:"c"  completion-command-alias-enabled:"false"`
+	Remove       InputRemoveCmd       `cmd:"" help:"Remove input."                           aliases:"d"  completion-command-alias-enabled:"false"`
+	List         InputListCmd         `cmd:"" help:"List all inputs."                        aliases:"ls" completion-command-alias-enabled:"false"`
+	ListKinds    InputListKindsCmd    `cmd:"" help:"List input kinds."                       aliases:"k"  completion-command-alias-enabled:"false"`
+	Mute         InputMuteCmd         `cmd:"" help:"Mute input."                             aliases:"m"  completion-command-alias-enabled:"false"`
+	Unmute       InputUnmuteCmd       `cmd:"" help:"Unmute input."                           aliases:"um" completion-command-alias-enabled:"false"`
+	Toggle       InputToggleCmd       `cmd:"" help:"Toggle input."                           aliases:"tg" completion-command-alias-enabled:"false"`
+	Volume       InputVolumeCmd       `cmd:"" help:"Set input volume."                       aliases:"v"  completion-command-alias-enabled:"false"`
+	Show         InputShowCmd         `cmd:"" help:"Show input details."                     aliases:"s"  completion-command-alias-enabled:"false"`
+	Update       InputUpdateCmd       `cmd:"" help:"Update input settings."                  aliases:"up" completion-command-alias-enabled:"false"`
+	KindDefaults InputKindDefaultsCmd `cmd:"" help:"Get default settings for an input kind." aliases:"df" completion-command-alias-enabled:"false"`
 }
 
 // InputCreateCmd provides a command to create an input.

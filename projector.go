@@ -10,8 +10,8 @@ import (
 
 // ProjectorCmd provides a command to manage projectors in OBS.
 type ProjectorCmd struct {
-	ListMonitors ProjectorListMonitorsCmd `cmd:"" help:"List available monitors."                                        aliases:"ls-m"`
-	Open         ProjectorOpenCmd         `cmd:"" help:"Open a fullscreen projector for a source on a specific monitor." aliases:"o"`
+	ListMonitors ProjectorListMonitorsCmd `cmd:"" help:"List available monitors."                                        aliases:"ls-m" completion-command-alias-enabled:"false"`
+	Open         ProjectorOpenCmd         `cmd:"" help:"Open a fullscreen projector for a source on a specific monitor." aliases:"o"    completion-command-alias-enabled:"false"`
 }
 
 // ProjectorListMonitorsCmd provides a command to list all monitors available for projectors.

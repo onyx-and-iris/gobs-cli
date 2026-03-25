@@ -10,11 +10,11 @@ import (
 
 // GroupCmd provides commands to manage groups in OBS Studio.
 type GroupCmd struct {
-	List   GroupListCmd   `cmd:"" help:"List all groups."    aliases:"ls"`
-	Show   GroupShowCmd   `cmd:"" help:"Show group details." aliases:"sh"`
-	Hide   GroupHideCmd   `cmd:"" help:"Hide group."         aliases:"h"`
-	Toggle GroupToggleCmd `cmd:"" help:"Toggle group."       aliases:"tg"`
-	Status GroupStatusCmd `cmd:"" help:"Get group status."   aliases:"ss"`
+	List   GroupListCmd   `cmd:"" help:"List all groups."    aliases:"ls" completion-command-alias-enabled:"false"`
+	Show   GroupShowCmd   `cmd:"" help:"Show group details." aliases:"sh" completion-command-alias-enabled:"false"`
+	Hide   GroupHideCmd   `cmd:"" help:"Hide group."         aliases:"h"  completion-command-alias-enabled:"false"`
+	Toggle GroupToggleCmd `cmd:"" help:"Toggle group."       aliases:"tg" completion-command-alias-enabled:"false"`
+	Status GroupStatusCmd `cmd:"" help:"Get group status."   aliases:"ss" completion-command-alias-enabled:"false"`
 }
 
 // GroupListCmd provides a command to list all groups in a scene.

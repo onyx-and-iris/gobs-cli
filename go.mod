@@ -2,6 +2,8 @@ module github.com/onyx-and-iris/gobs-cli
 
 go 1.25.0
 
+replace github.com/jotaen/kong-completion v0.0.12 => ../kong-completion
+
 require (
 	github.com/alecthomas/kong v1.14.0
 	github.com/alecthomas/mango-kong v0.1.0

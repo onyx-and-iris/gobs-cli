@@ -6,11 +6,11 @@ import (
 
 // ReplayBufferCmd handles the recording commands.
 type ReplayBufferCmd struct {
-	Start  ReplayBufferStartCmd  `help:"Start replay buffer."      cmd:"" aliases:"s"`
-	Stop   ReplayBufferStopCmd   `help:"Stop replay buffer."       cmd:"" aliases:"st"`
-	Toggle ReplayBufferToggleCmd `help:"Toggle replay buffer."     cmd:"" aliases:"tg"`
-	Status ReplayBufferStatusCmd `help:"Get replay buffer status." cmd:"" aliases:"ss"`
-	Save   ReplayBufferSaveCmd   `help:"Save replay buffer."       cmd:"" aliases:"sv"`
+	Start  ReplayBufferStartCmd  `cmd:"" help:"Start replay buffer."      aliases:"s"  completion-command-alias-enabled:"false"`
+	Stop   ReplayBufferStopCmd   `cmd:"" help:"Stop replay buffer."       aliases:"st" completion-command-alias-enabled:"false"`
+	Toggle ReplayBufferToggleCmd `cmd:"" help:"Toggle replay buffer."     aliases:"tg" completion-command-alias-enabled:"false"`
+	Status ReplayBufferStatusCmd `cmd:"" help:"Get replay buffer status." aliases:"ss" completion-command-alias-enabled:"false"`
+	Save   ReplayBufferSaveCmd   `cmd:"" help:"Save replay buffer."       aliases:"sv" completion-command-alias-enabled:"false"`
 }
 
 // ReplayBufferStartCmd starts the replay buffer.

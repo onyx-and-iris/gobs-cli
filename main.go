@@ -34,16 +34,16 @@ func (v VersionFlag) BeforeApply(app *kong.Kong, vars kong.Vars) error { // noli
 
 // ObsConfig holds the configuration for connecting to the OBS WebSocket server.
 type ObsConfig struct {
-	Host     string `flag:"host"     help:"Host to connect to."          default:"localhost" env:"OBS_HOST"     short:"H"`
-	Port     int    `flag:"port"     help:"Port to connect to."          default:"4455"      env:"OBS_PORT"     short:"P"`
-	Password string `flag:"password" help:"Password for authentication." default:""          env:"OBS_PASSWORD" short:"p"`
-	Timeout  int    `flag:"timeout"  help:"Timeout in seconds."          default:"5"         env:"OBS_TIMEOUT"  short:"T"`
+	Host     string `flag:"host"     help:"Host to connect to."          default:"localhost" env:"OBS_HOST"     short:"H" completion-short-enabled:"false"`
+	Port     int    `flag:"port"     help:"Port to connect to."          default:"4455"      env:"OBS_PORT"     short:"P" completion-short-enabled:"false"`
+	Password string `flag:"password" help:"Password for authentication." default:""          env:"OBS_PASSWORD" short:"p" completion-short-enabled:"false"`
+	Timeout  int    `flag:"timeout"  help:"Timeout in seconds."          default:"5"         env:"OBS_TIMEOUT"  short:"T" completion-short-enabled:"false"`
 }
 
 // StyleConfig holds the configuration for styling the CLI output.
 type StyleConfig struct {
-	Style    string `help:"Style used in output."                   flag:"style"     default:""      env:"GOBS_STYLE"           short:"s" enum:",red,magenta,purple,blue,cyan,green,yellow,orange,white,grey,navy,black"`
-	NoBorder bool   `help:"Disable table border styling in output." flag:"no-border" default:"false" env:"GOBS_STYLE_NO_BORDER" short:"b"`
+	Style    string `flag:"style"     help:"Style used in output."                   default:""      env:"GOBS_STYLE"           short:"s" enum:",red,magenta,purple,blue,cyan,green,yellow,orange,white,grey,navy,black" completion-short-enabled:"false"`
+	NoBorder bool   `flag:"no-border" help:"Disable table border styling in output." default:"false" env:"GOBS_STYLE_NO_BORDER" short:"b"                                                                                completion-short-enabled:"false"`
 }
 
 // CLI is the main command line interface structure.
@@ -55,27 +55,27 @@ type CLI struct {
 	Man     mangokong.ManFlag `help:"Print man page."`
 	Version VersionFlag       `help:"Print gobs-cli version information and quit" name:"version" short:"v"`
 
-	Completion kongcompletion.Completion `help:"Generate shell completion scripts." cmd:"" aliases:"c"`
+	Completion kongcompletion.Completion `help:"Generate shell completion scripts." cmd:""`
 
-	ObsVersion      ObsVersionCmd      `help:"Print OBS client and websocket version." cmd:"" aliases:"v"`
-	Scene           SceneCmd           `help:"Manage scenes."                          cmd:"" aliases:"sc"  group:"Scene"`
-	Sceneitem       SceneItemCmd       `help:"Manage scene items."                     cmd:"" aliases:"si"  group:"Scene Item"`
-	Group           GroupCmd           `help:"Manage groups."                          cmd:"" aliases:"g"   group:"Group"`
-	Input           InputCmd           `help:"Manage inputs."                          cmd:"" aliases:"i"   group:"Input"`
-	Text            TextCmd            `help:"Manage text inputs."                     cmd:"" aliases:"t"   group:"Text Input"`
-	Record          RecordCmd          `help:"Manage recording."                       cmd:"" aliases:"rec" group:"Recording"`
-	Stream          StreamCmd          `help:"Manage streaming."                       cmd:"" aliases:"st"  group:"Streaming"`
-	Scenecollection SceneCollectionCmd `help:"Manage scene collections."               cmd:"" aliases:"scn" group:"Scene Collection"`
-	Profile         ProfileCmd         `help:"Manage profiles."                        cmd:"" aliases:"p"   group:"Profile"`
-	Replaybuffer    ReplayBufferCmd    `help:"Manage replay buffer."                   cmd:"" aliases:"rb"  group:"Replay Buffer"`
-	Studiomode      StudioModeCmd      `help:"Manage studio mode."                     cmd:"" aliases:"sm"  group:"Studio Mode"`
-	Virtualcam      VirtualCamCmd      `help:"Manage virtual camera."                  cmd:"" aliases:"vc"  group:"Virtual Camera"`
-	Hotkey          HotkeyCmd          `help:"Manage hotkeys."                         cmd:"" aliases:"hk"  group:"Hotkey"`
-	Filter          FilterCmd          `help:"Manage filters."                         cmd:"" aliases:"f"   group:"Filter"`
-	Projector       ProjectorCmd       `help:"Manage projectors."                      cmd:"" aliases:"prj" group:"Projector"`
-	Screenshot      ScreenshotCmd      `help:"Take screenshots."                       cmd:"" aliases:"ss"  group:"Screenshot"`
-	Settings        SettingsCmd        `help:"Manage video and profile settings."      cmd:"" aliases:"set" group:"Settings"`
-	Media           MediaCmd           `help:"Manage media inputs."                    cmd:"" aliases:"mi"  group:"Media Input"`
+	ObsVersion      ObsVersionCmd      `cmd:"" help:"Print OBS client and websocket version." aliases:"v"   completion-command-alias-enabled:"false"`
+	Scene           SceneCmd           `cmd:"" help:"Manage scenes."                          aliases:"sc"  completion-command-alias-enabled:"false" group:"Scene"`
+	Sceneitem       SceneItemCmd       `cmd:"" help:"Manage scene items."                     aliases:"si"  completion-command-alias-enabled:"false" group:"Scene Item"`
+	Group           GroupCmd           `cmd:"" help:"Manage groups."                          aliases:"g"   completion-command-alias-enabled:"false" group:"Group"`
+	Input           InputCmd           `cmd:"" help:"Manage inputs."                          aliases:"i"   completion-command-alias-enabled:"false" group:"Input"`
+	Text            TextCmd            `cmd:"" help:"Manage text inputs."                     aliases:"t"   completion-command-alias-enabled:"false" group:"Text Input"`
+	Record          RecordCmd          `cmd:"" help:"Manage recording."                       aliases:"rec" completion-command-alias-enabled:"false" group:"Recording"`
+	Stream          StreamCmd          `cmd:"" help:"Manage streaming."                       aliases:"st"  completion-command-alias-enabled:"false" group:"Streaming"`
+	Scenecollection SceneCollectionCmd `cmd:"" help:"Manage scene collections."               aliases:"scn" completion-command-alias-enabled:"false" group:"Scene Collection"`
+	Profile         ProfileCmd         `cmd:"" help:"Manage profiles."                        aliases:"p"   completion-command-alias-enabled:"false" group:"Profile"`
+	Replaybuffer    ReplayBufferCmd    `cmd:"" help:"Manage replay buffer."                   aliases:"rb"  completion-command-alias-enabled:"false" group:"Replay Buffer"`
+	Studiomode      StudioModeCmd      `cmd:"" help:"Manage studio mode."                     aliases:"sm"  completion-command-alias-enabled:"false" group:"Studio Mode"`
+	Virtualcam      VirtualCamCmd      `cmd:"" help:"Manage virtual camera."                  aliases:"vc"  completion-command-alias-enabled:"false" group:"Virtual Camera"`
+	Hotkey          HotkeyCmd          `cmd:"" help:"Manage hotkeys."                         aliases:"hk"  completion-command-alias-enabled:"false" group:"Hotkey"`
+	Filter          FilterCmd          `cmd:"" help:"Manage filters."                         aliases:"f"   completion-command-alias-enabled:"false" group:"Filter"`
+	Projector       ProjectorCmd       `cmd:"" help:"Manage projectors."                      aliases:"prj" completion-command-alias-enabled:"false" group:"Projector"`
+	Screenshot      ScreenshotCmd      `cmd:"" help:"Take screenshots."                       aliases:"ss"  completion-command-alias-enabled:"false" group:"Screenshot"`
+	Settings        SettingsCmd        `cmd:"" help:"Manage video and profile settings."      aliases:"set" completion-command-alias-enabled:"false" group:"Settings"`
+	Media           MediaCmd           `cmd:"" help:"Manage media inputs."                    aliases:"mi"  completion-command-alias-enabled:"false" group:"Media Input"`
 }
 
 type context struct {

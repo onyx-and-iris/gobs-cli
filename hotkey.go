@@ -11,9 +11,9 @@ import (
 
 // HotkeyCmd provides commands to manage hotkeys in OBS Studio.
 type HotkeyCmd struct {
-	List            HotkeyListCmd            `cmd:"" help:"List all hotkeys."             aliases:"ls"`
-	Trigger         HotkeyTriggerCmd         `cmd:"" help:"Trigger a hotkey by name."     aliases:"tr"`
-	TriggerSequence HotkeyTriggerSequenceCmd `cmd:"" help:"Trigger a hotkey by sequence." aliases:"trs"`
+	List            HotkeyListCmd            `cmd:"" help:"List all hotkeys."             aliases:"ls"  completion-command-alias-enabled:"false"`
+	Trigger         HotkeyTriggerCmd         `cmd:"" help:"Trigger a hotkey by name."     aliases:"tr"  completion-command-alias-enabled:"false"`
+	TriggerSequence HotkeyTriggerSequenceCmd `cmd:"" help:"Trigger a hotkey by sequence." aliases:"trs" completion-command-alias-enabled:"false"`
 }
 
 // HotkeyListCmd provides a command to list all hotkeys.

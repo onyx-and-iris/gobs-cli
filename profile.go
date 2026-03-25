@@ -11,11 +11,11 @@ import (
 
 // ProfileCmd provides commands to manage profiles in OBS Studio.
 type ProfileCmd struct {
-	List    ProfileListCmd    `help:"List profiles."       cmd:"" aliases:"ls"`
-	Current ProfileCurrentCmd `help:"Get current profile." cmd:"" aliases:"c"`
-	Switch  ProfileSwitchCmd  `help:"Switch profile."      cmd:"" aliases:"sw"`
-	Create  ProfileCreateCmd  `help:"Create profile."      cmd:"" aliases:"new"`
-	Remove  ProfileRemoveCmd  `help:"Remove profile."      cmd:"" aliases:"rm"`
+	List    ProfileListCmd    `cmd:"" help:"List profiles."       aliases:"ls"  completion-command-alias-enabled:"false"`
+	Current ProfileCurrentCmd `cmd:"" help:"Get current profile." aliases:"c"   completion-command-alias-enabled:"false"`
+	Switch  ProfileSwitchCmd  `cmd:"" help:"Switch profile."      aliases:"sw"  completion-command-alias-enabled:"false"`
+	Create  ProfileCreateCmd  `cmd:"" help:"Create profile."      aliases:"new" completion-command-alias-enabled:"false"`
+	Remove  ProfileRemoveCmd  `cmd:"" help:"Remove profile."      aliases:"rm"  completion-command-alias-enabled:"false"`
 }
 
 // ProfileListCmd provides a command to list all profiles.

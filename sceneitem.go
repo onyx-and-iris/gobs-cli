@@ -13,12 +13,12 @@ import (
 
 // SceneItemCmd provides commands to manage scene items in OBS Studio.
 type SceneItemCmd struct {
-	List      SceneItemListCmd      `cmd:"" help:"List all scene items."      aliases:"ls"`
-	Show      SceneItemShowCmd      `cmd:"" help:"Show scene item."           aliases:"sh"`
-	Hide      SceneItemHideCmd      `cmd:"" help:"Hide scene item."           aliases:"h"`
-	Toggle    SceneItemToggleCmd    `cmd:"" help:"Toggle scene item."         aliases:"tg"`
-	Visible   SceneItemVisibleCmd   `cmd:"" help:"Get scene item visibility." aliases:"v"`
-	Transform SceneItemTransformCmd `cmd:"" help:"Transform scene item."      aliases:"t"`
+	List      SceneItemListCmd      `cmd:"" help:"List all scene items."      aliases:"ls" completion-command-alias-enabled:"false"`
+	Show      SceneItemShowCmd      `cmd:"" help:"Show scene item."           aliases:"sh" completion-command-alias-enabled:"false"`
+	Hide      SceneItemHideCmd      `cmd:"" help:"Hide scene item."           aliases:"h"  completion-command-alias-enabled:"false"`
+	Toggle    SceneItemToggleCmd    `cmd:"" help:"Toggle scene item."         aliases:"tg" completion-command-alias-enabled:"false"`
+	Visible   SceneItemVisibleCmd   `cmd:"" help:"Get scene item visibility." aliases:"v"  completion-command-alias-enabled:"false"`
+	Transform SceneItemTransformCmd `cmd:"" help:"Transform scene item."      aliases:"t"  completion-command-alias-enabled:"false"`
 }
 
 // SceneItemListCmd provides a command to list all scene items in a scene.

@@ -13,11 +13,11 @@ import (
 
 // FilterCmd provides commands to manage filters in OBS Studio.
 type FilterCmd struct {
-	List    FilterListCmd    `cmd:"" help:"List all filters."  aliases:"ls"`
-	Enable  FilterEnableCmd  `cmd:"" help:"Enable filter."     aliases:"on"`
-	Disable FilterDisableCmd `cmd:"" help:"Disable filter."    aliases:"off"`
-	Toggle  FilterToggleCmd  `cmd:"" help:"Toggle filter."     aliases:"tg"`
-	Status  FilterStatusCmd  `cmd:"" help:"Get filter status." aliases:"ss"`
+	List    FilterListCmd    `cmd:"" help:"List all filters."  aliases:"ls"  completion-command-alias-enabled:"false"`
+	Enable  FilterEnableCmd  `cmd:"" help:"Enable filter."     aliases:"on"  completion-command-alias-enabled:"false"`
+	Disable FilterDisableCmd `cmd:"" help:"Disable filter."    aliases:"off" completion-command-alias-enabled:"false"`
+	Toggle  FilterToggleCmd  `cmd:"" help:"Toggle filter."     aliases:"tg"  completion-command-alias-enabled:"false"`
+	Status  FilterStatusCmd  `cmd:"" help:"Get filter status." aliases:"ss"  completion-command-alias-enabled:"false"`
 }
 
 // FilterListCmd provides a command to list all filters in a scene.

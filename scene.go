@@ -11,9 +11,9 @@ import (
 
 // SceneCmd provides commands to manage scenes in OBS Studio.
 type SceneCmd struct {
-	List    SceneListCmd    `cmd:"" help:"List all scenes."       aliases:"ls"`
-	Current SceneCurrentCmd `cmd:"" help:"Get the current scene." aliases:"c"`
-	Switch  SceneSwitchCmd  `cmd:"" help:"Switch to a scene."     aliases:"sw"`
+	List    SceneListCmd    `cmd:"" help:"List all scenes."       aliases:"ls" completion-command-alias-enabled:"false"`
+	Current SceneCurrentCmd `cmd:"" help:"Get the current scene." aliases:"c"  completion-command-alias-enabled:"false"`
+	Switch  SceneSwitchCmd  `cmd:"" help:"Switch to a scene."     aliases:"sw" completion-command-alias-enabled:"false"`
 }
 
 // SceneListCmd provides a command to list all scenes.
