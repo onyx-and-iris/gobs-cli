@@ -8,10 +8,10 @@ import (
 
 // StudioModeCmd provides commands to manage studio mode in OBS Studio.
 type StudioModeCmd struct {
-	Enable  StudioModeEnableCmd  `cmd:"enable"  help:"Enable studio mode."     aliases:"on"  completion-command-alias-enabled:"false"`
-	Disable StudioModeDisableCmd `cmd:"disable" help:"Disable studio mode."    aliases:"off" completion-command-alias-enabled:"false"`
-	Toggle  StudioModeToggleCmd  `cmd:"toggle"  help:"Toggle studio mode."     aliases:"tg"  completion-command-alias-enabled:"false"`
-	Status  StudioModeStatusCmd  `cmd:"status"  help:"Get studio mode status." aliases:"ss"  completion-command-alias-enabled:"false"`
+	Enable  StudioModeEnableCmd  `cmd:"enable"  help:"Enable studio mode."     aliases:"on"  completion-enabled-command-alias:"false"`
+	Disable StudioModeDisableCmd `cmd:"disable" help:"Disable studio mode."    aliases:"off" completion-enabled-command-alias:"false"`
+	Toggle  StudioModeToggleCmd  `cmd:"toggle"  help:"Toggle studio mode."     aliases:"tg"  completion-enabled-command-alias:"false"`
+	Status  StudioModeStatusCmd  `cmd:"status"  help:"Get studio mode status." aliases:"ss"  completion-enabled-command-alias:"false"`
 }
 
 // StudioModeEnableCmd provides a command to enable studio mode.

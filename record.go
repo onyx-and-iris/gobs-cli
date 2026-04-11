@@ -9,15 +9,15 @@ import (
 
 // RecordCmd handles the recording commands.
 type RecordCmd struct {
-	Start     RecordStartCmd     `cmd:"" help:"Start recording."                   aliases:"s"  completion-command-alias-enabled:"false"`
-	Stop      RecordStopCmd      `cmd:"" help:"Stop recording."                    aliases:"st" completion-command-alias-enabled:"false"`
-	Toggle    RecordToggleCmd    `cmd:"" help:"Toggle recording."                  aliases:"tg" completion-command-alias-enabled:"false"`
-	Status    RecordStatusCmd    `cmd:"" help:"Show recording status."             aliases:"ss" completion-command-alias-enabled:"false"`
-	Pause     RecordPauseCmd     `cmd:"" help:"Pause recording."                   aliases:"p"  completion-command-alias-enabled:"false"`
-	Resume    RecordResumeCmd    `cmd:"" help:"Resume recording."                  aliases:"r"  completion-command-alias-enabled:"false"`
-	Directory RecordDirectoryCmd `cmd:"" help:"Get/Set recording directory."       aliases:"d"  completion-command-alias-enabled:"false"`
-	Split     RecordSplitCmd     `cmd:"" help:"Split recording."                   aliases:"sp" completion-command-alias-enabled:"false"`
-	Chapter   RecordChapterCmd   `cmd:"" help:"Create a chapter in the recording." aliases:"c"  completion-command-alias-enabled:"false"`
+	Start     RecordStartCmd     `cmd:"" help:"Start recording."                   aliases:"s"  completion-enabled-command-alias:"false"`
+	Stop      RecordStopCmd      `cmd:"" help:"Stop recording."                    aliases:"st" completion-enabled-command-alias:"false"`
+	Toggle    RecordToggleCmd    `cmd:"" help:"Toggle recording."                  aliases:"tg" completion-enabled-command-alias:"false"`
+	Status    RecordStatusCmd    `cmd:"" help:"Show recording status."             aliases:"ss" completion-enabled-command-alias:"false"`
+	Pause     RecordPauseCmd     `cmd:"" help:"Pause recording."                   aliases:"p"  completion-enabled-command-alias:"false"`
+	Resume    RecordResumeCmd    `cmd:"" help:"Resume recording."                  aliases:"r"  completion-enabled-command-alias:"false"`
+	Directory RecordDirectoryCmd `cmd:"" help:"Get/Set recording directory."       aliases:"d"  completion-enabled-command-alias:"false"`
+	Split     RecordSplitCmd     `cmd:"" help:"Split recording."                   aliases:"sp" completion-enabled-command-alias:"false"`
+	Chapter   RecordChapterCmd   `cmd:"" help:"Create a chapter in the recording." aliases:"c"  completion-enabled-command-alias:"false"`
 }
 
 // RecordStartCmd starts the recording.
