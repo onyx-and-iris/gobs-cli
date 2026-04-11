@@ -6,10 +6,10 @@ import (
 
 // StreamCmd handles the streaming commands.
 type StreamCmd struct {
-	Start  StreamStartCmd  `cmd:"" help:"Start streaming."      aliases:"s"`
-	Stop   StreamStopCmd   `cmd:"" help:"Stop streaming."       aliases:"st"`
-	Toggle StreamToggleCmd `cmd:"" help:"Toggle streaming."     aliases:"tg"`
-	Status StreamStatusCmd `cmd:"" help:"Get streaming status." aliases:"ss"`
+	Start  StreamStartCmd  `cmd:"" help:"Start streaming."      aliases:"s"  completion-enabled-command-alias:"false"`
+	Stop   StreamStopCmd   `cmd:"" help:"Stop streaming."       aliases:"st" completion-enabled-command-alias:"false"`
+	Toggle StreamToggleCmd `cmd:"" help:"Toggle streaming."     aliases:"tg" completion-enabled-command-alias:"false"`
+	Status StreamStatusCmd `cmd:"" help:"Get streaming status." aliases:"ss" completion-enabled-command-alias:"false"`
 }
 
 // StreamStartCmd starts the stream.

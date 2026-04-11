@@ -7,7 +7,7 @@ require (
 	github.com/alecthomas/mango-kong v0.1.0
 	github.com/andreykaipov/goobs v1.8.3
 	github.com/charmbracelet/lipgloss v1.1.0
-	github.com/jotaen/kong-completion v0.0.12
+	github.com/jotaen/kong-completion v0.0.13
 	github.com/titusjaka/kong-dotenv-go v0.1.0
 )
 

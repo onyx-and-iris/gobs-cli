@@ -10,10 +10,10 @@ import (
 
 // SceneCollectionCmd provides commands to manage scene collections in OBS Studio.
 type SceneCollectionCmd struct {
-	List    SceneCollectionListCmd    `help:"List scene collections."       cmd:"" aliases:"ls"`
-	Current SceneCollectionCurrentCmd `help:"Get current scene collection." cmd:"" aliases:"c"`
-	Switch  SceneCollectionSwitchCmd  `help:"Switch scene collection."      cmd:"" aliases:"sw"`
-	Create  SceneCollectionCreateCmd  `help:"Create scene collection."      cmd:"" aliases:"new"`
+	List    SceneCollectionListCmd    `cmd:"" help:"List scene collections."       aliases:"ls"  completion-enabled-command-alias:"false"`
+	Current SceneCollectionCurrentCmd `cmd:"" help:"Get current scene collection." aliases:"c"   completion-enabled-command-alias:"false"`
+	Switch  SceneCollectionSwitchCmd  `cmd:"" help:"Switch scene collection."      aliases:"sw"  completion-enabled-command-alias:"false"`
+	Create  SceneCollectionCreateCmd  `cmd:"" help:"Create scene collection."      aliases:"new" completion-enabled-command-alias:"false"`
 }
 
 // SceneCollectionListCmd provides a command to list all scene collections.

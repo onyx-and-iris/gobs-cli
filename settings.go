@@ -11,10 +11,10 @@ import (
 
 // SettingsCmd handles settings management.
 type SettingsCmd struct {
-	Show          SettingsShowCmd          `help:"Show settings."                     cmd:"" aliases:"s"`
-	Profile       SettingsProfileCmd       `help:"Get/Set profile parameter setting." cmd:"" aliases:"p"`
-	StreamService SettingsStreamServiceCmd `help:"Get/Set stream service setting."    cmd:"" aliases:"ss"`
-	Video         SettingsVideoCmd         `help:"Get/Set video setting."             cmd:"" aliases:"v"`
+	Show          SettingsShowCmd          `cmd:"" help:"Show settings."                     aliases:"s"  completion-enabled-command-alias:"false"`
+	Profile       SettingsProfileCmd       `cmd:"" help:"Get/Set profile parameter setting." aliases:"p"  completion-enabled-command-alias:"false"`
+	StreamService SettingsStreamServiceCmd `cmd:"" help:"Get/Set stream service setting."    aliases:"ss" completion-enabled-command-alias:"false"`
+	Video         SettingsVideoCmd         `cmd:"" help:"Get/Set video setting."             aliases:"v"  completion-enabled-command-alias:"false"`
 }
 
 // SettingsShowCmd shows the video settings.
