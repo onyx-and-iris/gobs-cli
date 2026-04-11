@@ -58,9 +58,12 @@ func TestFilterListEmpty(t *testing.T) {
 	if err == nil {
 		t.Fatal("Expected error for non-existent source, but got none")
 	}
-	if !strings.Contains(err.Error(), "No source was found by the name of `NonExistentSource`.") {
+	if !strings.Contains(
+		err.Error(),
+		"No source was found by the name of `NonExistentSource` within the canvas `Main`.",
+	) {
 		t.Fatalf(
-			"Expected error to contain 'No source was found by the name of `NonExistentSource`.', got '%s'",
+			"Expected error to contain 'No source was found by the name of `NonExistentSource` within the canvas `Main`.', got '%s'",
 			err.Error(),
 		)
 	}
