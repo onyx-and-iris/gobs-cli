@@ -7,13 +7,13 @@ require (
 	github.com/alecthomas/mango-kong v0.1.0
 	github.com/andreykaipov/goobs v1.8.3
 	github.com/charmbracelet/lipgloss v1.1.0
-	github.com/jotaen/kong-completion v0.0.13
+	github.com/jotaen/kong-completion v0.0.14
 	github.com/titusjaka/kong-dotenv-go v0.1.0
 )
 
 require (
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
-	github.com/buger/jsonparser v1.1.2 // indirect
+	github.com/buger/jsonparser v1.2.0 // indirect
 	github.com/charmbracelet/colorprofile v0.4.3 // indirect
 	github.com/charmbracelet/x/ansi v0.11.7 // indirect
 	github.com/charmbracelet/x/cellbuf v0.0.15 // indirect
@@ -26,7 +26,7 @@ require (
 	github.com/hashicorp/logutils v1.0.0 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/lucasb-eyer/go-colorful v1.4.0 // indirect
-	github.com/mattn/go-isatty v0.0.21 // indirect
+	github.com/mattn/go-isatty v0.0.22 // indirect
 	github.com/mattn/go-runewidth v0.0.23 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mmcloughlin/profile v0.1.1 // indirect
