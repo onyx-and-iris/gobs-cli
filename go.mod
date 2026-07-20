@@ -3,7 +3,7 @@ module github.com/onyx-and-iris/gobs-cli
 go 1.25.0
 
 require (
-	github.com/alecthomas/kong v1.15.0
+	github.com/alecthomas/kong v1.16.0
 	github.com/alecthomas/mango-kong v0.1.0
 	github.com/andreykaipov/goobs v1.9.0
 	github.com/charmbracelet/lipgloss v1.1.0
@@ -26,7 +26,7 @@ require (
 	github.com/hashicorp/logutils v1.0.0 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/lucasb-eyer/go-colorful v1.4.0 // indirect
-	github.com/mattn/go-isatty v0.0.22 // indirect
+	github.com/mattn/go-isatty v0.0.23 // indirect
 	github.com/mattn/go-runewidth v0.0.24 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mmcloughlin/profile v0.1.1 // indirect
