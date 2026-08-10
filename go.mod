@@ -3,7 +3,7 @@ module github.com/onyx-and-iris/gobs-cli
 go 1.25.0
 
 require (
-	github.com/alecthomas/kong v1.16.0
+	github.com/alecthomas/kong v1.16.1
 	github.com/alecthomas/mango-kong v0.1.0
 	github.com/andreykaipov/goobs v1.9.0
 	github.com/charmbracelet/lipgloss v1.1.0
