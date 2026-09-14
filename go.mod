@@ -1,6 +1,6 @@
 module github.com/onyx-and-iris/gobs-cli
 
-go 1.25.0
+go 1.26.0
 
 require (
 	github.com/alecthomas/kong v1.16.1
@@ -27,7 +27,7 @@ require (
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/lucasb-eyer/go-colorful v1.4.1 // indirect
 	github.com/mattn/go-isatty v0.0.24 // indirect
-	github.com/mattn/go-runewidth v0.0.29 // indirect
+	github.com/mattn/go-runewidth v0.0.30 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mmcloughlin/profile v0.1.1 // indirect
 	github.com/muesli/mango v0.2.0 // indirect
@@ -37,6 +37,6 @@ require (
 	github.com/posener/complete v1.2.3 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/riywo/loginshell v0.0.0-20200815045211-7d26008be1ab // indirect
-	github.com/xo/terminfo v1.0.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
+	github.com/xo/terminfo v1.2.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
 )
