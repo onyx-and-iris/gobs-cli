@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	github.com/alecthomas/kong v1.16.1
 	github.com/alecthomas/mango-kong v0.1.0
-	github.com/andreykaipov/goobs v1.10.0
+	github.com/andreykaipov/goobs v1.11.0
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/jotaen/kong-completion v0.0.14
 	github.com/titusjaka/kong-dotenv-go v0.1.0
